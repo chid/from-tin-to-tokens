@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Queues and Dispatch — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link active">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part II: The Hardware Layer</span>
+            <span class="sep">/</span>
+            <span class="current">Command Queues and Dispatch</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part II: The Hardware Layer</span>
+            <h1 class="chapter-title">Command Queues and Dispatch</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">/// hsa_kernel_dispatch_packet_t (64 bytes, little-endian)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>repr<span class="at">(</span>C<span class="at">)]</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="op">,</span> <span class="bu">Clone</span><span class="op">,</span> <span class="bu">Copy</span><span class="at">)]</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> AqlKernelDispatchPacket <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    header<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>               <span class="co">// 0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    setup<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>                <span class="co">// 2   dimensions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    workgroup_size_x<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>     <span class="co">// 4</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    workgroup_size_y<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>     <span class="co">// 6</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    workgroup_size_z<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>     <span class="co">// 8</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    reserved0<span class="op">:</span> <span class="dt">u16</span><span class="op">,</span>            <span class="co">// 10</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    grid_size_x<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>          <span class="co">// 12</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    grid_size_y<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>          <span class="co">// 16</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    grid_size_z<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>          <span class="co">// 20</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    private_segment_size<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> <span class="co">// 24</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    group_segment_size<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>   <span class="co">// 28  LDS bytes per workgroup</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    kernel_object<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>        <span class="co">// 32  VA of the kernel descriptor</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    kernarg_address<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>      <span class="co">// 40  VA of the kernel argument buffer</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    reserved2<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>            <span class="co">// 48</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    completion_signal<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>    <span class="co">// 56  VA of an amd_signal_t</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> _<span class="op">:</span> () <span class="op">=</span> <span class="pp">assert!</span>(<span class="pp">core::mem::size_of::</span><span class="op">&lt;</span>AqlKernelDispatchPacket<span class="op">&gt;</span>() <span class="op">==</span> <span class="dv">64</span>)<span class="op">;</span></span></code></pre></div>
+<p>That <code>const</code> assertion isn’t decoration, it’s the cheapest possible test that your struct matches the ABI, it runs at compile time, and it catches the most damaging category of mistake at this layer.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0046-01.png" alt="FIGURE 7.1: The 64-byte dispatch packet, at its real offsets" />
+<figcaption aria-hidden="true">FIGURE 7.1: The 64-byte dispatch packet, at its real offsets</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Sixty-four bytes exactly, and a compile-time size assertion on the struct is the cheapest ABI test you will ever write.</p></li>
+<li><p>O <strong><code>2</code></strong> The header is 16 bits, not 32. Bit 8 is the barrier bit, which is the mechanism behind chained dispatch, and bits 9 and 10 begin the acquire fence scope.</p></li>
+<li><p>O <strong><code>3</code></strong> The three pointers are naturally aligned at offsets 32, 40 and 56, and kernel_object precedes kernarg_address. Reversing them faults immediately, which is at least a fast failure.</p></li>
+<li><p>O <strong><code>4</code></strong> kernel_object points at the kernel descriptor the compiler emits, the symbol ending .kd, rather than at the code entry point itself.</p></li>
+</ul>
+<p>Three fields deserve comment. <code>kernarg_address</code> points at a buffer holding the kernel’s arguments laid out exactly as the compiled kernel expects, with the alignment its metadata specifies, and getting the padding wrong means the kernel reads a pointer from the middle of two other arguments.</p>
+<p><code>kernel_object</code> points at the <em>kernel descriptor</em> , a 64-byte structure the compiler emits under the symbol <code>&lt;name&gt;.kd</code> , not the code entry point itself, and that descriptor holds the code offset plus register and segment configuration. And <code>completion_signal</code> points at an <code>amd_signal_t</code> , a 64-byte structure whose value the command processor atomically decrements when the dispatch finishes.</p>
+<h2 id="the-header-and-the-barrier-bit">The header and the barrier bit</h2>
+<p>The 16-bit header packs the packet type together with its memory-fence behaviour.</p>
+<table>
+<thead>
+<tr>
+<th><strong>BITS</strong></th>
+<th><strong>FIELD</strong></th>
+<th><strong>MEANING</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–7</td>
+<td>packet type</td>
+<td>2 =<code>KERNEL_DISPATCH</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>barrier</strong></td>
+<td>don’t launch until all preceding packets complete</td>
+</tr>
+<tr>
+<td>9–10</td>
+<td>acquire fence scope</td>
+<td>cache invalidate before the dispatch</td>
+</tr>
+<tr>
+<td>11–12</td>
+<td>release fence scope</td>
+<td>cache writeback after the dispatch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The barrier bit is bit 8</strong> , not bit 9, since bit 9 begins the acquire fence scope field. Setting it is the mechanism behind chained dispatch in Chapter 25, where a whole layer’s kernels go into the ring with barrier bits set and execute in dependency order behind a single doorbell and a single wait.</p>
+<p>The fence scopes are just as load-bearing and get fumbled more often. If a kernel’s release scope is too narrow its writes may not be visible to the next kernel, let alone to a peer GPU, and the symptom is intermittent wrong results that vanish under a profiler. Cross-GPU work needs system scope, and Chapter 28 explains why.</p>
+<h2 id="publishing-a-packet-and-then-the-doorbell">Publishing a packet, and then the doorbell</h2>
+<p>This is the part people get subtly wrong, because the doorbell looks like the gate and isn’t. The command processor is entitled to look at any slot below the write index at any time, so what holds it off is not the doorbell, it’s the packet’s own header. A slot whose header type reads <code>INVALID</code> is a slot the processor will skip and come back to.</p>
+<p>So enqueuing has four steps, in this order.</p>
+<pre><code>// 1. reserve a slot
+letindex=queue.write_index.fetch_add(1,Ordering::Relaxed);
+letslot=&amp;mutring[(index%queue.ring_slots)asusize];
+
+// 2. write the body with the header still INVALID
+write_packet_body(slot,&amp;dispatch);
+
+// 3. publish: one release store to the first 32 bits hands the slot over
+slot.publish_header(header_word,Ordering::Release);
+
+// 4. ring the doorbell so the processor looks now rather than later
+queue.doorbell.store(index,Ordering::Relaxed);</code></pre>
+<p>Step 3 is the handover. Everything the processor needs must be visible before that store lands, which is what the release ordering buys, and the header has to go out as a single store rather than field by field. Writing the whole 64-byte packet including a valid header and <em>then</em> fencing is the common mistake: the processor may have already read a half-written slot, and the fence arrives too late to matter.</p>
+<p>Step 4 is a wake-up, not permission. Skip it and a spinning processor may still find the packet, which is exactly why forgetting it produces an intermittent stall rather than a clean hang.</p>
+<p>The doorbell takes the <strong>packet index</strong> , not a byte offset and not a count. Writing <code>index + 1</code> tells the processor that a slot you haven’t published is ready, so it fetches a slot still marked <code>INVALID</code> and waits for it, and the usual symptom is a queue that stops making progress with no error anywhere.</p>
+<h2 id="completion-signals">Completion signals</h2>
+<p>The completion signal is the only reliable indicator that a dispatch is done. The command processor atomically decrements it once every workgroup has completed and its memory effects are visible at the release scope, and the host polls until it reaches the completed value.</p>
+<p>Why not poll the output buffer instead? Because workgroup completion order isn’t defined, so the workgroup that writes the last byte of output isn’t necessarily the last to finish, and a buffer can look</p>
+<p>complete while work is still running. Worse, without the release fence the bytes may sit in a cache the host can’t see. The signal is the only synchronisation point that means what you want it to mean.</p>
+<p>The entire conversation with the GPU, at its simplest.</p>
+<pre><code>loop {</code></pre>
+<p><code>1. reserve a slot and write the packet body, header left INVALID</code></p>
+<p><code>2. publish the header with a release store</code></p>
+<p><code>3. ring the doorbell with the packet index</code></p>
+<p><code>4. poll the completion signal until it reads COMPLETED</code></p>
+<p><code>5. read the result }</code></p>
+<p>Every kernel goes through that loop, attention and norm and RoPE and MoE and all-reduce alike, so how tight it is sets the floor on per-token latency for anything the model does more than a handful of times.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0048-11.png" alt="FIGURE 7.2: The entire conversation with the GPU" />
+<figcaption aria-hidden="true">FIGURE 7.2: The entire conversation with the GPU</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> The host writes a packet into the next slot of the ring buffer, then issues a release fence so those bytes are visible before anything else happens.</p></li>
+<li><p>O <strong><code>2</code></strong> It writes the packet index to the doorbell. Writing a count instead makes the command processor fetch a slot you never wrote, and the usual result is a hang rather than an error.</p></li>
+<li><p>O <strong><code>3</code></strong> The command processor reads from the ring and runs the kernel. O <strong><code>4</code></strong> On completion it atomically decrements the signal, which is the only indicator that means what you want it to mean, because workgroup completion order is not defined.</p></li>
+</ul>
+<p>One note on step 3. A pure spin burns a core and, on a shared host, can starve the very thread that needs to enqueue the next batch, so production implementations spin for a bounded number of iterations</p>
+<p>and then fall back to an interrupt-based wait, which KFD supports through event-backed signals. Spin when you expect microseconds, sleep when you expect milliseconds.</p>
+<h2 id="kernarg-slot-management">Kernarg slot management</h2>
+<p>Every dispatch needs a kernarg buffer holding its arguments, which is trivial for a single dispatch and isn’t for <strong>chained dispatch</strong> , where multiple packets get enqueued without waiting between them. Two inflight dispatches sharing a kernarg buffer means the second’s host-side write can overwrite the first’s arguments before the command processor has read them.</p>
+<p>The fix is a ring of pre-allocated kernarg slots indexed by a counter tracking how many dispatches remain unretired, and that counter does double duty, because it’s also what tells you when it’s safe to drop a buffer. It’s the stack’s ground truth for what the GPU is still holding.</p>
+<p>The failure mode when you get this wrong is instructive. Not a crash, but a wrong answer that only appears under load, because the race needs the host to run ahead of the device.</p>
+<h2 id="why-synchronous-polling">Why synchronous polling</h2>
+<p>The dispatch loop is a latency-bound spin rather than I/O, so an async runtime would add a reactor and a thread pool to something measured in microseconds, introduce wakeup latency of the same order as the operation, and solve a multiplexing problem that doesn’t exist here. The loop stays <code>fn</code> , concurrency in the compute path comes from threads pinned to devices, and the async serving layer sits above an explicit boundary, as Chapter 3 described.</p>
+<h2 id="rust-patterns-for-the-queue">Rust patterns for the queue</h2>
+<p><strong><code>Cell</code> for hot-path interior mutability.</strong> The unretired-dispatch counter gets mutated on every dispatch through a shared reference, and <code>Cell&lt;usize&gt;</code> makes that free where <code>RefCell</code> would add a borrow flag and a panic path and <code>Mutex</code> would add an atomic read-modify-write. <code>Cell</code> is correct here precisely because the dispatch loop is single-threaded, and if that assumption ever changes the compiler tells you, because <code>Cell</code> isn’t <code>Sync</code> .</p>
+<p><strong>Owning the ring and doorbell.</strong> The <code>Queue</code> struct owns the ring buffer as a <code>DeviceBuffer</code> , the mapped doorbell page, and the indices, and <code>Drop</code> destroys the queue, unmaps the doorbell, and frees the ring, in that order, because destroying the queue is what guarantees the command processor has stopped reading.</p>
+<p><strong>The signal as a typed wrapper.</strong> A raw address becomes a <code>Signal</code> type with <code>poll()</code> , <code>wait()</code> , and <code>reset()</code> . The value isn’t the methods, it’s that the contract now has somewhere to live.</p>
+<p>The entire conversation with the GPU is write a packet, ring a doorbell, wait for a signal. The details that bite are exact. The AQL packet is 64 bytes with pointers at offsets 32, 40, and 56, the barrier bit is bit 8 of the header, the doorbell takes the packet index and a count instead of an index hangs the queue, a release fence must precede the doorbell store, and chained dispatches need distinct kernarg slots or they race.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Write out the 64-byte packet, byte by byte, for a 1-D dispatch of a kernel with a 256-work-item workgroup, a grid of 65,536, 8 KB of LDS, and the barrier bit set. Verify your offsets against the struct above.</p></li>
+<li><p>Explain precisely what the command processor does if the doorbell is written with <code>index + 1</code> , and why that manifests as a hang rather than an error.</p></li>
+<li><p>A kernel’s results are correct when run alone and intermittently wrong when chained behind another kernel. List three plausible causes in order of likelihood and the experiment that distinguishes them.</p></li>
+<li><p><strong>Build:</strong> implement the dispatch loop with a bounded spin followed by an event-based wait. Measure completion latency of a trivial kernel for both strategies and find the spin bound where they cross over.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch06-device-memory.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Device Memory</span>
+        </a>
+        
+        <a href="ch08-attention-variants.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Attention Variants</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

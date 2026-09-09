@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weight Loading and Model Formats — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link active">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part V: Model Execution</span>
+            <span class="sep">/</span>
+            <span class="current">Weight Loading and Model Formats</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part V: Model Execution</div>
+          <h2>Overview</h2>
+          <p>Loading model weights defensively from SafeTensors, assembling the decode layer (RMSNorm, RoPE, SwiGLU), running the autoregressive loop, handling Mixture-of-Experts, and chained kernel dispatch.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part V: Model Execution</span>
+            <h1 class="chapter-title">Weight Loading and Model Formats</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="model-formats">Model formats</h2>
+<p><strong>SafeTensors</strong> is the default for open model weights, and it’s about as simple as a format can be. An 8- byte little-endian <code>u64</code> giving the header length <em>N</em> , then <em>N</em> bytes of JSON header describing each tensor’s dtype, shape, and byte range, then the data buffer with tensors laid out contiguously. It was designed for safety, since there’s no code execution unlike pickle, and for zero-copy loading, since the data buffer is memory-mappable and tensors are byte-range views. Large models ship as multiple shards with an index file mapping tensor names to shard files.</p>
+<p><strong>GGUF</strong> from llama.cpp is a self-contained file with quantised weights, full metadata, and the tokeniser, designed so that one file plus one binary is a complete deployment. Excellent for edge, less interoperable with the training ecosystem.</p>
+<p><strong>PyTorch checkpoints</strong> use Python pickle, which executes arbitrary code on load. Don’t load untrusted ones, convert to SafeTensors first.</p>
+<h2 id="parsing-safetensors-defensively">Parsing SafeTensors, defensively</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> TensorInfo <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    dtype<span class="op">:</span> <span class="dt">String</span><span class="op">,</span>                 <span class="co">// &quot;F16&quot;, &quot;BF16&quot;, &quot;F32&quot;, &quot;F8_E4M3&quot;, ...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    shape<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">usize</span><span class="op">&gt;,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    data_offsets<span class="op">:</span> (<span class="dt">usize</span><span class="op">,</span> <span class="dt">usize</span>)<span class="op">,</span>  <span class="co">// [start, end) within the data buffer</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The parsing steps are mechanical and the validation is what matters, because every malformed field becomes an out-of-bounds GPU access later. Read the 8-byte length and reject absurd values before allocating anything. Parse the JSON header. Then for every tensor, check that <code>product(shape) × dtype_size == end − start</code> , that <code>start ≤ end</code> , and that <code>end</code> lies within the file, so that a truncated download or a corrupted shard fails here, on the host, rather than as a VM fault on the device. Check offsets are in range and, ideally, that the tensor set matches the architecture you expect.</p>
+<p>Add an integrity check for production, hashing the file against a manifest. A checkpoint corrupted in transit produces a model that generates plausible-looking garbage, which is the hardest failure to diagnose from the output alone.</p>
+<h2 id="data-types-youll-actually-encounter">Data types you’ll actually encounter</h2>
+<p>A loader has to handle at least FP32, FP16, <strong>BF16</strong> , FP8 in both E4M3 and E5M2, and integer formats with separate scale tensors.</p>
+<p>BF16 deserves specific attention, because it’s what most modern checkpoints are stored in and it gets far less coverage than FP16. BF16 has 8 exponent bits and 7 mantissa bits, giving it FP32’s dynamic range with a quarter of the precision, while FP16 has 5 exponent bits and 10 mantissa bits, more precision and far less range.</p>
+<p>Three consequences follow for the loader and the kernels beneath it.</p>
+<p><strong>BF16 to FP16 conversion can overflow.</strong> BF16 represents values up to about 3.4e38 while FP16 saturates at 65,504, and models trained in BF16 do contain weights and, more often, activations outside FP16’s range. Converting a BF16 checkpoint to FP16 without checking is a real source of <code>inf</code> and <code>NaN</code> in the first forward pass.</p>
+<p><strong>BF16 to FP32 is trivial in one direction</strong> , since BF16 is the top 16 bits of an FP32. Truncating is cheap and rounding to nearest even is correct.</p>
+<p><strong>Accumulate in FP32 regardless.</strong> Both are storage formats, so every reduction, RMSNorm sums and attention scores and GEMM accumulation, should accumulate in FP32 or higher, and the storage format shouldn’t change that.</p>
+<p>If your kernels are FP16 and your checkpoints are BF16, the decision to convert at load time is a real one with a quality consequence, so measure it against the f64 oracle of Chapter 36 rather than assuming it’s free.</p>
+<h2 id="tensor-parallel-slice-planning">Tensor-parallel slice planning</h2>
+<p>For multi-GPU inference, weights get split across GPUs Megatron-style, and the notation trips almost everyone up at least once, so let’s fix it here and use it consistently for the rest of the book.</p>
+<p>Store weights in PyTorch’s <code>nn.Linear</code> convention, where a weight matrix has shape <strong>(out_features, in_features)</strong> and <code>y = x · Wᵀ</code> .</p>
+<p><strong>Column-parallel</strong> splits the <em>output</em> features, which in the stored layout is <strong>axis 0</strong> , the rows. Each rank gets a contiguous range of rows, and because rows are contiguous in memory each rank’s slice is one contiguous byte range. Easy.</p>
+<p><strong>Row-parallel</strong> splits the <em>input</em> features, which in the stored layout is <strong>axis 1</strong> , the columns. Each rank gets a column range from <em>every</em> row, so its slice is <strong>strided</strong> , <code>out_features</code> separate byte ranges with gaps between them.</p>
+<p>The names come from the mathematical matrix in <code>y = xW</code> , where they refer to columns and rows respectively, and they refer to the opposite axis of the stored transposed matrix. That mismatch is the single most common source of confusion in TP loaders, and it is entirely possible to carry the inconsistency across two chapters of your own codebase without noticing. Pick the stored-layout convention, write it down, and use it everywhere.</p>
+<p>The strided case is the hard part of TP loading, and you have three options. <strong>Scatter-read</strong> does one read per row, which is correct and catastrophically slow since <code>out_features</code> can be tens of thousands. <strong>Rowcoalescing</strong> reads a contiguous window covering several rows’ slices and discards the parts belonging to other ranks, trading read amplification, a factor of TP size in the worst case, for large sequential reads, and it’s usually the right answer. <strong>Offline re-layout</strong> pre-shards the checkpoint so each rank’s slice is contiguous, which is fastest at load time and costs you a conversion step plus TP-degree-specific artefacts.</p>
+<p>For a system that reloads frequently, offline re-layout wins. For one that loads once at startup, coalescing is enough and avoids maintaining per-TP-degree copies of a 400 GB checkpoint.</p>
+<h2 id="getting-the-bytes-to-the-gpu">Getting the bytes to the GPU</h2>
+<p>Three mechanisms, in increasing order of sophistication.</p>
+<p><strong>Buffered read then copy</strong> reads into host memory and copies to VRAM. Simple, double-buffers through the page cache, wastes bandwidth and pollutes the cache.</p>
+<p><strong>Direct I/O</strong> with <code>O_DIRECT</code> bypasses the page cache, which matters because weights are read once and never re-read, so caching them evicts everything else on the node for no benefit. The requirement is alignment, since the buffer address, file offset, and length all have to be block-aligned, typically to 4,096 bytes. Tensors don’t start on block boundaries, so the pattern is an <code>aligned_read_window</code> , expanding the tensor’s range to the enclosing aligned window, reading the window, and skipping the prefix bytes.</p>
+<p><strong>DMA straight to VRAM</strong> uses a large BAR and a DMA engine, SDMA on AMD, to move data from a host staging buffer into device memory without the CPU copying it, overlapping transfer with compute on other layers. This is where a from-scratch loader can beat a naive framework loader substantially.</p>
+<h2 id="overlapping-load-with-compute">Overlapping load with compute</h2>
+<p>For a 400 GB checkpoint, loading takes minutes rather than seconds and dominates cold-start time, which matters enormously for autoscaling. The pipeline starts reading layer <em>i</em> ’s weights while the layers already resident begin work, for prefill of the first request or for warmup, with a per-layer resident flag the dispatch path waits on.</p>
+<p>That synchronisation has to be real. Dispatching a layer whose weights are still in flight reads whatever was in that VRAM beforehand, so a per-layer completion signal checked before the first dispatch touching those weights is the minimum.</p>
+<h2 id="rust-patterns-for-weight-loading">Rust patterns for weight loading</h2>
+<p>Parse once into a validated <code>TensorDescriptor { name, dtype, shape, offsets }</code> so everything downstream consumes the validated form and the “is this shape sane” question gets asked in exactly one place. Use <code>memmap2</code> for the file and explicit copies to VRAM, since mapping gives cheap random access to the header and tensor ranges while the copy stays explicit because you want to control placement. Provide typed views through <code>as_mut_slice_of::&lt;T&gt;()</code> on a <code>DeviceBuffer</code> , with the same temporal safety contract as Chapter 6.</p>
+<p>And fail loudly. A loader that silently zero-fills a missing tensor produces a model that runs and is wrong, so a missing tensor, shape mismatch, or dtype surprise should each be a hard error naming the tensor.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Weight loading is a systems problem rather than a maths problem. The format decides how you parse metadata, the TP plan decides how you slice, Direct I/O keeps the page cache clean, and DMA with perlayer overlap keeps cold start bounded. Fix one axis convention for TP slicing and use it everywhere, where the stored layout is (out_features, in_features), column-parallel splits axis 0 contiguously, and rowparallel splits axis 1 and is strided. Validate every tensor’s size on the host, because the alternative is an out-of-bounds read on the device.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A weight of shape (8192, 4096) in BF16 is row-parallel split across 8 ranks. How many byte ranges does rank 3 need, and how large is each? What is the read amplification if you coalesce 16 rows at a time?</p></li>
+<li><p>Explain why BF16 to FP16 conversion can overflow but BF16 to FP32 cannot. Write the check a loader should perform and decide what it should do on failure.</p></li>
+<li><p><strong>Build:</strong> write a SafeTensors parser with full validation. Feed it a truncated file, a file with an inconsistent shape, and a file with overlapping tensor ranges, and confirm each produces a distinct, clear error.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch20-tokenisation-sampling-structured-output.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Tokenisation, Sampling, and Structured Output</span>
+        </a>
+        
+        <a href="ch22-the-decode-layer.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Decode Layer</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

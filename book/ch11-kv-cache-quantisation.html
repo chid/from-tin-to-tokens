@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KV Cache Quantisation — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link active">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">KV Cache Quantisation</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">KV Cache Quantisation</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="why-quantise-the-kv-cache">Why quantise the KV cache</h2>
+<p>Run the arithmetic from Chapter 1 and the case makes itself. Qwen3-235B-A22B at a million tokens needs <strong>192 GB of FP16 KV</strong> for one sequence, 96 GB in FP8, 48 GB in FP4. Set that against the weights, which for a 235B model in FP8 are about 235 GB, and a 288 GB MI355X has no room at all for the FP16 cache and none for the FP8 one either. Getting a million-token sequence onto one package means fourbit weights, about 118 GB, with a 96 GB FP8 cache beside them. KV precision and weight precision are the same budget, and at long context they are competing for it.</p>
+<p>Speed follows capacity directly, because decode attention is bandwidth-bound and halving the KV bytes roughly halves the time the kernel spends moving them. “Roughly” is doing real work in that sentence, as the measured 1.47× below will show.</p>
+<h2 id="fp8-in-ocp-e4m3">FP8 in OCP E4M3</h2>
+<p>FP8 in the OCP E4M3 format is the production-ready choice today, and the format is 1 sign bit, 4 exponent bits, 3 mantissa bits. The <code>fn</code> suffix you see in framework type names like <code>float8_e4m3fn</code> means <em>finite</em> , this variant has no infinities and a single NaN encoding, which buys one extra magnitude of dynamic range. Descriptions of E4M3 as having “no sign bit in the exponent” turn up occasionally and aren’t a meaningful statement about anything.</p>
+<p>Accuracy lands around 2% relative L2 error on realistic tensors with per-block scales, comfortably inside the noise floor for most tasks, and end-to-end FP8 KV cache is generally reported as quality-neutral on standard benchmarks. Both vendors have native conversion instructions and in-datapath scaling in the matrix core. Store K and V in E4M3 with a scale factor per token, or per block of tokens per head, since per-tensor scales are cheaper and noticeably worse while per-token is the usual sweet spot.</p>
+<p>Now the detail that decides whether any of this is a win, because the first attempt in mainarch made FP8 KV <em>slower</em> than FP16, at 0.83 to 0.91×. The kernel decoded E4M3 with explicit bit manipulation, and the per-element decode cost, the tens of cycles per token the literature warns about, exceeded the bandwidth it saved. Two changes turned that into a 1.47× win.</p>
+<p>Use the hardware conversion instruction rather than manual bit twiddling. And, more importantly, pull the per-token scale factor <strong>out of the dot product</strong> . Because q·(s·K) = s·(q·K), the scale can be applied once per token after the reduction instead of once per element before it, and the same trick works on the value side by scaling P by <code>scale_v[t]</code> before accumulating.</p>
+<p>That algebraic rearrangement, one scalar multiply per token instead of <em>d</em> multiplies per token, is the whole ballgame. Any quantised-KV kernel that dequantises element-wise inside the inner loop will underperform the unquantised version it was meant to replace.</p>
+<h2 id="four-bit-mxfp4-and-nvfp4">Four-bit: MXFP4 and NVFP4</h2>
+<p>Four-bit KV halves the bytes again, and two block formats matter.</p>
+<p><strong>MXFP4</strong> , the OCP microscaling format, uses E2M1 elements, 1 sign bit, 2 exponent, 1 mantissa, with one <strong>E8M0</strong> scale per block of 32. E8M0 is exponent-only, so the scale is exactly a power of two, <code>2^(x−127)</code> , which makes scaling exact but coarse.</p>
+<p><strong>NVFP4</strong> uses the same E2M1 elements with an <strong>E4M3</strong> scale per block of <strong>16</strong> , plus a second-level FP32 per-tensor scale. Two changes from MXFP4, half the block size and a scale with mantissa bits, and both reduce error. NVIDIA reports NVFP4 outperforming both MXFP4 and INT4 across models, with quantisation-aware distillation closing most of the remaining gap to BF16 for weights.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0066-03.png" alt="FIGURE 11.1: Four formats, and where the block scale lives" />
+<figcaption aria-hidden="true">FIGURE 11.1: Four formats, and where the block scale lives</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> FP16 is one sign bit, five exponent, ten mantissa. Sixteen bits per element and no scale to manage. O <strong><code>2</code></strong> FP8 E4M3 is one sign, four exponent, three mantissa. The fn suffix in framework type names means finite, so no infinities and a single NaN encoding, which buys one extra magnitude of range.</p></li>
+<li><p>O <strong><code>3</code></strong> MXFP4 packs E2M1 elements and shares one E8M0 scale across 32 of them. E8M0 is exponent-only, so the scale is exactly a power of two, which makes it exact but coarse.</p></li>
+<li><p>O <strong><code>4</code></strong> NVFP4 shares an E4M3 scale across 16, plus a second-level tensor scale. Half the block and a scale with mantissa bits, which is why it roughly halves MXFP4’s error at the same bit width.</p></li>
+</ul>
+<p>Measured on synthetic tensors with realistic outlier structure, Gaussian with 2% outliers, mainarch’s calibration put raw MXFP4 at 15 to 16% relative L2 error and NVFP4 at 9.2%, an improvement of roughly 45% that still leaves four-bit several times worse than FP8’s 2%. Those are <em>format</em> error numbers on synthetic data rather than end-to-end quality numbers, so treat them as a ranking rather than a prediction.</p>
+<p>The honest status for KV cache specifically in 2026 is that FP8 is the production default, four-bit KV works with additional technique, meaning smoothing or mixed precision for recent tokens or keeping outlier channels higher, and is deployed by teams who have measured it on their own traffic, while raw four-bit KV with a naive per-block scale isn’t something to ship without task-specific evaluation. Note also</p>
+<p>that four-bit is further along for <em>weights</em> than for KV cache, because the distributions and the error propagation paths differ, and results from one don’t transfer to the other.</p>
+<h2 id="smoothing-or-making-the-score-path-quantisable">Smoothing, or making the score path quantisable</h2>
+<p>The SageAttention line of work is the reference for quantised attention, and its central observation is that the <em>key</em> tensor carries large per-channel offsets and outliers, so a block scale ends up spending most of its range representing a bias rather than the signal.</p>
+<p>SageAttention introduced smoothing K, subtracting the channel mean before quantisation and correcting afterwards. SageAttention2 added smoothing on the query side and per-thread quantisation granularity with INT4 QK. SageAttention3 brings microscaling FP4 attention to Blackwell, inherits K-smoothing from the earlier work, and reports around 1,038 TOPS on an RTX 5090, roughly 5× the fastest FlashAttention on the same part.</p>
+<p>Attribute smoothing to the line rather than to v3 alone, and note the scope, since this work targets the <em>attention score computation</em> in FP4, which overlaps with but isn’t the same thing as storing the KV <em>cache</em> in FP4.</p>
+<h2 id="hardware-dequantisation-paths">Hardware dequantisation paths</h2>
+<p>On <strong>AMD CDNA4</strong> , <code>V_CVT_SCALEF32_PK_F32_FP4</code> and its relatives convert packed FP4 to FP32 applying a scale, running on the vector ALU. In a decode attention kernel the VALU has spare issue slots while the memory system is the bottleneck, so that’s close to free in practice, but “close to free” is a statement about a specific kernel’s issue-slot budget rather than a property of the instruction, so measure it.</p>
+<p>On <strong>NVIDIA Hopper and Blackwell</strong> , block scales get applied in the tensor-core datapath during the matrix multiply, so there’s no separate dequantisation step at all, provided the operation is shaped to use the tensor core, which decode’s M=1 GEMV isn’t. Which is why decode paths on both vendors often end up using vector-ALU conversion anyway.</p>
+<h2 id="the-accuracy-against-compression-trade">The accuracy against compression trade</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>FORMAT</strong></th>
+<th><strong>BYTES/ELEMENT</strong></th>
+<th><strong>VS FP16</strong></th>
+<th><strong>REL-L2 (SYNTHETIC)</strong></th>
+<th><strong>KV STATUS 2026</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FP16/BF16</td>
+<td>2</td>
+<td>1×</td>
+<td>0</td>
+<td>Baseline</td>
+</tr>
+<tr>
+<td>FP8 E4M3 + per-token scale</td>
+<td>1</td>
+<td>2×</td>
+<td>~2%</td>
+<td>Production default</td>
+</tr>
+<tr>
+<td>MXFP4 (E2M1 + E8M0/32)</td>
+<td>4.25 bits</td>
+<td>3.8×</td>
+<td>~15%</td>
+<td>Needs technique</td>
+</tr>
+<tr>
+<td>NVFP4 (E2M1 + E4M3/16 + FP32)</td>
+<td>4.5 bits</td>
+<td>3.6×</td>
+<td>~9%</td>
+<td>Needs technique</td>
+</tr>
+<tr>
+<td>FP4 + smoothing / mixed precision</td>
+<td>4.25–4.5 bits</td>
+<td>3.6–3.8×</td>
+<td>~3–5%</td>
+<td>Deployed with evaluation</td>
+</tr>
+</tbody>
+</table>
+<p>Neither format reaches 4× because of the scale, and the two differ. MXFP4’s E8M0 scale spread over 32 elements costs a quarter of a bit, giving 4.25 bits per element and 3.8× against FP16. NVFP4’s E4M3 scale over 16 elements costs half a bit, giving 4.5 bits and 3.6×, plus one FP32 per-tensor scale that rounds to nothing. NVFP4 buys its lower error with slightly worse compression, which is the trade rather than a free win.</p>
+<h2 id="when-to-quantise">When to quantise</h2>
+<p>Most valuable at long context where KV dominates, in multi-tenant serving where it buys concurrent sequences per GB, and anywhere memory is the binding constraint. Least valuable at short context, where the cache is small and the scale bookkeeping is pure overhead, and in prefill, which is computebound and writing the cache rather than re-reading it.</p>
+<p>One asymmetry is worth designing around. You can store recent tokens at higher precision and older tokens lower, because recency correlates with attention weight, and in a paged cache that’s cheap to implement since precision becomes a per-block property. It’s the most reliable way to get most of fourbit’s capacity benefit at close to FP8’s quality, and Chapter 32 returns to it.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>KV quantisation is the most leveraged memory optimisation in long-context inference. FP8 E4M3 with pertoken scales is production-ready and gives a measured 1.47× on real decode, provided the scale is factored out of the dot product and hardware conversion instructions do the work. A kernel that dequantises per element inside the inner loop can be <em>slower</em> than FP16. Four-bit halves bytes again, NVFP4’s block-16 E4M3 scaling roughly halves MXFP4’s error and smoothing narrows the rest, but fourbit KV still needs evaluation on your own traffic.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Show that per-token scale factors can be moved outside the QK dot product, and state precisely what changes if the scale is per-channel instead.</p></li>
+<li><p>Compute the effective bits per element for MXFP4 and NVFP4 including scale overhead. At what block size does the scale overhead exceed 10%?</p></li>
+<li><p>Explain why halving KV bytes gives 1.47× rather than 2× on the measured kernel. Which components of the runtime don’t shrink?</p></li>
+<li><p><strong>Build:</strong> quantise a real key tensor to E4M3 with per-tensor, per-token, and per-block scales and measure relative L2 error for each. Repeat after subtracting the per-channel mean and quantify what smoothing buys.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch10-flashdecoding-and-split-kv.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">FlashDecoding and Split-KV</span>
+        </a>
+        
+        <a href="ch12-paged-kv-and-block-tables.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Paged KV and Block Tables</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

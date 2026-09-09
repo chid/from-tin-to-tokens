@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Long-Context Attention — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link active">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">Long-Context Attention</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">Long-Context Attention</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Everything so far assumes the model can attend to its full context and that you’re willing to pay for it, and at a million tokens neither assumption survives contact with economics. A model trained at 32K doesn’t magically work at 1M, and even if it did, attending to the whole history for every token would cost more than anyone wants to spend. This chapter covers the two families of technique that make million-token serving real, one for each problem.</p>
+<h2 id="the-two-problems">The two problems</h2>
+<p><strong>Extrapolation.</strong> A model trained with RoPE at a given base frequency and maximum length doesn’t automatically work beyond it. Attention scores degrade badly at unseen relative distances, and the output becomes incoherent well before you run out of memory.</p>
+<p><strong>Cost.</strong> Even if the model extrapolates, attention over the full history is linear per token in context length for decode and quadratic in total for prefill, so at a million tokens prefill alone is enormous and decode reads gigabytes per token per layer.</p>
+<p>Production 1M-context deployments solve both, and the techniques are independent.</p>
+<h2 id="rope-and-its-base-frequency">RoPE and its base frequency</h2>
+<p>Recall RoPE from Chapter 22, where dimension pair <em>i</em> rotates by θ_i = p · base^(−2i/d) at position <em>p</em> . Low-index dimensions rotate fast, carrying local information, while high-index dimensions rotate slowly and carry long-range information.</p>
+<p>The base frequency is the main knob. Llama 1 and 2 use 10,000, Llama 3 raised it to 500,000, and Llama 3.1’s 128K variant layers a <code>rope_scaling</code> block on top of that base. Qwen3-235B-A22B uses 1e6 at 40,960 positions in its original release and <strong>5e6 at 262,144 positions</strong> in the Instruct-2507 refresh. Raising the base slows the decay of positional frequencies, so slow dimensions complete fewer rotations across the context and stay distinguishable at long distance, which is why models intended for long context get pretrained, or continued-pretrained, with a raised base.</p>
+<h2 id="position-interpolation-ntk-scaling-and-yarn">Position interpolation, NTK scaling, and YaRN</h2>
+<p>To push a trained model past its training length without retraining it, three approaches build on each other.</p>
+<p><strong>Position Interpolation</strong> scales positions down by the extension factor <em>s</em> , using <em>p</em> / <em>s</em> instead of <em>p</em> , so every relative distance falls back inside the trained range. Simple, works with brief fine-tuning, and it compresses the high-frequency dimensions that were carrying local information, which costs shortcontext quality.</p>
+<p><strong>NTK-aware scaling</strong> scales the <em>base</em> instead of the positions, spreading the interpolation unevenly across dimensions so high frequencies are barely touched and local resolution survives while low frequencies get interpolated and range extends. It works without fine-tuning to moderate extension factors.</p>
+<p><strong>YaRN</strong> is the refinement that became standard. It combines frequency-dependent interpolation, where dimensions whose wavelength is short relative to the trained context are left alone, dimensions whose wavelength exceeds it get interpolated, and a band in between is blended, with a temperature adjustment to the attention logits that compensates for the entropy change longer contexts cause. It reaches large extension factors with modest fine-tuning and it’s what most published long-context configurations use.</p>
+<p>Two things to get right as an engine builder. YaRN’s parameters live in the model config, under <code>rope_scaling</code> with <code>factor</code> , <code>original_max_position_embeddings</code> , and beta parameters, and they <strong>must</strong> be applied exactly as trained, since a mismatch between config and kernel produces a model that’s subtly wrong rather than obviously broken. And static YaRN scaling degrades short-context performance because it applies the extension whether or not the sequence needs it, so if you serve mixed lengths you either serve two configurations or use a length-aware variant.</p>
+<h2 id="dual-chunk-attention">Dual Chunk Attention</h2>
+<p>Interpolation still asks the model to handle relative distances it never saw. <strong>Dual Chunk Attention</strong> instead <em>remaps</em> positions so no distance exceeds the trained range, dividing the sequence into chunks and using three position index schemes, one within a chunk, one between adjacent chunks, and one between distant chunks, such that every computed relative position stays inside what the model was trained on.</p>
+<p>DCA is training-free. Combined with YaRN it’s the published path by which Qwen2.5-1M and the Qwen3-2507 models reach a million tokens, and it’s supported in vLLM and SGLang. The engine cost is real but contained, since attention has to be computed with position indices derived from the chunk scheme rather than absolute positions, meaning the kernel takes a position map rather than a scalar offset.</p>
+<h2 id="sparse-attention">Sparse attention</h2>
+<p>Extrapolation solves quality. Sparsity solves cost, and it’s where the frontier is.</p>
+<p>The empirical basis is that attention at long context is extremely concentrated, so for most heads and most queries a small fraction of keys carries almost all the probability mass. The exploitable structure shows up in a few recurring patterns, a local window, a set of global or sink tokens, strided diagonals, and a query-dependent set of semantically relevant blocks.</p>
+<p><strong>Training-free selection at inference</strong> is what MInference does, profiling each head offline, assigning it one of a few sparse patterns, and building the sparse index dynamically per head at inference time, with reported speedups reaching roughly 10× for 1M prefill on A100-class hardware while retaining accuracy. Related approaches, Quest and DuoAttention and various block-sparse top- <em>k</em> selectors, estimate perblock relevance cheaply and attend to the top blocks only.</p>
+<p><strong>Trainable sparsity</strong> is Native Sparse Attention’s answer, making the sparse pattern part of the architecture and training with it, combining compressed coarse tokens, selected fine blocks, and a sliding window through a learned gate. Because the model is trained sparse there’s no train-inference mismatch to recover from, and the pattern is hardware-aligned by construction.</p>
+<p><strong>Production sparse attention</strong> is DeepSeek Sparse Attention, the version that shipped at scale, where a lightweight indexer selects a fixed budget of tokens per query, on the order of 2,048, and attention runs over that budget. Attention compute at 128K context falls by roughly 98% while long-range retrieval survives, which changes the economics of long context outright. As of 2026 it powers long-context inference in DeepSeek’s and other frontier MoE models, and serving engines expose it through dedicated prefill and decode backends.</p>
+<h2 id="what-sparsity-does-to-the-rest-of-the-stack">What sparsity does to the rest of the stack</h2>
+<p>This is the part that surprises implementers, and it’s why sparse attention belongs in a systems book rather than only a modelling one.</p>
+<p><strong>The KV cache doesn’t shrink.</strong> Selection reduces reads, not storage, because any token might be selected by a later query. Sparse attention and KV quantisation are complements rather than alternatives.</p>
+<p><strong>Gather replaces stream.</strong> A dense decode kernel streams contiguous blocks and is bandwidth-bound with perfect locality, while a sparse kernel gathers scattered blocks, so achieved bandwidth per byte requested drops sharply and the block granularity of selection, not the token granularity, decides efficiency. Selecting whole pages aligned to your KV block size is worth a great deal here.</p>
+<p><strong>The index has a cost.</strong> Whatever computes the selection runs on every query, and if it costs more than a few percent of the attention it replaces the gain evaporates, which is why production designs use a small learned indexer or a compressed-token scan rather than an exact top- <em>k</em> over the full cache.</p>
+<p><strong>Scheduling changes.</strong> Per-request attention cost stops being a function of sequence length alone, which breaks the cost models a scheduler uses to pack batches, as Chapter 16 explains.</p>
+<h2 id="streaming-and-bounded-cache-serving">Streaming and bounded-cache serving</h2>
+<p>A separate regime worth distinguishing, because confusing it with long-context understanding is a common way to ship a regression. In unbounded conversation where you don’t need recall of the distant past, only fluent continuation, StreamingLLM’s finding is the practical one. Keep a handful of initial tokens as attention sinks plus a rolling window of recent tokens and generation stays stable indefinitely, where naively dropping the oldest tokens collapses immediately. Chapter 32 explains why.</p>
+<h2 id="what-a-1m-context-path-actually-looks-like">What a 1M-context path actually looks like</h2>
+<p>Assembled from everything above, a concrete configuration.</p>
+<p>A model pretrained with a high RoPE base, extended with YaRN and DCA to 1M positions. Chunked prefill with a large chunk, 32K being a published choice, so activation memory stays bounded, which is a 96%-plus reduction against prefilling a million tokens at once. Sparse attention during prefill, patternbased or learned, to cut the quadratic term. FP8 KV cache with per-token scales, giving 96 GB rather than 192 GB for the sequence. Paged KV with large blocks so sparse gathers stay page-aligned. And prefix caching, so the 1M-token document gets prefilled once and reused across the many queries that follow.</p>
+<p>That last point deserves emphasis, because almost every deployed million-token workload is one enormous shared context with many queries against it. A system that prefills brilliantly and can’t reuse the result is solving the wrong half of the problem.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Long context has two independent problems, extrapolation and cost. YaRN, with frequency-dependent interpolation plus logit temperature, and dual-chunk attention, which remaps positions so no relative distance is unseen, solve extrapolation training-free or nearly so. Sparse attention solves cost, with production systems attending to a bounded per-query budget and cutting attention compute at 128K by around 98%. Sparsity reduces reads rather than storage, so it composes with KV quantisation rather than replacing it, and it turns a streaming kernel into a gathering one, which is a systems change rather than a kernel change.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Given a model trained at 32K with RoPE base 1e6, compute the extension factor needed for a million tokens and describe what YaRN does to the lowest- and highest-frequency dimension pairs.</p></li>
+<li><p>Explain why static YaRN scaling degrades short-context quality, then design a serving policy that avoids the degradation for a mixed-length workload.</p></li>
+<li><p>A sparse decode kernel selects 2,048 of 1,000,000 tokens per query and achieves only 15% of the dense kernel’s bandwidth. Explain, and propose two changes to the selection granularity that would improve it.</p></li>
+<li><p><strong>Build:</strong> implement top- <em>k</em> block selection over a paged KV cache using per-block key summaries. Measure recall of the true top- <em>k</em> tokens as a function of block size, and the wall-clock cost of the selection step.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch13-kv-cache-memory-management.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">KV Cache Memory Management</span>
+        </a>
+        
+        <a href="ch15-continuous-batching.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Continuous Batching</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

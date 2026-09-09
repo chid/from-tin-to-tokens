@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashAttention and Tiling — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link active">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">FlashAttention and Tiling</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">FlashAttention and Tiling</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="why-naive-attention-is-slow">Why naive attention is slow</h2>
+<p>The textbook formulation looks harmless.</p>
+<pre><code>S = Q·Kᵀ        # (n, n) scores
+P = softmax(S)  # (n, n) probabilities
+O = P·V         # (n, d) output</code></pre>
+<p>The trouble is <em>S</em> and <em>P</em> . At sequence length 8,192 each of them holds 67 million elements per head, far too large for on-chip memory, so a naive implementation writes them to HBM and reads them straight back. For an operation whose useful output is only (n, d), that’s a catastrophic amount of traffic, and what dominates isn’t the inputs or the output but the intermediates nobody wanted in the first place.</p>
+<p>FlashAttention (Dao et al., 2022) removes them entirely, and the key ingredient is <strong>online softmax</strong> , computing softmax without ever holding a full row of scores.</p>
+<h2 id="the-online-softmax-trick">The online softmax trick</h2>
+<p>Standard softmax over a row goes</p>
+<pre><code>m = max(S)
+P = exp(S − m)        # subtract max for numerical stability
+Z = Σ P
+O = (P / Z) · V</code></pre>
+<p>which needs the whole row before it can start. Online softmax reformulates that as a running computation over blocks.</p>
+<pre><code>m_new = max(m_old, max(S_blk))
+f     = exp(m_old − m_new)          # rescale factor for prior state
+P_blk = exp(S_blk − m_new)
+Z_new = f·Z_old + Σ P_blk
+O_new = f·O_old + P_blk · V_blk</code></pre>
+<p>Each block of K and V gets loaded once, consumed, and discarded. The only state carried forward is a running maximum, a running denominator, and a running output accumulator, and all three fit in registers.</p>
+<p>The result is <strong>mathematically exact</strong> , not an approximation. The only difference from the naive computation is floating-point summation order, which produces relative differences on the order of 1e-6 when the running statistics and the output accumulator are held in FP32, as every serious implementation holds them. Round the result to FP16 at the end and the two computations agree to within a few units in the last place, around 1e-3 relative, because that’s the granularity of the format rather than an error in the algorithm.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0058-01.png" alt="FIGURE 9.1: FlashAttention never builds the thing that costs the most" />
+<figcaption aria-hidden="true">FIGURE 9.1: FlashAttention never builds the thing that costs the most</figcaption>
+</figure>
+<ul>
+<li><div class="line-block"><strong><code>1</code></strong> Naive attention materialises the score matrix. At sequence length 8,192 that is 67 million elements per head, far too large for on-chip memory.</div></li>
+<li><div class="line-block"><strong><code>2</code></strong> So it goes to HBM and comes straight back. For an operation whose useful output is only the small result, the intermediate nobody wanted dominates the traffic.</div></li>
+<li><div class="line-block"><strong><code>3</code></strong> The tiled version marches a block of keys and values through on-chip memory instead, consuming each block once and discarding it.</div></li>
+<li><div class="line-block"><strong><code>4</code></strong> All that survives between blocks is a running maximum, a running denominator and an unnormalised output accumulator. The result is exact, not approximate.</div></li>
+</ul>
+<h2 id="tiling">Tiling</h2>
+<p>FlashAttention tiles the computation to fit on-chip memory. Load a block of Q rows into registers, bounded by the register file. Then for each block of K and V, load them into LDS or shared memory, compute S_blk = Q·K_blkᵀ in registers on the matrix core, update the running max and sum and output accumulator, and discard S_blk. When the K and V blocks run out, normalise the accumulator by the running sum and write O once.</p>
+<p>HBM traffic drops to reading Q, K, and V once and writing O once, and the quadratic intermediate never exists.</p>
+<p>Tile sizes are a hardware fit rather than a constant, with Q block size bounded by registers and K/V block size by shared memory. CDNA4’s 160 KB LDS admits substantially larger K/V tiles than CDNA3’s 64 KB, which is why AMD tiling advice written before 2025 is worth re-deriving rather than copying.</p>
+<h2 id="flashattention-2">FlashAttention-2</h2>
+<p>FlashAttention-2 (Dao, 2023) restructured the algorithm around the observation that non-matmul FLOPs are disproportionately expensive on tensor-core hardware. It reduced non-matmul work by deferring the</p>
+<p>softmax rescale out of the inner loop, parallelised over sequence length as well as batch and heads so the GPU stays full when batch × heads alone can’t fill it, and improved work partitioning between warps to cut shared memory traffic in the reduction. Roughly 2× over the original, reaching 50 to 73% of theoretical peak matmul throughput on A100.</p>
+<h2 id="flashattention-3-and-after">FlashAttention-3 and after</h2>
+<p>FlashAttention-3 (Shah et al., 2024) exploits Hopper’s asynchronous hardware through <strong>TMA</strong> for asynchronous bulk copies that overlap with compute, <code>wgmma</code> warpgroup matrix multiply issued asynchronously so one block’s softmax overlaps the next block’s matmul, <strong>warp specialisation</strong> where producer warps move data and consumer warps compute through a pipeline rather than a barrier, and FP8 support with block quantisation and incoherent processing to keep error low. On H100 that’s 1.5 to 2.0× over FA-2, around 740 TFLOPS in FP16 at roughly 75% utilisation, approaching 1.2 PFLOPS in FP8.</p>
+<p>The generalisable idea, and the reason this chapter matters beyond attention, is <strong>three-way overlap</strong> . While block <em>i</em> ’s matmul runs, block <em>i+1</em> ’s data is in flight and block <em>i−1</em> ’s softmax is being updated. Any kernel with a load, compute, reduce structure can be organised that way, and on hardware with asynchronous copy engines it’s usually the difference between 40% and 75% of peak.</p>
+<p>FlashAttention-3’s specific mechanisms are Hopper-specific. On CDNA4 the equivalent structure gets built from asynchronous global-to-LDS copies, MFMA pipelining, and explicit multi-buffering, expressed through Composable Kernel, AITER, or Triton rather than TMA and <code>wgmma</code> . The structure transfers, the instructions don’t.</p>
+<h2 id="what-this-means-for-decode">What this means for decode</h2>
+<p>FlashAttention was designed for prefill, where there are many query rows to parallelise over. In decode there’s exactly one query row per sequence, so FlashAttention’s parallelisation yields one workgroup per head, nowhere near enough to fill a 256-CU GPU.</p>
+<p>The decode variant is <strong>FlashDecoding</strong> , which is the next chapter, and it parallelises over the KV cache instead. The mathematics is identical, online softmax with no materialised score matrix and tiles sized to on-chip memory. Only the parallelisation axis changes.</p>
+<h2 id="why-partial-results-merge-exactly">Why partial results merge exactly</h2>
+<p>Online softmax works because softmax admits an exact merge of independently computed partial results. Given two blocks with partial state (m₁, Z₁, O₁) and (m₂, Z₂, O₂),</p>
+<pre><code>m = max(m₁, m₂)
+
+Z = e^(m₁−m)·Z₁ + e^(m₂−m)·Z₂
+O = (e^(m₁−m)·O₁ + e^(m₂−m)·O₂) / Z</code></pre>
+<p>which is associative and commutative, and that’s exactly what makes both FlashAttention’s sequential merge and FlashDecoding’s parallel merge correct. It’s also why the merge can happen in any order, which the tree reduction in the next chapter depends on.</p>
+<p>One numerical detail matters here. The accumulator O stays unnormalised until the very end, and implementations that normalise per block accumulate rounding error and lose the exactness property.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>FlashAttention is the algorithmic foundation of efficient attention. Online softmax means you never need the full score matrix, tiling keeps working data on chip, and the mathematics is exact rather than approximate. Its partial results merge associatively, which is what makes parallel decode attention possible at all. FlashAttention-3’s real lesson is structural, three-way overlap of load, matmul, and softmax, and that structure transfers to any hardware with asynchronous copy even though its instructions don’t.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Show that the merge formula above is associative, and explain why normalising the output accumulator per block would break exactness.</p></li>
+<li><p>For head dimension 128 in FP16, compute the largest K/V tile that fits in 64 KB of LDS and in 160 KB. How does the change affect the number of passes over Q?</p></li>
+<li><p>Naive attention at S = 8,192 writes and reads the score matrix. Estimate its HBM traffic per head and compare with FlashAttention’s. At what sequence length does the intermediate traffic exceed the Q, K, V traffic?</p></li>
+<li><p><strong>Build:</strong> implement online softmax in f64 on the host and verify against a naive softmax to 1e-12 on random inputs including large-magnitude outliers. This reference is the oracle you’ll use in Chapter 36.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch08-attention-variants.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Attention Variants</span>
+        </a>
+        
+        <a href="ch10-flashdecoding-and-split-kv.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">FlashDecoding and Split-KV</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

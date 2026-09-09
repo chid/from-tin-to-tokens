@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Tin to Tokens — Building an LLM Inference Stack from Scratch in Rust</title>
+  <meta name="description" content="A free textbook on inference-stack engineering: attention kernels, paged KV cache, continuous batching, multi-GPU collectives, and quantisation.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="current">Home</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <div class="content-inner">
+          <section class="hero-section">
+            <img src="assets/images/from-tin-to-tokens-v1.0.pdf-0001-06.png" alt="From Tin to Tokens Cover" class="hero-cover-img" />
+            <h1 class="hero-title">From Tin to Tokens</h1>
+            <p class="hero-subtitle">Building an LLM Inference Stack from Scratch in Rust</p>
+            <p class="hero-meta">Written by <strong>Dave Lemphers</strong> at <a href="https://maincode.com" target="_blank" rel="noopener">Maincode</a> · Version 1.0 (2026) · Creative Commons CC-BY 4.0</p>
+            
+            <div class="hero-actions">
+              <a href="preface.html" class="btn-primary">Start Reading (Preface)</a>
+              <a href="ch01-why-inference-is-different.html" class="btn-secondary">Jump to Chapter 1</a>
+              <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="btn-secondary" download>Download PDF Edition</a>
+            </div>
+
+            <p class="prose" style="text-align: left; margin: 2.5rem 0 1.5rem;">
+              A free textbook on inference-stack engineering. It covers the whole stack, from the driver interface where you write ioctl structures by hand to an HTTP endpoint serving thousands of concurrent users: attention kernels, a paged KV cache, a scheduler, multi-GPU collectives, a quantisation pipeline, and the correctness apparatus that proves any of it works. Concepts come first and implementations follow, because the implementations change every eighteen months and the concepts don't.
+            </p>
+          </section>
+
+          <section class="toc-section">
+            <h2 style="font-size: 1.75rem; font-weight: 800; border-bottom: 2px solid var(--border-subtle); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Table of Contents</h2>
+            <div class="toc-grid">
+              
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Frontmatter</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="preface.html" class="toc-card-link">
+            <span class="toc-card-num">Preface</span>
+            <span class="toc-card-title-text">Preface</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="introduction.html" class="toc-card-link">
+            <span class="toc-card-num">Intro</span>
+            <span class="toc-card-title-text">Introduction</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part I: Foundations</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch01-why-inference-is-different.html" class="toc-card-link">
+            <span class="toc-card-num">1</span>
+            <span class="toc-card-title-text">Why Inference Is Different</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch02-the-inference-ecosystem.html" class="toc-card-link">
+            <span class="toc-card-num">2</span>
+            <span class="toc-card-title-text">The Inference Ecosystem</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch03-why-rust.html" class="toc-card-link">
+            <span class="toc-card-num">3</span>
+            <span class="toc-card-title-text">Why Rust</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part II: The Hardware Layer</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch04-gpu-architecture-for-inference.html" class="toc-card-link">
+            <span class="toc-card-num">4</span>
+            <span class="toc-card-title-text">GPU Architecture for Inference</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch05-the-driver-interface.html" class="toc-card-link">
+            <span class="toc-card-num">5</span>
+            <span class="toc-card-title-text">The Driver Interface</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch06-device-memory.html" class="toc-card-link">
+            <span class="toc-card-num">6</span>
+            <span class="toc-card-title-text">Device Memory</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch07-command-queues-and-dispatch.html" class="toc-card-link">
+            <span class="toc-card-num">7</span>
+            <span class="toc-card-title-text">Command Queues and Dispatch</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part III: Attention and the KV Cache</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch08-attention-variants.html" class="toc-card-link">
+            <span class="toc-card-num">8</span>
+            <span class="toc-card-title-text">Attention Variants</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch09-flashattention-and-tiling.html" class="toc-card-link">
+            <span class="toc-card-num">9</span>
+            <span class="toc-card-title-text">FlashAttention and Tiling</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch10-flashdecoding-and-split-kv.html" class="toc-card-link">
+            <span class="toc-card-num">10</span>
+            <span class="toc-card-title-text">FlashDecoding and Split-KV</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch11-kv-cache-quantisation.html" class="toc-card-link">
+            <span class="toc-card-num">11</span>
+            <span class="toc-card-title-text">KV Cache Quantisation</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch12-paged-kv-and-block-tables.html" class="toc-card-link">
+            <span class="toc-card-num">12</span>
+            <span class="toc-card-title-text">Paged KV and Block Tables</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch13-kv-cache-memory-management.html" class="toc-card-link">
+            <span class="toc-card-num">13</span>
+            <span class="toc-card-title-text">KV Cache Memory Management</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch14-long-context-attention.html" class="toc-card-link">
+            <span class="toc-card-num">14</span>
+            <span class="toc-card-title-text">Long-Context Attention</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part IV: The Serving Engine</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch15-continuous-batching.html" class="toc-card-link">
+            <span class="toc-card-num">15</span>
+            <span class="toc-card-title-text">Continuous Batching</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch16-request-scheduling.html" class="toc-card-link">
+            <span class="toc-card-num">16</span>
+            <span class="toc-card-title-text">Request Scheduling</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch17-prefix-caching-and-radixattention.html" class="toc-card-link">
+            <span class="toc-card-num">17</span>
+            <span class="toc-card-title-text">Prefix Caching and RadixAttention</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch18-chunked-prefill.html" class="toc-card-link">
+            <span class="toc-card-num">18</span>
+            <span class="toc-card-title-text">Chunked Prefill</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch19-speculative-decoding.html" class="toc-card-link">
+            <span class="toc-card-num">19</span>
+            <span class="toc-card-title-text">Speculative Decoding</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch20-tokenisation-sampling-structured-output.html" class="toc-card-link">
+            <span class="toc-card-num">20</span>
+            <span class="toc-card-title-text">Tokenisation, Sampling, and Structured Output</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part V: Model Execution</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch21-weight-loading-and-model-formats.html" class="toc-card-link">
+            <span class="toc-card-num">21</span>
+            <span class="toc-card-title-text">Weight Loading and Model Formats</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch22-the-decode-layer.html" class="toc-card-link">
+            <span class="toc-card-num">22</span>
+            <span class="toc-card-title-text">The Decode Layer</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch23-the-autoregressive-loop.html" class="toc-card-link">
+            <span class="toc-card-num">23</span>
+            <span class="toc-card-title-text">The Autoregressive Loop</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch24-mixture-of-experts-inference.html" class="toc-card-link">
+            <span class="toc-card-num">24</span>
+            <span class="toc-card-title-text">Mixture-of-Experts Inference</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="toc-card-link">
+            <span class="toc-card-num">25</span>
+            <span class="toc-card-title-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch26-adapters-and-multimodal-inputs.html" class="toc-card-link">
+            <span class="toc-card-num">26</span>
+            <span class="toc-card-title-text">Adapters and Multimodal Inputs</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part VI: Multi-GPU and Distributed</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch27-the-interconnect-fabric.html" class="toc-card-link">
+            <span class="toc-card-num">27</span>
+            <span class="toc-card-title-text">The Interconnect Fabric</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch28-collectives-for-inference.html" class="toc-card-link">
+            <span class="toc-card-num">28</span>
+            <span class="toc-card-title-text">Collectives for Inference</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch29-tensor-pipeline-expert-parallelism.html" class="toc-card-link">
+            <span class="toc-card-num">29</span>
+            <span class="toc-card-title-text">Tensor, Pipeline, and Expert Parallelism</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch30-disaggregated-serving.html" class="toc-card-link">
+            <span class="toc-card-num">30</span>
+            <span class="toc-card-title-text">Disaggregated Serving</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part VII: Quantisation and Compression</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch31-weight-quantisation.html" class="toc-card-link">
+            <span class="toc-card-num">31</span>
+            <span class="toc-card-title-text">Weight Quantisation</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch32-kv-cache-compression.html" class="toc-card-link">
+            <span class="toc-card-num">32</span>
+            <span class="toc-card-title-text">KV Cache Compression</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part VIII: The Hardware Landscape</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch33-nvidia-vs-amd.html" class="toc-card-link">
+            <span class="toc-card-num">33</span>
+            <span class="toc-card-title-text">NVIDIA vs AMD</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch34-specialised-silicon.html" class="toc-card-link">
+            <span class="toc-card-num">34</span>
+            <span class="toc-card-title-text">Specialised Silicon</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch35-edge-and-resource-constrained-inference.html" class="toc-card-link">
+            <span class="toc-card-num">35</span>
+            <span class="toc-card-title-text">Edge and Resource-Constrained Inference</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Part IX: Proof, Testing, and Production</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="ch36-correctness-validation.html" class="toc-card-link">
+            <span class="toc-card-num">36</span>
+            <span class="toc-card-title-text">Correctness Validation</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch37-performance-measurement.html" class="toc-card-link">
+            <span class="toc-card-num">37</span>
+            <span class="toc-card-title-text">Performance Measurement</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch38-building-a-production-stack.html" class="toc-card-link">
+            <span class="toc-card-num">38</span>
+            <span class="toc-card-title-text">Building a Production Stack</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="ch39-the-build-order.html" class="toc-card-link">
+            <span class="toc-card-num">39</span>
+            <span class="toc-card-title-text">The Build Order</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+    <div class="toc-card">
+      <div class="toc-card-header">
+        <div class="toc-card-part">Appendices</div>
+      </div>
+      <ul class="toc-card-list">
+        
+        <li class="toc-card-item">
+          <a href="app-a-rust-patterns-gpu.html" class="toc-card-link">
+            <span class="toc-card-num">A</span>
+            <span class="toc-card-title-text">Appendix A: Rust Patterns for GPU Programming</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="app-b-gpu-command-interfaces.html" class="toc-card-link">
+            <span class="toc-card-num">B</span>
+            <span class="toc-card-title-text">Appendix B: GPU Command Interfaces</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="app-c-code-object-loading.html" class="toc-card-link">
+            <span class="toc-card-num">C</span>
+            <span class="toc-card-title-text">Appendix C: Code Object Loading</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="app-d-inference-ecosystem-reference.html" class="toc-card-link">
+            <span class="toc-card-num">D</span>
+            <span class="toc-card-title-text">Appendix D: The Inference Ecosystem Reference</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="app-e-glossary.html" class="toc-card-link">
+            <span class="toc-card-num">E</span>
+            <span class="toc-card-title-text">Appendix E: Glossary</span>
+          </a>
+        </li>
+        
+        <li class="toc-card-item">
+          <a href="app-f-bibliography.html" class="toc-card-link">
+            <span class="toc-card-num">F</span>
+            <span class="toc-card-title-text">Appendix F: Bibliography</span>
+          </a>
+        </li>
+        
+      </ul>
+    </div>
+    
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

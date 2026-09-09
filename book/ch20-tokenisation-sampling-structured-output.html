@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokenisation, Sampling, and Structured Output — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link active">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IV: The Serving Engine</span>
+            <span class="sep">/</span>
+            <span class="current">Tokenisation, Sampling, and Structured Output</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IV: The Serving Engine</span>
+            <h1 class="chapter-title">Tokenisation, Sampling, and Structured Output</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>CHAPTER 20 · TOKENISATION, SAMPLING, AND STRUCTURED OUTPUT</p>
+<p>The layers at the very top and very bottom of a request are easy to skip in a book about kernels, and they’re responsible for a surprising share of production bugs and rather more latency than anyone expects. This chapter covers the path from text to token IDs, the path from logits back to text, and the machinery for constraining what the model is allowed to say.</p>
+<h2 id="tokenisation">Tokenisation</h2>
+<p>Modern LLMs use subword tokenisation, almost always byte-level BPE in the GPT, Llama, and Qwen lineage or SentencePiece Unigram elsewhere, and four properties matter to an engine.</p>
+<p><strong>Byte-level fallback means no unknown tokens.</strong> Byte-level BPE operates on UTF-8 bytes, so any input encodes and there’s no out-of-vocabulary case to handle, which removes a whole class of errors.</p>
+<p><strong>Tokenisation isn’t a bijection over text fragments.</strong> The same string can tokenise differently depending on what precedes it, which is why you can’t tokenise a conversation turn by turn and concatenate. You have to apply the chat template to the full conversation and tokenise the result, or the prefix you compute won’t match the prefix another request computes for the same text, destroying prefix-cache hit rate and, worse, feeding the model a token sequence it never saw in training.</p>
+<p><strong>Chat templates are part of the model.</strong> The mapping from a structured message list to a token sequence, with its role markers and system prompt placement and generation prompt and tool-call syntax and, for reasoning models, thinking delimiters, ships with the model as a Jinja template in the tokeniser config. Implementing it by hand is a reliable way to produce a model that’s subtly worse than everyone else’s copy of the same weights.</p>
+<p><strong>Special tokens must never come from user text.</strong> If a user’s message contains the literal string for your end-of-turn token and your tokeniser encodes it as that special token, the user can forge role boundaries. Encode user content with special-token handling disabled and insert control tokens structurally.</p>
+<h2 id="incremental-detokenisation">Incremental detokenisation</h2>
+<p>Streaming means converting token IDs back to text one token at a time, and the naive implementation is wrong in an interesting way. A single token can be a <em>partial</em> UTF-8 sequence or a partial grapheme cluster, so emitting it shows the client a replacement character, and a multi-byte emoji or CJK character can span several tokens.</p>
+<p>The correct approach buffers undecodable bytes until they form a complete character, and it also holds back text that might participate in a stop string. Take a stop sequence of <code>"&lt;/answer&gt;"</code> . On seeing <code>"&lt;/ ans"</code> you must not stream it, because if the next tokens complete the stop sequence then that text should never have been emitted at all.</p>
+<p>So the detokeniser is a small state machine with a hold-back buffer, flushing only what’s both valid UTF-8 and not a prefix of any active stop string. Get it wrong and you produce bugs that appear only for nonEnglish text or only near stop sequences, which is to say bugs that reach production.</p>
+<p>CHAPTER 20 · TOKENISATION, SAMPLING, AND STRUCTURED OUTPUT</p>
+<p>Detokenisation isn’t free either. At high aggregate token rates a naive implementation that re-decodes the whole sequence each step is O(n²) and will saturate a host core long before the GPU is busy.</p>
+<h2 id="sampling">Sampling</h2>
+<p>After the LM head produces logits over the vocabulary, 151,936 entries for Qwen3, the sampler picks a token. Greedy takes the argmax. Temperature divides logits before softmax, sharpening below 1 and flattening above. Top-k restricts to the <em>k</em> highest-probability tokens. Top-p, or nucleus, restricts to the smallest set whose cumulative probability exceeds <em>p</em> , adapting to the distribution’s shape. Min-p restricts to tokens with probability at least <em>p</em> times the maximum, which is more stable than top-p at high temperature. And repetition, presence, and frequency penalties modify logits based on what’s already been generated.</p>
+<p>Order matters and it’s a genuine source of cross-engine mismatch, since applying penalties before or after temperature, or top-k before or after top-p, gives different distributions. Engines document their order, and if you’re matching another engine’s outputs you match its order.</p>
+<p><strong>Sample on the device.</strong> Sampling is often described as happening on the host and therefore off the critical path, which is wrong on both counts for a modern engine. For a batch of <em>B</em> sequences the logits tensor is <em>B</em> × 151,936, which at FP32 and batch 64 is 39 MB, and copying that to the host every token costs more than the sampling does. Worse, it serialises, since the GPU idles while the host decides and then has to be re-fed. Production engines run temperature, penalties, top-k and top-p filtering, and the categorical draw as GPU kernels, transferring only the sampled token IDs, a few hundred bytes. Only the stop-condition check and detokenisation need the host, and both work on token IDs.</p>
+<p>The tricky part of on-device sampling is that every sequence in the batch can have different parameters, and the standard solution passes parameter vectors and has the kernel apply per-row parameters, with fast paths for the common case where all rows are greedy or all share settings.</p>
+<h2 id="structured-output">Structured output</h2>
+<p>Plenty of applications need output conforming to a JSON schema or a regex or a grammar, and doing that by prompting and retrying is expensive and unreliable, while doing it in the engine is exact.</p>
+<p>The mechanism is <strong>constrained decoding</strong> . At each step you compute the set of tokens that could legally extend the output and set every other logit to −∞ before sampling, so the model still chooses among valid tokens according to its own distribution and simply can’t choose invalid ones.</p>
+<p>The engineering problem is that the constraint is over <em>characters</em> while decoding is over <em>tokens</em> , and a single token can span several grammar symbols. Done naively, testing all 152K tokens against the grammar at every step costs more than the model forward pass.</p>
+<p>What makes it fast is compiling the grammar to an automaton and precomputing, per automaton state, the bitmask of allowed tokens, so applying the constraint at decode time is a mask lookup and an elementwise operation. Masks get cached across requests sharing a schema, which is the common case in production, mask computation overlaps the forward pass since the next state depends only on the token just emitted, and token-boundary ambiguity gets handled by tracking a set of automaton states rather than one, or by restricting to a canonical tokenisation.</p>
+<p>CHAPTER 20 · TOKENISATION, SAMPLING, AND STRUCTURED OUTPUT</p>
+<p>XGrammar, Outlines, and Guidance are the widely used implementations, and XGrammar is integrated into vLLM, SGLang, and TensorRT-LLM with near-zero overhead masking for typical JSON schemas.</p>
+<p>Two production cautions. Constrained decoding guarantees <em>syntactic</em> validity, not semantic correctness, so a schema-valid object can still be nonsense. And over-constraining hurts quality, because forcing a token the model finds very unlikely pushes it off-distribution, and the usual symptom is degenerate repetition. Where you can, constrain to a grammar the model was trained to produce.</p>
+<h2 id="determinism-and-reproducibility">Determinism and reproducibility</h2>
+<p>Same prompt, same seed, same output is a reasonable expectation and, on a standard inference server, false. The reason isn’t floating-point non-associativity in the abstract, it’s <strong>batch invariance</strong> .</p>
+<p>Most GPU kernels, matmul and RMSNorm and softmax and attention, change their reduction strategy with the shape of the work, so a kernel processing a batch of 4 may split reductions differently than the same kernel on a batch of 32, producing different rounding. Since a serving engine’s batch composition depends on what other requests happen to be in flight, your result depends on other users’ traffic. Same prompt, same seed, different answer.</p>
+<p>The fix, formalised by Thinking Machines Lab in 2025 and since implemented in SGLang and elsewhere, is <strong>batch-invariant kernels</strong> , constraining each kernel to one reduction strategy independent of batch size through fixed split counts, fixed-size reduction trees, and data-parallel rather than split-K matmuls. With those in place, output becomes bitwise reproducible under dynamic batching, at a reported cost of roughly 25 to 60% end-to-end. Thinking Machines Lab measured around 60% overhead on an 8B model, and SGLang’s integration reports a range depending on attention backend that falls to about a third once graph capture is re-enabled over the batch-invariant kernels.</p>
+<p>Worth paying for reinforcement learning from model outputs, where train-inference mismatch silently corrupts the objective, for debugging, since a bug you can’t reproduce is a bug you can’t fix, and for regression testing, audit, and regulated deployment. Not worth paying for ordinary user-facing serving, where that overhead buys nothing anyone perceives.</p>
+<p>Determinism also needs the obvious hygiene, a fixed seed per request rather than a global RNG shared across a batch, sampling parameters that don’t depend on batch composition, and, if you speculate, a fixed speculation depth, since acceptance changes the reduction shapes too.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Tokenisation and detokenisation are stateful and easy to get wrong. Tokenise whole conversations through the model’s chat template, never encode user text as special tokens, and stream through a hold-back buffer that respects UTF-8 boundaries and stop strings. Sample on the device, because a batch of 152Kwide logits is far too large to ship to the host every token. Constrained decoding gives exact structural validity through precompiled automaton masks. And reproducibility requires batch-invariant kernels, because default kernels change their reduction strategy with batch shape and therefore make your output depend on other users’ traffic.</p>
+<p>CHAPTER 20 · TOKENISATION, SAMPLING, AND STRUCTURED OUTPUT</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Give a concrete example where tokenising a conversation turn by turn and concatenating produces a different token sequence than tokenising the templated whole. What does that do to prefix-cache hit rate?</p></li>
+<li><p>Design the hold-back logic for a streaming detokeniser with stop sequences <code>["\n\n", "&lt;/answer&gt;"]</code> . What’s the maximum number of characters that can be held back, and how do you flush correctly at end of stream?</p></li>
+<li><p>Compute the per-token host transfer cost of CPU sampling for batch 64 and vocabulary 151,936 in FP32, and compare with transferring sampled IDs. At what batch size does CPU sampling exceed a 2 ms decode step?</p></li>
+<li><p><strong>Build:</strong> implement top-k and top-p filtering as a GPU kernel supporting per-row parameters, and verify against a host reference for exact equality on the selected candidate set.</p></li>
+<li><p><strong>Build:</strong> demonstrate batch-dependence by running the same prompt at batch 1 and batch 32 with greedy sampling and finding the first token position where they diverge, then explain the divergence in terms of a specific reduction.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch19-speculative-decoding.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Speculative Decoding</span>
+        </a>
+        
+        <a href="ch21-weight-loading-and-model-formats.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Weight Loading and Model Formats</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

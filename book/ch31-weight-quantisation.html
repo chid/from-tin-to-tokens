@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weight Quantisation — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link active">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VII: Quantisation and Compression</span>
+            <span class="sep">/</span>
+            <span class="current">Weight Quantisation</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part VII: Quantisation and Compression</div>
+          <h2>Overview</h2>
+          <p>Quantisation attacks the two resources that constrain inference: model size and memory bandwidth. This part covers weight quantisation (GPTQ, AWQ, Marlin, FP8, FP4) and KV cache compression.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VII: Quantisation and Compression</span>
+            <h1 class="chapter-title">Weight Quantisation</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="why-quantise-weights">Why quantise weights</h2>
+<p>Weights are the largest fixed memory cost. A 70B model in FP16 is 140 GB, more than an H100 holds, while in FP8 it’s 70 GB and fits, and in 4-bit it’s 35 GB with room left for a large KV cache.</p>
+<p>For decode the benefit is speed as much as capacity, through the same mechanism as everywhere else in this book. At small batch the GEMV reads every weight once per token, so halving the bytes roughly halves the time, which makes weight quantisation the single most effective optimisation for small-batch decode of a dense model.</p>
+<p>Note the qualifier. As batch grows the weight read amortises across more tokens and the operation becomes compute-bound, at which point 4-bit weights that have to be dequantised stop helping and can hurt. Marlin exists precisely to push that crossover point outward.</p>
+<h2 id="the-design-space">The design space</h2>
+<p>Three independent choices, and confusing them is the source of most quantisation arguments.</p>
+<p><strong>What gets quantised.</strong> Weight-only, W4A16 or W8A16, keeps activations in high precision and compresses storage. Weight-and-activation, W8A8 or W4A4, compresses both and lets the matrix core run at the low precision, which is the only way to get <em>compute</em> speedup rather than bandwidth relief.</p>
+<p><strong>Granularity.</strong> Per-tensor uses one scale for everything, which is cheapest and worst. Per-channel uses one scale per output row, which is good. Per-group uses one scale per 32 or 64 or 128 elements along the input dimension, which is better and standard for 4-bit. Finer granularity costs storage and dequantisation complexity and buys accuracy.</p>
+<p><strong>Calibration.</strong> Round-to-nearest needs no data. Data-driven methods, GPTQ and AWQ, use a small calibration set to make better rounding or scaling decisions. Quantisation-aware training or distillation goes further and adjusts the weights themselves.</p>
+<h2 id="w4a16-gptq-and-awq">W4A16, GPTQ and AWQ</h2>
+<p><strong>GPTQ</strong> (Frantar et al., ICLR 2023) quantises weights column by column, using second-order information from a calibration set to update the remaining unquantised weights so they compensate for the error just introduced. It quantises very large models to 3 or 4 bits in hours on a single GPU with small perplexity loss.</p>
+<p><strong>AWQ</strong> (Lin et al., MLSys 2024) starts from a different observation, that weight importance is determined by the <em>activations</em> they multiply rather than by the weights’ own magnitudes. Roughly 1% of channels are salient and protecting them recovers most of the loss, but rather than keeping them in higher precision, which turns the kernel into a mixed-precision mess, AWQ applies a per-channel scaling that expands salient channels before quantisation and contracts them after, folding the scale into the surrounding operations so the kernel stays uniform.</p>
+<p>Both are post-training and need only a small calibration set, and there’s a practical warning attached. <strong>Calibration data matters.</strong> A model calibrated on generic web text and deployed on code, or calibrated on English and deployed on Chinese, can lose noticeably more than the papers’ numbers suggest. Calibrate on data resembling your traffic and validate on your traffic.</p>
+<h2 id="marlin-or-making-4-bit-fast-at-real-batch-sizes">Marlin, or making 4-bit fast at real batch sizes</h2>
+<p>Storing weights in 4 bits is easy and making the kernel fast is not. A naive W4A16 GEMM dequantises to FP16 and then multiplies, and the dequantisation work scales with the weight reads while the useful work scales with batch, so any speedup evaporates as batch grows.</p>
+<p><strong>Marlin</strong> (Frantar, Castro, Chen, Hoefler, and Alistarh, 2024) is the kernel that fixed that, and its claim stated precisely is <strong>near-ideal 4× speedup sustained up to batch sizes of 16 to 32 tokens</strong> , which was 4 to 8× larger than prior work. It gets there by overlapping dequantisation latency with the matrix-core operations, through asynchronous weight loads, a weight layout arranged so dequantisation is a few cheap bit operations in the right lane, careful register and shared-memory scheduling, and striped partitioning so the work divides evenly.</p>
+<p>The framing worth carrying away is that Marlin’s contribution is keeping quantised inference <em>memorybound</em> , and therefore benefiting from fewer bytes, at input sizes where a naive kernel would already have become dequantisation-bound. It’s the reference for anyone writing a low-precision GEMM on any vendor.</p>
+<h2 id="fp8-weights">FP8 weights</h2>
+<p>FP8 in E4M3 has native hardware support on Hopper, Blackwell, and CDNA3 and 4, with scaling applied in the matrix core datapath. Against 4-bit, accuracy is near-lossless with per-channel or per-tensor scales for most models, typically a fraction of a percent on benchmarks, compression is 2× rather than 4×, compute is genuinely faster because the matrix core runs FP8 at twice the FP16 rate where weight-only 4-bit gives no compute benefit at all, and the implementation is simpler, with no separate dequantisation kernel and no group-scale bookkeeping and no calibration in the simplest form.</p>
+<p>FP8 has become the default for datacentre inference where memory permits, with 4-bit reserved for cases where capacity is the binding constraint.</p>
+<h2 id="four-bit-floating-point">Four-bit floating point</h2>
+<p>Chapter 11 described the formats. For <em>weights</em> specifically, 2026 is further along than for KV cache.</p>
+<p><strong>NVFP4</strong> , E2M1 with E4M3 scales per 16 elements plus a per-tensor FP32 scale, is supported natively by Blackwell’s tensor cores, so it gives both 4× compression and full-rate compute. <strong>Quantisation-aware distillation</strong> , training the quantised model to match the full-precision one’s outputs, recovers most of the remaining accuracy gap, and published results put NVFP4 models close to BF16 quality with roughly 2 to 3× higher throughput. <strong>MXFP4</strong> , E2M1 with E8M0 scales per 32, is the OCP standard supported on CDNA4 and Blackwell, slightly less accurate at the same bit width because the scale has no mantissa and the block is twice as large.</p>
+<p>The trajectory is clear. Four-bit weights with hardware scaling and quantisation-aware recovery are becoming the default for large-scale serving, in a way that four-bit <em>KV cache</em> hasn’t yet.</p>
+<h2 id="activation-quantisation-and-outliers">Activation quantisation and outliers</h2>
+<p>Going to W8A8 or W4A4 means quantising activations, and activations have a property weights don’t. <strong>Systematic outliers in a few channels</strong> , sometimes 100× the typical magnitude, appearing consistently in the same channels across tokens.</p>
+<p>Per-tensor activation quantisation therefore fails badly, because the outliers set the scale and everything else quantises to near-zero. The standard fixes are SmoothQuant-style migration, shifting quantisation difficulty from activations to weights with a per-channel scaling that folds into the preceding layer since weights are much easier to quantise, keeping outlier channels in higher precision at the cost of a mixedprecision kernel, or finer granularity with per-token activation scales computed on the fly.</p>
+<p>The general principle is worth stating because it recurs everywhere in this part. Quantisation error is driven by the <em>dynamic range within a scaling group</em> , so every technique here is ultimately about making groups more homogeneous, by choosing smaller groups, by moving the outliers somewhere else, or by reshaping the distribution.</p>
+<h2 id="quantisation-and-moe">Quantisation and MoE</h2>
+<p>The arithmetic of Chapter 24 makes weight quantisation especially valuable for MoE, since 302 MB per layer per token in FP16 becomes 151 MB in FP8 and 76 MB in FP4, with a near-proportional effect on decode time.</p>
+<p>Quantise expert weights aggressively, since they dominate the parameter count and get read per token. <strong>Never quantise the router</strong> , because it selects which computation happens, so perturbing it changes the graph rather than a value (Chapter 24). Watch expert-wise sensitivity, because experts aren’t equally important and rarely-activated ones often tolerate more aggressive quantisation than hot ones, which makes mixed-precision experts a real technique. And quantise attention weights with the dense recipe, since they behave like ordinary dense layers.</p>
+<h2 id="when-to-quantise">When to quantise</h2>
+<p>Almost always beneficial for decode, which is memory-bound, where quality loss is small with a good recipe and dequantisation fuses into the kernel.</p>
+<p>Less beneficial for prefill, which is compute-bound, so fewer weight bytes don’t help and weight-only 4-bit adds dequantisation work at exactly the batch sizes where the machine is already busy. Which is why engines commonly use FP8, speeding up compute too, rather than W4A16 when prefill throughput matters.</p>
+<p>The recipe most production deployments converge on is FP8 weights, FP8 KV cache, BF16 activations and residual stream, FP32 accumulation and norms, and full precision for the router and the sampling path, with 4-bit weights substituted where capacity binds and the accuracy has been validated on real traffic.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Weight quantisation is the most effective optimisation for small-batch decode. FP8 is the datacentre default, near-lossless, natively supported, and faster at compute as well as bandwidth. Four-bit weights, GPTQ or AWQ for W4A16 and NVFP4 or MXFP4 with quantisation-aware distillation, give 4× compression and are becoming standard for large-scale serving, and Marlin’s contribution is keeping such kernels memory-bound up to batch 16 to 32 rather than dequantisation-bound immediately. Activations need outlier-aware treatment that weights don’t. Quantise experts, never the router, and validate on data that looks like your traffic.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>For a 70B dense model, compute weight memory and the per-token weight read time at 5,800 GB/s in FP16, FP8, and 4-bit. At what batch size does the weight read stop dominating in each case?</p></li>
+<li><p>Explain why weight-only 4-bit gives no compute speedup while FP8 does, in terms of what the matrix core actually executes.</p></li>
+<li><p>A W8A8 deployment shows large accuracy loss that disappears when activations stay in BF16. Explain the likely cause and describe two fixes with their kernel-level costs.</p></li>
+<li><p><strong>Build:</strong> quantise a linear layer’s weights to 4-bit with per-tensor, per-channel, and per-group-128 scales. Measure relative L2 error of the layer output for each, and the storage overhead of the scales.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch30-disaggregated-serving.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Disaggregated Serving</span>
+        </a>
+        
+        <a href="ch32-kv-cache-compression.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">KV Cache Compression</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

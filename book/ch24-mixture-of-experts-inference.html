@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mixture-of-Experts Inference — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link active">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part V: Model Execution</span>
+            <span class="sep">/</span>
+            <span class="current">Mixture-of-Experts Inference</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part V: Model Execution</span>
+            <h1 class="chapter-title">Mixture-of-Experts Inference</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="moe-architecture">MoE architecture</h2>
+<p>MoE replaces the dense FFN with many parallel FFNs, the experts, plus a router that picks a few per token.</p>
+<ul>
+<li><p><code>x → router (GEMV) → top-k selection → normalised weights</code></p></li>
+<li><p><code>→ for each selected expert e: down_e(SiLU(gate_e(x)) ⊙ up_e(x))</code></p></li>
+<li><p><code>→ weighted sum → out</code></p></li>
+</ul>
+<p>Qwen3-235B-A22B has 128 experts with top-8 routing, expert intermediate size 1,536, hidden 4,096, and 94 layers, giving 235B total parameters with 22B active per token. DeepSeek-V3 has 256 routed experts plus a shared expert, top-8, 671B total and 37B active.</p>
+<p>The <strong>shared expert</strong> pattern, which DeepSeek and others use, is worth noting. One expert every token uses, plus <em>k</em> routed ones, capturing common computation without routing overhead. For an inference engine that’s simply a dense FFN alongside the sparse ones, and it changes the weight-traffic arithmetic below in a way that matters.</p>
+<h2 id="the-router">The router</h2>
+<p>The gate projection computes one score per expert, and for 128 experts with hidden 4,096 that’s a 512Kparameter GEMV, which is trivial. Then top-k selection, then normalisation, where Qwen3’s</p>
+<p><code>norm_topk_prob = true</code> means the top-k weights get renormalised to sum to 1. Whether the softmax is taken before or after selection differs between architectures and changes the result, so read the config.</p>
+<p>The router is cheap in FLOPs and expensive in structure, because everything after it is data-dependent. The selection <strong>must</strong> be resolved on-device, since reading expert indices back to the host to decide what to dispatch adds a full round-trip per layer, and at 94 layers that’s the entire latency budget.</p>
+<h2 id="decode-moe-is-weight-bandwidth-bound">Decode MoE is weight-bandwidth bound</h2>
+<p>Get this arithmetic right, because it’s the whole chapter. For Qwen3-235B, each expert has three matrices, gate, up, and down, each 4,096 × 1,536.</p>
+<ul>
+<li><p><code>3 × 4096 × 1536 = 18.87M parameters</code></p></li>
+<li><p><code>× 2 bytes (FP16) = 37.7 MB per expert</code></p></li>
+</ul>
+<p>Top-8 selection at batch 1 therefore reads</p>
+<pre><code>8 × 37.7 MB = 302 MB per layer per token</code></pre>
+<p>Figures around 25 MB per expert and 200 MB per layer circulate for this model and are too low. The correct ones are above, and they’re confirmed by measurement, since mainarch’s MoE FFN kernel at these exact dimensions moves that volume at <strong>872 GB/s in 346 µs</strong> , which works out at 302 MB.</p>
+<p>At a 5,800 GB/s sustained ceiling, 302 MB has a floor of about 52 µs, and the measured 346 µs sits well above it for an instructive reason. The eight experts’ weights live at eight unrelated VRAM addresses, so the access pattern is eight independent streams rather than one, and each stream has to ramp up its own prefetch pipeline. Scattered bandwidth isn’t streaming bandwidth.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0115-02.png" alt="FIGURE 24.1: Mixture of experts is a bandwidth problem wearing a routing costume" />
+<figcaption aria-hidden="true">FIGURE 24.1: Mixture of experts is a bandwidth problem wearing a routing costume</figcaption>
+</figure>
+<ul>
+<li><p><strong><code>1</code></strong> The router is a small projection producing one score per expert, then a top-k selection. Cheap in FLOPs and expensive in structure, because everything downstream is data-dependent.</p></li>
+<li><p><strong><code>2</code></strong> It has to resolve on-device. Reading expert indices back to the host to decide what to dispatch adds a round trip per layer, which at 94 layers is the entire latency budget.</p></li>
+<li><p><strong><code>3</code></strong> Eight experts get pulled per token. Each is three matrices of 4096 by 1536, so 37.7 MB in FP16, and the layer moves 302 MB.</p></li>
+<li><p><strong><code>4</code></strong> Those eight live at eight unrelated addresses, so this is eight streams rather than one and each ramps its own prefetch.</p></li>
+<li><p>; Measured at 872 GB/s against a 5,800 GB/s streaming ceiling, scattered bandwidth is not streaming bandwidth.</p></li>
+</ul>
+<p>Which means <strong>MoE decode is a bandwidth problem, exactly like attention</strong> . The FLOPs are trivial and the cost is reading expert weights, so every optimisation follows from that. Quantise the experts, batch tokens so experts get shared, or place experts so the reads are more local.</p>
+<h2 id="batching-changes-everything">Batching changes everything</h2>
+<p>At batch 1 each token pulls its own 8 experts. At batch <em>B</em> , what has to be read is the union of experts activated across the batch, and that union saturates. With 128 experts, top-8, and reasonably uniform routing, a batch of 64 tokens activates nearly all 128 experts, so weight traffic is bounded by the <em>total</em> expert weights, 128 × 37.7 MB or 4.8 GB in FP16 and 2.4 GB in FP8, rather than by 8 × batch.</p>
+<p>That produces the defining economic property of MoE serving. Weight traffic per token falls sharply with batch size until the expert set saturates, then goes flat. MoE models are dramatically more efficient at</p>
+<p>high batch than at batch 1, far more so than dense models whose weight traffic is constant in batch from the start, and a benchmark of an MoE model at batch 1 is measuring its worst case.</p>
+<p>The kernel structure follows. At batch 1 you run per-expert GEMV. Above that you compute routing for all tokens, sort or group tokens by expert with a permutation computed on device, run a GEMM per expert over its assigned tokens, and scatter results back combined with router weights. That per-expert GEMM is the <strong>grouped GEMM</strong> every production MoE kernel implements, turning many tiny memory-bound GEMVs into fewer larger GEMMs with real arithmetic intensity. The difficulty is the ragged group sizes, since expert loads are unbalanced and a kernel padding every group to the maximum wastes most of its work.</p>
+<h2 id="expert-parallelism">Expert parallelism</h2>
+<p>For multi-GPU, <strong>expert parallelism</strong> places different experts on different GPUs. Each GPU holds a subset, 128 experts over 8 GPUs being 16 each. After routing, tokens get dispatched to the GPUs owning their experts, which is an <strong>all-to-all</strong> . Each GPU computes its experts’ FFN for the tokens it received. Then results return, which is a second all-to-all.</p>
+<p>Against tensor parallelism for the expert weights, TP means every GPU holds a slice of every expert with a fixed-size all-reduce per layer and per-GPU weight memory of total over TP, while EP means every GPU holds whole experts with a data-dependent all-to-all per layer, twice, and per-GPU weight memory of total over EP.</p>
+<p>EP’s attraction is scaling expert capacity without every GPU reading every expert. Its difficulties all live in the all-to-all, where message sizes depend on routing and therefore vary per step and per rank, load imbalance means some GPUs get far more tokens than others, and the two all-to-alls per layer sit directly on the critical path.</p>
+<p>Mitigations used in practice are overlapping the dispatch all-to-all with computation of already-arrived tokens, capping tokens per expert with a capacity factor and dropping or rerouting the excess, replicating hot experts, and using auxiliary-loss-free load balancing at training time so routing is naturally balanced at inference. Real deployments combine EP for the FFN with TP or DP for attention, since attention has no expert structure to exploit.</p>
+<h2 id="quantised-experts">Quantised experts</h2>
+<p>Because MoE decode is weight-bandwidth bound, quantising expert weights maps directly onto speed. FP16 to FP8 halves 302 MB to 151 MB per layer and roughly halves the time, and FP8 to FP4 halves it again.</p>
+<p>Two rules from practice. <strong>Quantise the experts, not the router</strong> , because the router’s output selects which computation happens, so a quantised router can select different experts than the full-precision model, changing the computation graph rather than perturbing a value. That error is discontinuous and unpredictable, and the gate is 512K parameters, so keeping it in BF16 or FP32 costs nothing. And <strong>watch the shared expert</strong> , which every token reads regardless of routing, so its bandwidth cost doesn’t amortise with batch the way routed experts do.</p>
+<h2 id="correctness-and-router-tie-breaks">Correctness and router tie-breaks</h2>
+<p>Top-k selection can tie, and the GPU implementation breaks ties by index order. An f64 reference breaking them differently selects different experts, and the resulting output difference is enormous, not because the arithmetic is wrong but because a different function was computed.</p>
+<p>The fix that makes MoE testable is to have <strong>the reference follow the GPU’s selections</strong> , reading the router’s chosen indices and weights back from the device and using exactly those, so the test isolates the expert FFN maths. Then test the routing separately by comparing indices and weights directly.</p>
+<p>There’s a second-order version of the same problem in production, where two engines breaking ties differently diverge on the rare tied token and the divergence compounds. It’s a legitimate cause of same model, same prompt, different output between engines.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>MoE decode is a routing problem and a bandwidth problem. For Qwen3-235B each expert is 37.7 MB in FP16 and top-8 reads 302 MB per layer per token, measured at 872 GB/s and 346 µs, well below the streaming ceiling because eight scattered streams don’t prefetch like one. Weight traffic per token falls with batch size until the expert set saturates, which makes MoE far more efficient batched than at batch 1. Expert parallelism scales capacity at the cost of two data-dependent all-to-alls per layer. Quantise experts, never the router, and make the correctness reference follow the GPU’s expert selections.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Compute per-layer expert weight traffic for Qwen3-235B at batch 1, 8, 64, and 512, assuming uniform routing. At what batch does the union of activated experts exceed 90% of all experts?</p></li>
+<li><p>DeepSeek-V3 has a shared expert plus top-8 of 256 routed. Compute the per-token weight traffic in FP8 and identify which component fails to amortise with batch.</p></li>
+<li><p>An EP=8 deployment sees one GPU receiving 3× the average token count. Quantify the effect on step time and propose two mitigations with their costs.</p></li>
+<li><p><strong>Build:</strong> implement grouped GEMM for ragged expert groups and compare against padding every group to the maximum, on a routing distribution with realistic imbalance.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch23-the-autoregressive-loop.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">The Autoregressive Loop</span>
+        </a>
+        
+        <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Kernel Fusion, Graphs, and Chained Dispatch</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

@@ -8,7 +8,8 @@ Written by Dave Lemphers at [Maincode](https://maincode.com). It is free and det
 
 ## Read it
 
-Download the current edition from the [releases page](https://github.com/MaincodeHQ/from-tin-to-tokens/releases/latest). Each release is one numbered edition, and the PDF is the whole book.
+- **Web Edition:** Open [`book/index.html`](book/index.html) in any browser, or host the `book/` directory with any static file server.
+- **PDF Edition:** Download the current edition from the [releases page](https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf) or read [`from-tin-to-tokens-v1.0.pdf`](from-tin-to-tokens-v1.0.pdf). Each release is one numbered edition, and the PDF is the whole book.
 
 ## Corrections
 

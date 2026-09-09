@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance Measurement — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link active">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IX: Proof, Testing, and Production</span>
+            <span class="sep">/</span>
+            <span class="current">Performance Measurement</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IX: Proof, Testing, and Production</span>
+            <h1 class="chapter-title">Performance Measurement</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-roofline-in-practice">The roofline in practice</h2>
+<p>Measure sustained bandwidth with a pure streaming kernel, which on MI355X gives about 5,800 GB/s against an 8 TB/s spec. Measure achievable compute with a large well-shaped GEMM at each precision you use. Compute the ridge point from your measured numbers, roughly 310 FLOP/byte for FP16 on MI355X using spec bandwidth and higher using sustained. Place your kernel using bytes actually moved from HBM. Then account for the gap with named mechanisms rather than adjectives.</p>
+<p>That last step separates performance engineering from performance observation. “We’re at 59% of the ceiling” is a measurement. “We’re at 59%, of which 12 points are the combine tree’s serialisation and 20 are prefetch ramp-up in the first window” is a plan.</p>
+<h2 id="getting-the-arithmetic-right">Getting the arithmetic right</h2>
+<pre><code>achieved_bandwidth = (bytes_read + bytes_written) / kernel_time</code></pre>
+<p>The parentheses matter. Printed without them the expression computes something else entirely, and that typo is common enough to be worth guarding against. More substantively, be careful what you count.</p>
+<p>Count bytes that actually cross the HBM interface, because data served from L2 or Infinity Cache inflates apparent bandwidth beyond the physical maximum, which is a useful signal in itself. Computing 12 TB/s on an 8 TB/s part means your working set is in cache. Count writes as well as reads. And for quantised data, count stored bytes rather than dequantised ones.</p>
+<h2 id="per-kernel-timing">Per-kernel timing</h2>
+<p>Measure dispatch-to-completion per kernel and, separately, wall-clock per layer, because the difference is host overhead and it’s frequently the largest term in an unoptimised stack (Chapter 25).</p>
+<p>For chained dispatches you can’t time individual kernels without breaking the chain, which changes what you’re measuring, so time the whole chain and keep a separate unchained build for per-kernel attribution.</p>
+<p>Two GPU-specific traps. <strong>Clocks</strong> boost and throttle, so a benchmark run cold reports boost clocks the same kernel will never see in production, which means warming up until clocks are stable and recording them. And <strong>the first launch is different</strong> , with code object load, cold caches, a cold allocator, and on a runtime a JIT, so never include it.</p>
+<h2 id="end-to-end-metrics">End-to-end metrics</h2>
+<p><strong>TTFT</strong> is arrival to first token, queueing plus prefill. <strong>TPOT</strong> or inter-token latency is the perceived streaming rate. <strong>Tokens per second per GPU</strong> is the cost-relevant throughput. And <strong>goodput</strong> is tokens per second delivered by requests that met their SLOs, which is the metric that should drive decisions (Chapter 16).</p>
+<p>Always report distributions rather than means, because a system with a 20 ms mean TPOT and a 400 ms P99 feels broken to a meaningful fraction of users and its mean says nothing about that.</p>
+<h2 id="benchmarking-honestly">Benchmarking honestly</h2>
+<p>The failure modes, each of which shows up regularly in published comparisons.</p>
+<p><strong>Mismatched batch size</strong> , comparing your batch-1 latency against another system’s batch-64 throughput, which is the most common error and usually unintentional. <strong>Mismatched precision</strong> , since FP8 against FP16 isn’t a comparison of engines. <strong>Mismatched context</strong> , because decode speed depends strongly on context length, so state it. <strong>Mismatched output length</strong> , since short generations are dominated by prefill and startup. <strong>No warmup</strong> , or warmup included in the measurement. <strong>Cherry-picked runs</strong> , reporting the best rather than the median and the tail. <strong>Uncontrolled environment</strong> , where other tenants and other processes and thermal state and clock behaviour move results by more than most optimisations do. And <strong>ignoring correctness</strong> , because a fast wrong answer isn’t a data point, which is why every performance claim in this book is paired with a correctness result for the same configuration.</p>
+<p>A useful discipline is to write down the full configuration, model and precision and context and batch and hardware and driver version and engine version and sampling parameters, <em>before</em> running, and publish it with the number. If the configuration is embarrassing to state, the number isn’t real.</p>
+<h2 id="load-generation">Load generation</h2>
+<p>Constant-rate load generators produce results that don’t match production, because real arrivals are bursty and real requests have correlated lengths. Better practice offers three options.</p>
+<p><strong>Closed-loop</strong> , with N concurrent clients each sending the next request on completion, measures throughput at a given concurrency and is what most engine benchmarks use. <strong>Open-loop</strong> , with Poisson or trace-replay arrivals independent of completion, measures what happens under overload, which is what actually breaks systems and the only way to observe queueing collapse. And <strong>trace replay</strong> from production logs preserves prompt-length distribution, output-length distribution, and prefix-sharing structure, the last of which is invisible to synthetic generators and can change throughput by multiples.</p>
+<p>Report the <strong>goodput curve</strong> , offered load on the x-axis and goodput on the y. Every real system’s curve rises, peaks, and then falls as overload sets in, where the peak is your capacity and the shape after it tells you whether the system degrades or collapses.</p>
+<h2 id="profiling">Profiling</h2>
+<p><strong>Nsight Compute and Systems</strong> on NVIDIA give per-kernel counters, memory throughput, occupancy, warp stall reasons, and source attribution, and it’s the strongest tooling in this space. <strong>rocprofv3 and ROCm Systems Profiler</strong> , the tool formerly called Omnitrace, on AMD give kernel timing, hardware counters, and traces. <strong><code>perf</code> and friends</strong> cover host overhead, time in ioctls and polling and packet construction and tokenisation and detokenisation and scheduling, and you should never assume the bottleneck is on the GPU, because in a serving system it frequently isn’t. A Python scheduler saturating one core while eight GPUs idle is a common failure and entirely invisible if you only profile kernels. And <strong>distributed tracing</strong> covers the request path end to end (Chapter 38).</p>
+<h2 id="standard-benchmarks">Standard benchmarks</h2>
+<p>MLPerf Inference provides comparable, audited numbers across vendors with defined scenarios, singlestream and server with latency constraints and offline, plus accuracy requirements, and that accuracy requirement is what stops quantisation from becoming a free win. Its value is comparability and its limit is that its workloads may not resemble yours.</p>
+<p>For engine-level comparison, each major engine ships a benchmark harness, and using theirs rather than writing your own removes a large class of accidental unfairness.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Measure sustained bandwidth and achievable compute on your own hardware, place kernels on that roofline using bytes actually moved, and explain every gap with a named mechanism. Report TTFT, TPOT, throughput, and goodput as distributions. Match batch size, precision, context, and output length before comparing anything, warm up, control the environment, and pair every performance claim with a correctness result. Use open-loop or trace-replay load to see how the system behaves past its capacity, because that’s what production does to it.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A kernel reads 302 MB and writes 8 KB in 346 µs. Compute achieved bandwidth and the fraction of a 5,800 GB/s ceiling. What single architectural property of the access pattern most plausibly explains the gap?</p></li>
+<li><p>Design an apples-to-apples comparison between two engines on the same hardware. List every parameter you have to fix and how you’d verify each.</p></li>
+<li><p>Sketch goodput-against-offered-load curves for a system with admission control and one without, and explain the difference past the peak.</p></li>
+<li><p><strong>Build:</strong> implement an open-loop load generator with configurable arrival process and length distributions, and produce a goodput curve for your system at a stated SLO pair.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch36-correctness-validation.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Correctness Validation</span>
+        </a>
+        
+        <a href="ch38-building-a-production-stack.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Building a Production Stack</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

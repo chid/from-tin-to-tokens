@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Build Order — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link active">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IX: Proof, Testing, and Production</span>
+            <span class="sep">/</span>
+            <span class="current">The Build Order</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IX: Proof, Testing, and Production</span>
+            <h1 class="chapter-title">The Build Order</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>This chapter is the book’s capstone, covering what to build in what order with a gate at each step that has to pass before you move on. It comes from building the stack this book’s low-level measurements come from, and its main claim is that <strong>the order matters more than the individual choices</strong> .</p>
+<h2 id="why-order-matters">Why order matters</h2>
+<p>Each layer’s bugs are invisible until the layer above exercises them, and each layer’s performance is meaningless until the layer below is correct. A team that writes an attention kernel before it can reliably dispatch a trivial one will spend its time debugging dispatch <em>through</em> the attention kernel, which is the hardest possible way to find those bugs.</p>
+<p>So the rule is that <strong>every layer gets a correctness gate and a performance gate, on real hardware, before the next layer starts.</strong></p>
+<p><img src="assets/images/from-tin-to-tokens-v1.0.pdf-0173-07.png" /></p>
+<ul>
+<li><p><strong><code>FIGURE 39.1</code></strong> Eleven phases, each with a gate that has to pass</p></li>
+<li><p>O <strong><code>1</code></strong> Build bottom-up. Each layer’s bugs stay invisible until the layer above exercises them, so a team that writes an attention kernel before it can dispatch a trivial one ends up debugging dispatch through attention.</p></li>
+<li><p>O <strong><code>2</code></strong> Every phase carries a correctness gate and a performance gate, on real hardware, before the next one starts. O <strong><code>3</code></strong> Phase two is the one teams skip and the one that costs most. Without measured ceilings you cannot tell a good kernel from a bad one, and you will happily optimise a kernel already at 90% of achievable while a misplaced buffer caps the pipeline somewhere else entirely.</p></li>
+</ul>
+<h2 id="phase-1-talk-to-the-device">Phase 1, talk to the device</h2>
+<p>Build device open, topology enumeration, VM acquisition, memory allocation and mapping, queue creation, code object loading, packet construction, doorbell, and completion signal.</p>
+<p>The gate is dispatching a kernel that writes a known constant to a device buffer, reading it back, and verifying, then dispatching two in sequence and verifying ordering.</p>
+<p>Why first? Everything else is built on it, and its failure modes, wrong ioctl size or node index against <code>gpu_id</code> or missing <code>ACQUIRE_VM</code> or a doorbell index off by one, are individually simple and collectively impossible to diagnose through a complex kernel.</p>
+<h2 id="phase-2-establish-the-ceilings">Phase 2, establish the ceilings</h2>
+<p>Build a streaming-read microbenchmark and a GEMM benchmark. The gate is sustained bandwidth within a plausible fraction of spec, 70 to 80%, and GEMM throughput within a plausible fraction of peak.</p>
+<p>This phase takes a day and saves weeks, because every subsequent performance number is a fraction of these. Without them you can’t tell a good kernel from a bad one and you’ll optimise the wrong thing.</p>
+<h2 id="phase-3-multi-gpu-substrate">Phase 3, multi-GPU substrate</h2>
+<p>Build peer mapping, remote writes, device-side synchronisation flags with system scope, and a smallmessage all-reduce. The gate is a bit-exact all-reduce against a CPU reference across all GPUs, plus a head-to-head against the vendor library across message sizes, reporting where you lose.</p>
+<p>Why here rather than later? Peer mapping and memory scopes are foundational and their bugs are subtle, and discovering a memory-scope error while debugging a tensor-parallel model is much worse than discovering it in an all-reduce test.</p>
+<h2 id="phase-4-the-attention-kernel">Phase 4, the attention kernel</h2>
+<p>Build FlashDecoding with split-KV and a tree combine, then paged KV, then GQA broadcast, then quantised KV. The gate is rel-L2 against an f64 reference below 1e-6 for the kernel, sustained bandwidth above 80% of the streaming ceiling for the split phase, and the combine phase measured separately because that’s where the time goes.</p>
+<p>Order within the phase matters too. Correctness first with a naive kernel, then performance, then paging, then GQA, then quantisation, adding one dimension at a time so each failure has exactly one cause.</p>
+<h2 id="phase-5-the-layer">Phase 5, the layer</h2>
+<p>Build RMSNorm, QK-norm, RoPE, GEMV and GEMM, SwiGLU, MoE routing and expert FFN, KV append, and residuals, then assemble a decoder layer. The gate is each kernel against an f64 reference, then the assembled layer against an f64 reference of the whole layer at real model dimensions, below 1e-4.</p>
+<p>This is where the numerics of Chapter 22 get earned, and you should expect to find at least one of a RoPE pairing error, an ε placement error, an FP16 accumulation in a norm, or a transposed weight.</p>
+<h2 id="phase-6-the-model">Phase 6, the model</h2>
+<p>Build weight loading with validation, embedding, the layer stack, final norm, LM head, on-device sampling, and the decode loop. The gate is per-step logit comparison against an f64 reference across several tokens, below 1e-3, then golden vectors against a trusted external implementation of the same checkpoint.</p>
+<p>That external check is the one that catches shared-assumption bugs, and it’s worth substantial effort to arrange even if it means running the reference on different hardware.</p>
+<h2 id="phase-7-remove-the-host">Phase 7, remove the host</h2>
+<p>Build fused multi-head kernels, chained dispatch, and replay or graphs. The gate is per-token latency with host overhead measured as the gap between summed kernel time and wall clock, below 10% of the total.</p>
+<p>Do this after correctness and never before, because fused and chained execution is much harder to debug and you want the per-kernel path to remain available as a reference build.</p>
+<h2 id="phase-8-tensor-parallelism">Phase 8, tensor parallelism</h2>
+<p>Build TP slice planning in the loader, column and row-parallel layers, the two all-reduces per layer, and the fused residual epilogue. The gate is bit-comparable output against the single-GPU model, with the all-reduce share of step time measured and reported.</p>
+<h2 id="phase-9-the-kv-manager">Phase 9, the KV manager</h2>
+<p>Build the block allocator, block tables, reference counting, copy-on-write, prefix cache, and eviction. The gate is a fuzz test that allocates, forks, frees, and evicts under memory pressure without ever leaking a block or serving a stale one, plus prefix-cache hit rate on a replayed trace.</p>
+<h2 id="phase-10-the-scheduler-and-server">Phase 10, the scheduler and server</h2>
+<p>Build continuous batching, admission with watermarks, chunked prefill, preemption, the API layer, streaming, cancellation, and metrics. The gate is a goodput curve under open-loop load at a stated SLO pair, with preemption rate below a threshold and no leaked KV blocks after a run including client disconnects.</p>
+<h2 id="phase-11-everything-else-driven-by-measurement">Phase 11, everything else, driven by measurement</h2>
+<p>Speculative decoding, sparse attention, disaggregation, adapters, multimodality, further quantisation. By this point you have the measurement apparatus to know which of those your workload actually needs, which is the real purpose of the preceding ten phases.</p>
+<h2 id="what-this-order-optimises-for">What this order optimises for</h2>
+<p>Three things, in priority order. Every bug gets found in the smallest system that can contain it. Every performance number has a ceiling to be graded against before it gets quoted. And every layer has a working, debuggable predecessor to fall back to when the optimised version is wrong.</p>
+<p>The most common way this goes wrong is skipping Phase 2. Teams that never measure their machine’s ceilings end up optimising kernels that were already at 90% of achievable while a buffer in the wrong memory space caps the pipeline somewhere else entirely, which is precisely the failure Chapters 4 and 6 describe and precisely what cost a real rewrite cycle to find.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Build bottom-up with a correctness gate and a performance gate at every layer, on real hardware. Dispatch before kernels, ceilings before optimisation, collectives before tensor parallelism, correctness before fusion. The order isn’t a preference, it determines whether each bug gets found in a ten-line test or in a ten-thousand-line system.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>For each phase, name the specific bug class it’s designed to catch and the symptom that bug would produce if it survived to the next phase.</p></li>
+<li><p>Your team wants to start at Phase 5 using a vendor runtime for Phases 1 to</p></li>
+<li><p>Which gates can you still apply, which do you lose, and what would you add to compensate?</p></li>
+<li><p><strong>Build:</strong> the capstone. Take a small open model and carry it through as many phases as your hardware allows, keeping a written record of every gate result. Report the phase where your stack’s performance first fell below 50% of its measured ceiling, and what fixed it.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch38-building-a-production-stack.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Building a Production Stack</span>
+        </a>
+        
+        <a href="app-a-rust-patterns-gpu.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Appendix A: Rust Patterns for GPU Programming</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

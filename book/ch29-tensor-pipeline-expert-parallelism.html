@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tensor, Pipeline, and Expert Parallelism — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link active">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VI: Multi-GPU and Distributed</span>
+            <span class="sep">/</span>
+            <span class="current">Tensor, Pipeline, and Expert Parallelism</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VI: Multi-GPU and Distributed</span>
+            <h1 class="chapter-title">Tensor, Pipeline, and Expert Parallelism</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>CHAPTER 29 · TENSOR, PIPELINE, AND EXPERT PARALLELISM</p>
+<h2 id="tensor-parallelism">Tensor parallelism</h2>
+<p>Tensor parallelism, from Megatron-LM, splits each weight matrix across GPUs so every GPU computes a partial result for every token, combined by all-reduce.</p>
+<p>Using the stored-layout convention from Chapter 21, where weights are (out_features, in_features) and <code>y = x·Wᵀ</code> , <strong>column-parallel</strong> splits the output features on stored axis 0, so rank <em>i</em> holds a contiguous row range and produces a slice of the output with no communication needed for the projection itself, while <strong>row-parallel</strong> splits the input features on stored axis 1, so rank <em>i</em> holds a column range and consumes a slice of the input, producing a partial sum that has to be <strong>all-reduced</strong> .</p>
+<p>Megatron’s insight is to alternate them so a column-parallel layer’s sharded output feeds a row-parallel layer’s sharded input directly, with no communication in between. QKV projections are column-parallel, so each rank owns whole attention heads. The output projection is row-parallel, costing one all-reduce. Gate and up projections are column-parallel. The down projection is row-parallel, costing the second allreduce. Two per layer, and the intermediate activations never need gathering.</p>
+<p>CHAPTER 29 · TENSOR, PIPELINE, AND EXPERT PARALLELISM</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0135-01.png" alt="FIGURE 29.1: Two ways to slice a weight, one of which owes a collective" />
+<figcaption aria-hidden="true">FIGURE 29.1: Two ways to slice a weight, one of which owes a collective</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Stored weights have shape (out_features, in_features). Fix that convention once and use it everywhere, because the mathematical names refer to the opposite axis of the stored matrix and that mismatch is the most common bug in a tensor-parallel loader.</p></li>
+<li><p>O <strong><code>2</code></strong> Column-parallel splits the output features, which is axis 0 of the stored matrix. Each rank gets a contiguous row range, so its slice is one contiguous byte range and its output is simply a slice of the answer. No communication.</p></li>
+<li><p>O <strong><code>3</code></strong> Row-parallel splits the input features, axis 1. Each rank gets a column range from every row, so the slice is strided and the loader has to coalesce or pre-shard.</p></li>
+<li><p>O <strong><code>4</code></strong> Every rank now holds a partial sum over its own slice, so the results have to be all-reduced. Alternating the two forms is what keeps it to two collectives per layer.</p></li>
+</ul>
+<p>TP imposes constraints worth knowing before you plan a deployment. The number of attention heads has to divide by the TP degree, so for a model with 4 KV heads, TP greater than 4 means KV heads get replicated across ranks rather than split, which multiplies KV memory. That’s a real and frequently encountered limit, since Qwen3-235B at TP=8 replicates each KV head across two ranks. Intermediate sizes have to divide too, and MoE expert dimensions have to divide by whatever parallelism the experts use.</p>
+<h2 id="the-tp-decode-path">The TP decode path</h2>
+<p>Each rank loads its slice at startup (Chapter 21), computes its partial result for every token, and two allreduces per layer combine partials so every rank ends the step with identical activations.</p>
+<p>Because every rank has to produce identical results, TP is tightly synchronous and the slowest rank sets the pace every single step. That makes it sensitive to straggler effects, where a rank on a busier NUMA node or one whose clocks throttle first slows everyone, and it’s also why TP beyond a single node is usually a bad idea. Two all-reduces per layer over InfiniBand is a different order of magnitude from the same thing over NVLink or xGMI.</p>
+<p>CHAPTER 29 · TENSOR, PIPELINE, AND EXPERT PARALLELISM</p>
+<h2 id="sequence-and-context-parallelism">Sequence and context parallelism</h2>
+<p>TP shards the hidden dimension, and a complementary axis shards the <strong>token</strong> dimension.</p>
+<p><strong>Sequence parallelism</strong> shards the activations of the elementwise and normalisation regions, which TP leaves replicated, converting the all-reduce at each TP boundary into a reduce-scatter and all-gather pair. Communication volume is unchanged while replicated activation memory drops by the TP degree, which matters for long-context prefill where those activations are large.</p>
+<p><strong>Context parallelism</strong> shards the sequence for attention itself, so each rank holds part of the KV cache and attention proceeds by passing partial results or KV blocks between ranks, which is ring attention and its relatives. That’s what makes contexts too large for one GPU’s KV cache tractable, and it’s increasingly relevant as engines add decode-time context parallelism to split a single very long sequence’s KV across ranks.</p>
+<p>The trade is that context parallelism converts a memory problem into a communication problem, and for decode, where each token reads the entire cache, the communication is proportional to cache size rather than token count. It pays when the cache doesn’t fit and the alternative is not serving the request at all.</p>
+<h2 id="pipeline-parallelism">Pipeline parallelism</h2>
+<p>Pipeline parallelism splits <em>layers</em> across GPUs, with ranks holding consecutive ranges and passing activations forward.</p>
+<pre><code>GPU 0: layers  1–24  → send hidden state → GPU 1
+GPU 1: layers 25–48  → send                → GPU 2
+GPU 2: layers 49–72  → send                → GPU 3
+GPU 3: layers 73–94  → logits</code></pre>
+<p>Communication is one point-to-point send per stage boundary, a few tens of kilobytes, far less than TP’s all-reduces. The cost is the <strong>pipeline bubble</strong> , since with a single in-flight batch stage <em>i+1</em> idles while stage <em>i</em> works and utilisation is 1/P.</p>
+<p>For inference the bubble gets filled with <em>other requests</em> , because continuous batching means different micro-batches occupy different stages simultaneously. A well-fed pipeline achieves high utilisation and a lightly loaded one doesn’t, which makes PP a throughput technique rather than a latency one, and also the natural choice for crossing node boundaries since it needs far less bandwidth than TP.</p>
+<h2 id="expert-parallelism">Expert parallelism</h2>
+<p>Chapter 24 covered the mechanics. In the parallelism taxonomy, EP shards the expert dimension, communicates by all-to-all twice per layer with data-dependent sizes, and gets combined with TP or DP for the attention layers, which have no expert structure.</p>
+<p>One pattern is worth naming because it’s now standard in large MoE deployments, <strong>data-parallel attention with expert-parallel FFN</strong> . Attention is replicated per rank with each rank handling different sequences, so there’s no attention all-reduce at all and the KV cache isn’t replicated, while the FFN uses EP across the same ranks and the all-to-all also serves to redistribute tokens between the two regimes.</p>
+<p>CHAPTER 29 · TENSOR, PIPELINE, AND EXPERT PARALLELISM</p>
+<p>That avoids TP’s KV-head divisibility problem entirely, which is why very large MoE models are often served this way.</p>
+<h2 id="choosing-a-strategy">Choosing a strategy</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>STRATEGY</strong></th>
+<th><strong>COMMUNICATION PER LAYER</strong></th>
+<th><strong>SCALES</strong></th>
+<th><strong>USE WHEN</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TP within a node</td>
+<td>2 all-reduces (small)</td>
+<td>Latency and memory</td>
+<td>Model fits one node, latency matters</td>
+</tr>
+<tr>
+<td>TP + SP</td>
+<td>reduce-scatter + all-gather</td>
+<td>Also activation memory</td>
+<td>Long-context prefill</td>
+</tr>
+<tr>
+<td>Context parallel</td>
+<td>KV or partials between ranks</td>
+<td>Context length</td>
+<td>One sequence’s KV exceeds a GPU</td>
+</tr>
+<tr>
+<td>PP across nodes</td>
+<td>1 send per boundary</td>
+<td>Memory across nodes</td>
+<td>Model exceeds a node, throughput<br>workload</td>
+</tr>
+<tr>
+<td>EP for MoE</td>
+<td>2 all-to-alls (variable)</td>
+<td>Expert capacity</td>
+<td>Many experts</td>
+</tr>
+<tr>
+<td>DP attention + EP</td>
+<td>all-to-all only</td>
+<td>Both, avoids KV</td>
+<td>Large MoE serving</td>
+</tr>
+<tr>
+<td>FFN</td>
+<td></td>
+<td>replication</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>For a single node the default is TP across all GPUs, since the small all-reduces are cheap on an intranode fabric and it minimises latency. As the model or context grows past a node, PP or EP crosses the network boundary because they demand less of it.</p>
+<h2 id="fusing-the-all-reduce-with-what-surrounds-it">Fusing the all-reduce with what surrounds it</h2>
+<p>The all-reduce is followed immediately by a residual add and an RMSNorm, and done naively that’s three kernels and three passes over the activation.</p>
+<p>Fused, the residual add becomes the reduction’s epilogue, with each rank adding its reduced chunk into the residual buffer in place, and the norm runs once on the result. That saves two launches and two HBM round-trips per all-reduce, which is four per layer and 376 per token for a 94-layer model.</p>
+<p>The subtlety is that after a fused reduce-scatter the residual is only valid for each rank’s own chunk until the all-gather completes, so the norm has to be placed correctly relative to the gather, or computed on the sharded chunk in the sequence-parallel formulation, which is exactly why sequence parallelism composes so well here.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>TP splits weights and pays two small all-reduces per layer, which makes it the right default within a node, constrained by head-count divisibility that forces KV-head replication when TP exceeds the KV head count. Sequence parallelism shards the activations TP leaves replicated, and context parallelism shards the KV cache itself. Pipeline parallelism costs one small send per boundary and needs a full pipeline to avoid bubbles, which makes it a cross-node throughput technique. Data-parallel attention with expert-parallel FFN is the standard shape for very large MoE. And fuse the residual add into the collective’s epilogue.</p>
+<p>CHAPTER 29 · TENSOR, PIPELINE, AND EXPERT PARALLELISM</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Qwen3-235B has 4 KV heads. At TP=8, what happens to KV cache memory, and what’s the total KV footprint at 128K context in FP8 across the node? Compare with a DP-attention arrangement.</p></li>
+<li><p>Derive the pipeline bubble fraction for P stages and M in-flight micro-batches. How many concurrent requests does a 4-stage pipeline need to reach 90% utilisation?</p></li>
+<li><p>Explain why sequence parallelism has the same communication volume as plain TP with lower activation memory.</p></li>
+<li><p><strong>Build:</strong> implement column-parallel and row-parallel linear layers with an all-reduce for TP=2. Verify bitcomparable output against the single-GPU model, then measure the all-reduce’s share of step time.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch28-collectives-for-inference.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Collectives for Inference</span>
+        </a>
+        
+        <a href="ch30-disaggregated-serving.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Disaggregated Serving</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Inference Ecosystem — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link active">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part I: Foundations</span>
+            <span class="sep">/</span>
+            <span class="current">The Inference Ecosystem</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part I: Foundations</span>
+            <h1 class="chapter-title">The Inference Ecosystem</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Nobody builds an inference stack in a vacuum, and it would be foolish to try. The ecosystem matured quickly after 2023, converged on a shared set of ideas, and then differentiated on implementation, hardware, and priorities. This chapter walks the landscape so that later chapters can point at these systems as examples instead of explaining them from scratch each time.</p>
+<h2 id="vllm">vLLM</h2>
+<p>vLLM (Kwon et al., SOSP 2023) is the most widely used open-source inference engine, and its defining contribution was <strong>PagedAttention</strong> , which treats the KV cache as a paged virtual memory system with logical-to-physical block mapping, on-demand allocation, and copy-on-write sharing. That solved the fragmentation problem that had been quietly capping everyone’s concurrency, and it’s what makes continuous batching practical at high occupancy.</p>
+<p>The <strong>V1 engine</strong> from 2025 is now the default and repays study as an architecture, because it represents the current consensus about how to build one of these. The scheduler runs asynchronously from model execution, so scheduling for step <em>t+1</em> overlaps GPU work for step <em>t</em> . A <strong>persistent batch</strong> caches input tensors across steps and applies only the diff each iteration rather than rebuilding them. <code>torch.compile</code> is on by default, with <strong>piecewise CUDA graphs</strong> capturing the model around the attention kernels, graph capture where shapes are static and eager execution where they aren’t. Prefix caching is on by default and chunked prefill is the default scheduling mode.</p>
+<p>vLLM is the reference implementation for most of the serving-engine material in this book. It targets NVIDIA primarily, with mature ROCm support and backends for TPU and other accelerators.</p>
+<h2 id="sglang">SGLang</h2>
+<p>SGLang (Zheng et al., 2024) introduced <strong>RadixAttention</strong> , a radix tree over KV cache blocks that gives you automatic prefix caching. When requests share a prefix, and in production they share prefixes constantly, SGLang reuses the computed KV blocks without recomputation and without anyone asking it to.</p>
+<p>It also pushed hard on <strong>structured generation</strong> , constraining output to a JSON schema or grammar without leaving the engine, which is why it’s popular for agentic workloads where the output has to be machine-parseable. Chapter 20 covers how that’s made cheap.</p>
+<p>Through 2025 and 2026 SGLang became a common choice for very large MoE models and disaggregated deployments, and it carries first-class support for the sparse attention backends of Chapter 14 on both NVIDIA and AMD hardware.</p>
+<h2 id="tensorrt-llm">TensorRT-LLM</h2>
+<p>NVIDIA’s engine, built on the TensorRT compiler framework, and its defining characteristic is deep hardware co-design. Kernels are written alongside each GPU generation, often before that generation is publicly available.</p>
+<p>It popularised <strong>in-flight batching</strong> , NVIDIA’s name for the iteration-level scheduling Orca introduced in 2022, and has the most mature support for NVIDIA-specific features, FP8 on Hopper, NVFP4 on Blackwell, and heavily tuned speculative decoding. Increasingly its kernels get consumed by other engines rather than only by its own runtime. The trade-off is that it runs on NVIDIA hardware and nothing else.</p>
+<h2 id="llama.cpp">llama.cpp</h2>
+<p>llama.cpp owns local, edge, and CPU inference. It began as a C/C++ port of LLaMA and grew into a full engine with the GGUF format, a self-contained file holding quantised weights, metadata, and tokeniser, plus genuinely broad hardware support across CPU (AVX2, AVX-512, NEON, SVE) and GPU (CUDA, Metal, Vulkan, ROCm, SYCL), a wide family of quantisation formats from two bits to eight, and partial GPU offload that puts some layers on the GPU and runs the rest on the CPU.</p>
+<p>One correction to a claim that still gets repeated a lot. <code>llama-server</code> <strong>does</strong> implement continuous batching across parallel slots, controlled by <code>--cont-batching</code> , which is on by default, and <code>--parallel</code> for the slot count. It isn’t a datacentre-scale scheduler, there’s no preemption or priority or disaggregation, but the line about llama.cpp being unable to batch stopped being true years ago.</p>
+<h2 id="flashinfer">FlashInfer</h2>
+<p>FlashInfer is a kernel library for attention, sampling, and related primitives, built as shared infrastructure rather than as an engine. It provides prefill, decode, and append attention kernels with paged KV, GQA, and low-precision support, JIT-compiled for the shape you actually have.</p>
+<p>One point of accuracy, because this one is widely gotten wrong. <strong>Upstream FlashInfer is CUDA-only.</strong> It isn’t a vendor-abstraction layer. AMD maintains a separate ROCm port in the <code>ROCm/flashinfer</code> repository, under active development and not yet at feature parity, and engines running on AMD hardware generally reach for AITER, Composable Kernel, or Triton attention backends instead. Crossvendor portability is real, but it comes from engines maintaining multiple backends rather than from one library spanning both.</p>
+<h2 id="the-rust-ml-ecosystem">The Rust ML ecosystem</h2>
+<p>Young, growing, and worth knowing about even though a from-scratch stack uses almost none of it.</p>
+<p><strong>Candle</strong> from Hugging Face is a minimalist framework with CUDA, Metal, and CPU backends, built for serverless inference where a small binary and no Python runtime matter. <strong>Burn</strong> is a fuller deep learning framework with multiple backends and its own kernel-authoring layer, CubeCL. <strong>mistral.rs</strong> is a Rust inference engine built on Candle, with GGUF support, paged attention, and an OpenAI-compatible server. And <strong>mainarch</strong> is a Rust stack that talks straight to the AMD kernel ABI with no ROCm, HIP, or HSA runtime beneath it, which is the low-level example running through this book.</p>
+<p>The general shape is that Rust now gives you the language, the tooling, and increasingly the framework layer, while the GPU kernels themselves are still written in a C dialect and compiled by the vendor toolchain or emitted by a Rust-hosted kernel DSL. Nobody’s writing gfx950 MFMA schedules in safe Rust yet.</p>
+<h2 id="deepspeed-fastgen-and-lmdeploy">DeepSpeed-FastGen and LMDeploy</h2>
+<p><strong>DeepSpeed-FastGen</strong> from Microsoft combines DeepSpeed-Inference’s kernels with a continuous batching engine, and it’s notable for Dynamic SplitFuse, an adaptive chunked-prefill policy covered in Chapter 18.</p>
+<p><strong>LMDeploy</strong> from InternLM has its own TurboMind runtime, strong quantisation support, and both NVIDIA and AMD backends.</p>
+<h2 id="how-the-systems-relate">How the systems relate</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>CONCEPT</strong></th>
+<th><strong>VLLM</strong></th>
+<th><strong>SGLANG</strong></th>
+<th><strong>TENSORRT-LLM</strong></th>
+<th><strong>LLAMA.CPP</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Paged KV</td>
+<td>PagedAttention</td>
+<td>Paged plus radix tree</td>
+<td>Paged KV manager</td>
+<td>Unified KV cache,<br>slots</td>
+</tr>
+<tr>
+<td>Continuous<br>batching</td>
+<td>V1 async scheduler</td>
+<td>Yes</td>
+<td>In-flight batching</td>
+<td>Yes (<code>--cont-</code><br><code>batching</code>)</td>
+</tr>
+<tr>
+<td>Prefix caching</td>
+<td>Hash-based, default on</td>
+<td>RadixAttention</td>
+<td>Block reuse</td>
+<td>Prompt-cache and<br>slot reuse</td>
+</tr>
+<tr>
+<td>Attention kernels</td>
+<td>FlashAttention, FlashInfer,<br>Triton, AITER</td>
+<td>FlashInfer, Triton, AITER,<br>TRT-LLM</td>
+<td>Custom</td>
+<td>Custom (ggml)</td>
+</tr>
+<tr>
+<td>Speculative<br>decoding</td>
+<td>EAGLE, ngram, Medusa</td>
+<td>EAGLE-2/3</td>
+<td>EAGLE, Medusa,<br>Redrafter</td>
+<td>Draft model,<br>lookahead</td>
+</tr>
+<tr>
+<td>Structured output</td>
+<td>XGrammar, Outlines,<br>Guidance</td>
+<td>XGrammar, native</td>
+<td>XGrammar</td>
+<td>GBNF grammars</td>
+</tr>
+<tr>
+<td>Disaggregation</td>
+<td>KV connector API</td>
+<td>Native P/D</td>
+<td>Native P/D</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Vendors</td>
+<td>NVIDIA, AMD, TPU, others</td>
+<td>NVIDIA, AMD</td>
+<td>NVIDIA only</td>
+<td>Nearly everything</td>
+</tr>
+</tbody>
+</table>
+<p>The convergence is the useful lesson. Learning the concepts transfers between all of them, learning one engine’s implementation mostly doesn’t, which is why this book teaches the former and uses the latter as illustration.</p>
+<h2 id="whats-actually-new-in-2026">What’s actually new in 2026</h2>
+<p>Four things are moving, and they’re worth naming so you can place this book in time.</p>
+<p><strong>Sparse attention at long context</strong> has taken million-token serving from possible to economical, by attending to a selected subset of tokens per query instead of the entire history. DeepSeek Sparse Attention and Native Sparse Attention are the reference points, and Chapter 14 covers them.</p>
+<p><strong>Four-bit numerics</strong> have arrived properly for weights, with NVFP4 and MXFP4 plus quantisation-aware distillation to recover accuracy, and more tentatively for the KV cache and the attention score path, which are further behind and further behind for different reasons (Chapters 11 and 31).</p>
+<p><strong>Getting the host out of the loop</strong> shows up as persistent megakernels, GPU-driven collectives, and CPU-free serving paths, all attacking the same overhead from different angles. Chapters 25 and 28.</p>
+<p><strong>Disaggregation</strong> has become the default topology at cluster scale, with KV cache transfer standardised enough that engines interoperate through it. Chapter 30.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>The ecosystem has converged on paged KV, continuous batching, FlashAttention-style tiling, GQA, prefix caching, and speculative decoding. What separates the engines is maturity, hardware specialisation, and what they choose to optimise, not fundamental approach. Learn the concepts, then pick which engine’s answer to follow, or improve on, for each component.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Pick two engines and, from their documentation, write down what each does at the moment a request arrives and no KV blocks are free. Which behaviours are policy and which are mechanism?</p></li>
+<li><p>Upstream FlashInfer is CUDA-only. List three concrete engineering consequences for a serving engine that wants to support both NVIDIA and AMD, and describe how you’d structure the attention backend to absorb them.</p></li>
+<li><p><strong>Build:</strong> run the same model and prompt set through two engines at identical batch size and precision. Report tokens/second, TTFT, and P99 inter-token latency, then explain any difference larger than 10% by pointing at a specific mechanism.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch01-why-inference-is-different.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Why Inference Is Different</span>
+        </a>
+        
+        <a href="ch03-why-rust.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Why Rust</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

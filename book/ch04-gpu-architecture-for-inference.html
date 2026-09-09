@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPU Architecture for Inference — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link active">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part II: The Hardware Layer</span>
+            <span class="sep">/</span>
+            <span class="current">GPU Architecture for Inference</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part II: The Hardware Layer</div>
+          <h2>Overview</h2>
+          <p>The GPU as a throughput engine: memory hierarchy, the bandwidth ceiling, writing raw ioctl driver packets, managing device memory, and dispatching GPU commands without runtime bloat.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part II: The Hardware Layer</span>
+            <h1 class="chapter-title">GPU Architecture for Inference</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Before you write a line of kernel code you need to understand the machine, and the trouble with GPU architecture is that most of what people carry around in their heads is either a generation out of date or borrowed from the other vendor. Wavefront counts, cache sizes, and register file capacities all shifted in CDNA4, and occupancy arithmetic done with the old numbers produces kernels that are mysteriously slow for reasons no profiler will name.</p>
+<p>So this chapter is mostly numbers, and they’re the current ones.</p>
+<h2 id="the-gpu-as-a-throughput-processor">The GPU as a throughput processor</h2>
+<p>Work executes in groups called <strong>wavefronts</strong> on AMD and <strong>warps</strong> on NVIDIA, 64 lanes wide on CDNA and 32 on NVIDIA. Those get scheduled onto <strong>compute units</strong> or <strong>streaming multiprocessors</strong> , each holding many of them simultaneously so that memory latency on one can be covered by execution of another.</p>
+<p>On <strong>CDNA4 (MI355X)</strong> the chip carries 8 accelerator complex dies of 32 compute units each, 256 CUs in total. Every CU contains 4 SIMD units, every SIMD holds up to <strong>8 wavefronts</strong> , and so a CU holds up to <strong>32</strong> , which works out at 2,048 resident work-items per CU. Each SIMD has a vector register file of 512 registers per lane, allocated in blocks of 8, with regular and accumulator registers drawing on that single unified budget. Occupancy therefore falls straight out of a division. A kernel using 128 VGPRs per lane gets 512/128, so 4 waves per SIMD and half occupancy, one using 256 gets 2, and one using 64 gets the architectural maximum of 8.</p>
+<p>On <strong>NVIDIA Hopper (H100)</strong> you have 132 SMs on the SXM5 part, each holding up to <strong>64 warps</strong> , which is also 2,048 threads, backed by a 64K × 32-bit register file per SM (256 KB) and up to 32 resident thread blocks. Blackwell keeps the 64-warp limit.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0029-01.png" alt="FIGURE 4.2: Where occupancy actually comes from" />
+<figcaption aria-hidden="true">FIGURE 4.2: Where occupancy actually comes from</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> One compute unit holds four SIMD units, not one. This is where the arithmetic starts.</p></li>
+<li><p>O <strong><code>2</code></strong> Each SIMD holds up to eight wavefronts, so a CU holds 32, which is 2,048 resident work-items. The often-quoted figure of eight per CU is the per-SIMD number wearing the wrong label.</p></li>
+<li><p>O <strong><code>3</code></strong> Occupancy falls out of a division. The register file is 512 registers per lane per SIMD, so a kernel using 128 gets four waves, one using 256 gets two, and one using 64 gets the architectural maximum.</p></li>
+<li><p>O <strong><code>4</code></strong> The LDS is per compute unit and shared by all four SIMDs, so it limits workgroups where the register file limits waves.</p></li>
+</ul>
+<p>Three consequences follow, and the second one is the expensive one.</p>
+<p>High occupancy isn’t automatically the goal. A kernel with low occupancy but plenty of instruction-level parallelism can saturate the machine with fewer waves, and register-hungry matrix-core kernels routinely run at 2 to 4 waves per SIMD by design. What you actually need is enough <em>memory-level parallelism</em> to keep the memory system busy, meaning enough independent loads in flight to cover HBM latency. Occupancy is one way to get that, deep per-wave prefetch pipelines are another, and for decode attention the second usually beats the first.</p>
+<p>The wavefront is a synchronisation unit, not just a width, and this is the one that costs people weeks. A cross-lane reduction is a wavefront-wide barrier, so a load issued immediately before one can’t overlap with anything. In-flight loads cap at one, and a bandwidth-bound kernel quietly becomes a latency-bound kernel. That single structural mistake is the difference between 200 GB/s and 4,800 GB/s in the measurements of Chapter 10.</p>
+<p>And wave64 against warp32 changes tile shapes. A 64-lane wavefront naturally covers a 64-element row where a 32-lane warp doesn’t, so attention and GEMM tiles tuned for one width are rarely optimal on the other.</p>
+<h2 id="memory-hierarchy">Memory hierarchy</h2>
+<p><strong>Registers</strong> are the fastest storage, private to a wavefront. CDNA4 gives 512 VGPRs per lane per SIMD, roughly 128 KB per SIMD and 512 KB per CU, and Hopper gives 256 KB per SM. Register pressure is the primary occupancy limiter for compute kernels.</p>
+<p><strong>LDS and shared memory</strong> are the software-managed scratchpad, and CDNA4 raised the LDS from CDNA3’s 64 KB per CU to <strong>160 KB per CU</strong> , a change aimed squarely at attention and GEMM tiles that invalidates a lot of older AMD tuning advice. Hopper offers up to 228 KB of shared memory per SM out of a combined 256 KB L1 and shared pool. Attention kernels use it for tiled K and V blocks, partial softmax state, and cross-wave reductions.</p>
+<p><strong>L2 and last-level cache</strong> is where terminology causes real errors, so be careful here. On MI355X each XCD has its own <strong>4 MB L2</strong> , 32 MB across the chip, and behind those sits a chip-wide <strong>256 MB AMD Infinity Cache</strong> , a memory-attached last-level cache. Describing MI355X as having “256 MB of L2” is common and wrong, and it matters because Infinity Cache behaves differently, sitting further away, shared across XCDs, and backing HBM rather than the CUs directly. On H100 the L2 is 50 MB, H200 uses the same compute die so it’s also 50 MB, and B200 has 126 MB. Both Blackwell’s larger L2 and AMD’s Infinity Cache matter enormously for medium-context decode, where a KV working set that fits in last-level cache runs at cache bandwidth instead of HBM bandwidth.</p>
+<p><strong>HBM</strong> holds the weights and the KV cache. MI355X has 288 GB of HBM3E at 8 TB/s peak, H100 has 80 GB of HBM3 at 3.35 TB/s, H200 has 141 GB at 4.8 TB/s, B200 has 192 GB at 8 TB/s, and B300 has 288 GB at 8 TB/s.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0031-01.png" alt="FIGURE 4.1: The memory hierarchy, drawn at distance and pipe width" />
+<figcaption aria-hidden="true">FIGURE 4.1: The memory hierarchy, drawn at distance and pipe width</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Registers and LDS sit on the die. CDNA4 raised the LDS to 160 KB per compute unit, which is why attention tile sizes from the previous generation are worth re-deriving.</p></li>
+<li><p>O <strong><code>2</code></strong> Each accelerator die has its own 4 MB L2. The 256 MB Infinity Cache sits behind all eight of them, which is why calling it 01cL201d misleads.</p></li>
+<li><p>O <strong><code>3</code></strong> HBM is the wide pipe every memory-bound kernel is graded against. Peak is 8 TB/s and a streaming kernel measures about 5,800.</p></li>
+<li><p>O <strong><code>4</code></strong> Host memory over PCIe is the thread. A buffer placed here by accident does not crash anything, it just quietly costs you 125 times.</p></li>
+</ul>
+<h2 id="the-bandwidth-ceiling">The bandwidth ceiling</h2>
+<p>The spec sheet says 8 TB/s. The number you can build against is lower, and you find it by writing the simplest possible streaming kernel and measuring it.</p>
+<p>On MI355X, mainarch’s <code>mem_stream</code> microbenchmark, a pure <code>float4</code> grid-stride VRAM read, sustains <strong>about 5,800 GB/s, or 72% of the 8 TB/s peak</strong> . That’s the number every memory-bound kernel on that machine gets graded against. On H100 a well-written stream benchmark typically lands between 2.6 and 2.8 TB/s against a 3.35 TB/s peak.</p>
+<p>The gap comes from memory controller overheads, refresh, cache-line granularity, and the plain fact that real access patterns are never as clean as the benchmark. The sustained figure is your design target and the peak figure is for press releases.</p>
+<p>Grade every memory-bound kernel against sustained, and when it falls short, demand a specific cause rather than an adjective. When mainarch’s FlashDecoding kernel sustained 3,419 GB/s at 1M context, 42.7% of peak and 59% of the sustained ceiling, the useful question wasn’t “why only 59%” but “which mechanism is eating the other 41%”, and the answers turned out to be concrete. Combine serialisation, insufficient prefetch depth, and, before anyone found it, a scratch buffer sitting in host memory.</p>
+<p>That last one deserves a paragraph of its own, because it’s the most instructive bug in this book. Three independent rewrites of the same kernel all plateaued at exactly the same 229 GB/s, and a fixed floor that doesn’t move when you change the kernel is never a kernel problem. The cause was a small <code>partials</code> buffer allocated in host memory instead of device memory, so every combine-phase read crossed PCIe, and moving that one buffer to VRAM was worth 3.8× on its own. On the raw driver interface you own where every byte lives, and that ownership is a responsibility. Chapter 6 has the full story.</p>
+<h2 id="matrix-cores">Matrix cores</h2>
+<p>Modern GPUs carry dedicated matrix multiply hardware. <strong>AMD MFMA</strong> on CDNA4 operates on tiles such as 16×16×32 and 32×32×16 for 16-bit inputs, with deeper K for narrower types, and supports FP16, BF16, FP8 (E4M3 and E5M2), FP6, and FP4 (E2M1) with block scale factors applied in the datapath through the <code>V_MFMA_*_SCALE_*</code> family. <strong>NVIDIA Tensor Cores</strong> on Hopper expose <code>wgmma</code> , operating warpgroup-wide on larger tiles asynchronously, and Blackwell adds fifth-generation <code>tcgen05</code> cores with NVFP4 support and tensor memory.</p>
+<p>Peak dense throughput on MI355X is 2.5 PFLOPS for FP16 and BF16, 5.0 PFLOPS for FP8, and 10.1 PFLOPS for FP6 and FP4. Structured 2:4 sparsity doubles the FP16, BF16, FP8 and INT8 rates through the sparse MFMA instructions, and there is no sparse path for FP6 or FP4, so for those two 10.1 PFLOPS is the ceiling. H100 gives 989.4 TFLOPS dense FP16 and 1,979 TFLOPS FP8.</p>
+<p>For prefill, where many tokens arrive at once, the GEMM dominates and the operation is computebound. For decode at small batch the same hardware runs a GEMV, fed by streaming weights from HBM, and the bottleneck is bandwidth rather than FLOPs. A decode GEMV using 5% of the matrix core’s peak isn’t a broken kernel, it’s a correctly memory-bound one, and understanding that saves a lot of wasted optimisation effort.</p>
+<p>Low-precision support is the hardware foundation for the quantisation chapters, and on both vendors the matrix core can apply a scale factor in the datapath so dequantisation fuses into the multiply instead of being a separate pass. Note what that doesn’t buy you for decode, though. At batch 1 the matrix core is mostly idle regardless, so the useful dequantisation path is often a vector-ALU convert rather than scaled MFMA, because the M=1 shape wastes the matrix core’s other dimension.</p>
+<p>One more thing about low precision. The hardware doesn’t always behave the way the documentation says. Which scale formats are honoured, how rounding works, where saturation kicks in, all of that can only be established by feeding known values through the silicon and reading back what came out. That calibration step isn’t optional when you’re targeting a new low-precision path.</p>
+<h2 id="how-architecture-shapes-kernels">How architecture shapes kernels</h2>
+<table>
+<thead>
+<tr>
+<th><strong>FEATURE</strong></th>
+<th><strong>AMD CDNA4 (MI355X)</strong></th>
+<th><strong>NVIDIA HOPPER (H100)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compute units</td>
+<td>256 CUs (8 XCDs × 32)</td>
+<td>132 SMs</td>
+</tr>
+<tr>
+<td>Wavefront / warp width</td>
+<td>64</td>
+<td>32</td>
+</tr>
+<tr>
+<td>Max waves per CU/SM</td>
+<td>32 (8 per SIMD × 4)</td>
+<td>64 warps</td>
+</tr>
+<tr>
+<td>Register file</td>
+<td>512 VGPR/lane/SIMD (~512 KB/CU)</td>
+<td>256 KB/SM</td>
+</tr>
+<tr>
+<td>LDS / shared memory</td>
+<td>160 KB/CU</td>
+<td>up to 228 KB/SM</td>
+</tr>
+<tr>
+<td>L2</td>
+<td>4 MB per XCD (32 MB total)</td>
+<td>50 MB</td>
+</tr>
+<tr>
+<td>Last-level cache</td>
+<td>256 MB Infinity Cache</td>
+<td>(L2 is the LLC)</td>
+</tr>
+<tr>
+<td>HBM</td>
+<td>288 GB HBM3E, 8 TB/s peak</td>
+<td>80 GB HBM3, 3.35 TB/s peak</td>
+</tr>
+<tr>
+<td>Matrix core</td>
+<td>MFMA</td>
+<td>Tensor Core (<code>wgmma</code>)</td>
+</tr>
+<tr>
+<td>Low precision</td>
+<td>FP16/BF16/FP8/FP6/FP4</td>
+<td>FP16/BF16/FP8/INT8</td>
+</tr>
+</tbody>
+</table>
+<p>The wider wavefront on AMD means each instruction covers more data while giving you fewer independent scheduling units per CU. The much larger last-level cache means more of a medium-length KV cache gets served without touching HBM. The larger shared memory per scheduling unit on NVIDIA changes tile-size choices. An attention kernel tuned for one won’t be optimal on the other, and pretending otherwise is how ports end up at 40% of achievable performance.</p>
+<h2 id="the-roofline-in-practice">The roofline in practice</h2>
+<p>Measure the sustained bandwidth and achievable matrix throughput of your hardware rather than quoting spec numbers. Compute the arithmetic intensity of your kernel from bytes <em>actually moved from HBM</em> , not logical bytes and not bytes served from cache. Place the kernel on the roofline. Below the ridge you’re memory-bound and the ceiling is bandwidth × intensity, above it the ceiling is peak FLOPs. Then optimise whichever resource binds, moving fewer bytes or moving them better if you’re memorybound, reducing FLOPs or improving utilisation if you’re not.</p>
+<p>For decode attention on a GQA model in FP16, with an intensity around 16, the ceiling works out at 5,800 GB/s × 16 FLOP/byte, roughly 93 TFLOPS, which is about 3.7% of the chip’s FP16 peak. That number isn’t a failure. It’s what memory-bound means, and it’s why the entire optimisation effort in Part III goes into bytes rather than FLOPs.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Grade every performance number against measured sustained bandwidth, never the spec-sheet peak. Know your architecture’s real numbers, which on CDNA4 means 32 waves per CU, 160 KB of LDS, and 4 MB of L2 per XCD behind a 256 MB Infinity Cache, and on Hopper 64 warps per SM with 50 MB of L2. Occupancy matters only insofar as it delivers memory-level parallelism, and a wavefront-wide reduction placed just after a load destroys that parallelism no matter how high occupancy climbs.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A CDNA4 kernel uses 168 VGPRs per lane and 40 KB of LDS per workgroup of 256 work-items. How many wavefronts per SIMD, and how many workgroups per CU, can be resident? Which resource binds?</p></li>
+<li><p>Repeat for an H100 kernel using 96 registers per thread and 64 KB of shared memory per 256-thread block.</p></li>
+<li><p>A decode kernel reads 512 MB of KV and completes in 157 µs. What bandwidth is that, and what fraction of a 5,800 GB/s sustained ceiling? What’s the minimum possible time at that ceiling?</p></li>
+<li><p><strong>Build:</strong> write the streaming-read microbenchmark for your GPU, sweep access width (32, 64, 128-bit) and unroll depth, and plot achieved bandwidth. Find the configuration that first reaches 90% of your best result.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch03-why-rust.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Why Rust</span>
+        </a>
+        
+        <a href="ch05-the-driver-interface.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Driver Interface</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chunked Prefill — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link active">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IV: The Serving Engine</span>
+            <span class="sep">/</span>
+            <span class="current">Chunked Prefill</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IV: The Serving Engine</span>
+            <h1 class="chapter-title">Chunked Prefill</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-interference-problem">The interference problem</h2>
+<p>Prefill is compute-bound and long-running, decode is memory-bound and short, and running a 2,000token prefill as its own iteration delays every running sequence’s next token by the whole prefill, tens of milliseconds.</p>
+<p>The user-visible effect is that streaming output stutters whenever somebody else’s request starts, and it shows up in the metrics as a bimodal inter-token latency distribution, mostly fine and occasionally terrible. Which is worse than uniformly mediocre, because it’s the tail that people remember.</p>
+<p>The tension underneath is real. Prefill is required to start new requests and it blocks decode for existing ones.</p>
+<h2 id="chunked-prefill">Chunked prefill</h2>
+<p>Split the prompt into pieces and process one per iteration alongside decode.</p>
+<pre><code>iteration 1: decode all running + prefill tokens[0..C]
+iteration 2: decode all running + prefill tokens[C..2C]
+...
+iteration N: decode all running + prefill tokens[(N-1)C..L]
+             → the new request joins the decode set</code></pre>
+<p>Every iteration costs decode plus a bounded amount of prefill, so inter-token latency stays roughly constant instead of alternating between 2 ms and 50 ms.</p>
+<p>The modern formulation isn’t “chunk size” but <strong>token budget</strong> , where an iteration processes at most <code>max_num_batched_tokens</code> in total. Running sequences claim one each and prefill fills the remainder, which adapts automatically, since a big decode batch leaves little room for prefill and a small one leaves plenty. That’s why the budget rather than the chunk size is the parameter engines expose, and typical values sit in the low thousands, with larger budgets favouring prefill throughput and TTFT while smaller ones favour decode latency.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0092-01.png" alt="FIGURE 18.1: One token budget per iteration, shared between the phases" />
+<figcaption aria-hidden="true">FIGURE 18.1: One token budget per iteration, shared between the phases</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Each running sequence contributes exactly one decode token per iteration.</p></li>
+<li><p>O <strong><code>2</code></strong> Prefill fills whatever is left under the ceiling, so a long prompt is consumed across several iterations instead of blocking everyone at once.</p></li>
+<li><p>O <strong><code>3</code></strong> The budget is the control knob, not the chunk size, because the split adapts by itself. A large decode batch leaves little room and a small one leaves plenty.</p></li>
+<li><p>O <strong><code>4</code></strong> Holding per-iteration work constant is what makes inter-token latency predictable, and predictable is what users actually perceive.</p></li>
+</ul>
+<h2 id="dynamic-splitfuse">Dynamic SplitFuse</h2>
+<p>DeepSpeed-FastGen’s Dynamic SplitFuse is the adaptive form of the same idea, composing each batch to hit a target token count by splitting long prompts across iterations and fusing short ones together, so per-iteration work, and therefore per-iteration time, stays nearly constant. Constant iteration time is the property that actually delivers predictable TPOT.</p>
+<h2 id="what-it-costs">What it costs</h2>
+<p>The benefit is tail latency, since decode continues at every iteration and P99 inter-token latency approaches the mean instead of being set by the longest prefill in flight. The costs are real and worth stating.</p>
+<p>Prefill efficiency drops, because a 2,000-token prefill as one GEMM has better arithmetic intensity than eight 256-token GEMMs, and small chunks push prefill toward the memory-bound regime it was supposed to avoid.</p>
+<p>Attention gets recomputed against a growing cache, since chunk <em>k</em> attends to all previously prefilled tokens of the same sequence, so total attention work is unchanged while being split across more iterations with more kernel launches.</p>
+<p>And TTFT rises for the request being chunked, whose prefill now spans <em>N</em> iterations that also serve everyone else. Chunked prefill trades one request’s TTFT for everyone else’s TPOT, usually a good trade and occasionally not, which is why priority-aware engines will run a high-priority request’s prefill unchunked.</p>
+<h2 id="memory-implications">Memory implications</h2>
+<p>Chunked prefill needs incremental KV growth, since after each chunk the sequence’s cache has grown and the allocator has to supply blocks on demand. Natural with paged KV, impossible without it.</p>
+<p>It also bounds <em>activation</em> memory, which is the underappreciated benefit at very long context. Prefilling a million tokens in one pass needs activations for a million tokens, prefilling in 32K chunks needs activations for 32K, a reduction of over 96%. At million-token context, chunked prefill stops being a latency optimisation and becomes the only way the prefill fits in memory at all.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Chunked prefill stops a long prompt stalling every running sequence, converting a bimodal inter-token latency distribution into a tight one. The modern control is a per-iteration token budget rather than a fixed chunk size, so the split between prefill and decode adapts to the current batch. The costs are lower prefill arithmetic intensity and higher TTFT for the chunked request, and at very long context it also bounds activation memory, which makes it mandatory rather than optional.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>With a 2,000-token prompt, a 2 ms decode step, and prefill at 20,000 tokens/s, compute per-iteration time and the new request’s TTFT for unchunked prefill and for budgets of 512, 2,048, and 8,192 tokens. Plot TTFT against the running sequences’ P99 TPOT.</p></li>
+<li><p>Explain why chunked prefill doesn’t reduce total attention work for the prefilling sequence, and quantify the extra launch overhead at chunk size 256 for a 94-layer model.</p></li>
+<li><p><strong>Build:</strong> add a token budget to your scheduler simulator, sweep it, and plot the TTFT/TPOT frontier. Identify the budget that maximises goodput for a given SLO pair.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch17-prefix-caching-and-radixattention.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Prefix Caching and RadixAttention</span>
+        </a>
+        
+        <a href="ch19-speculative-decoding.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Speculative Decoding</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

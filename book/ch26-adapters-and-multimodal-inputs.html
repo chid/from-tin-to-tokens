@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adapters and Multimodal Inputs — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link active">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part V: Model Execution</span>
+            <span class="sep">/</span>
+            <span class="current">Adapters and Multimodal Inputs</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part V: Model Execution</span>
+            <h1 class="chapter-title">Adapters and Multimodal Inputs</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Two features turn a single-model runner into a platform, and both change the serving engine’s structure rather than only its kernels. Which is the interesting part, because if your abstractions are right they absorb both with modest work, and if they aren’t, each one is a rewrite.</p>
+<h2 id="lora-and-multi-adapter-serving">LoRA and multi-adapter serving</h2>
+<p>Low-rank adaptation replaces a fine-tuned copy of a model with a small pair of matrices per adapted weight, <code>W' = W + (B·A)·(α/r)</code> , where <code>A</code> is r × in, <code>B</code> is out × r, and r is typically 8 to 64. For a 70B model an adapter is tens of megabytes rather than 140 GB.</p>
+<p>The naive serving approach merges the adapter into the weights and loads a separate model per adapter, giving full speed and no sharing, and it doesn’t scale past a handful of adapters.</p>
+<p>The interesting problem is serving many adapters concurrently against one base model, which the S- LoRA line of work addressed and every major engine now implements. You <strong>keep adapters unmerged</strong> and compute <code>x·Wᵀ + (x·Aᵀ)·Bᵀ·(α/r)</code> at inference, where the extra work is two skinny GEMMs, negligible in FLOPs and awkward in shape. You <strong>batch across heterogeneous adapters</strong> , since a batch contains requests using different ones, which makes the LoRA term a grouped operation where you segment the batch by adapter and apply each group’s matrices, a gather-GEMM-scatter that is structurally the same problem as MoE’s grouped GEMM. You <strong>page the adapter weights</strong> , because with hundreds of adapters and only some active, adapter memory becomes another paged pool with its own allocator and eviction, which is the KV cache’s problem again and worth solving with the same machinery. And you <strong>include the adapter in the prefix cache key</strong> (Chapter 17), because two requests with identical tokens and different adapters have different KV, and omitting that is a correctness and isolation bug.</p>
+<p>Performance-wise, unmerged multi-adapter serving costs a few percent against the merged singleadapter case and buys the ability to serve hundreds of fine-tunes from one set of base weights, which is usually a far larger economic win than the few percent.</p>
+<h2 id="multimodal-inputs">Multimodal inputs</h2>
+<p>A vision-language model prepends encoded image, audio, or video tokens to the text sequence. Structurally that’s preprocessing on CPU or GPU, decoding and resizing and normalising and tiling, where modern models use dynamic resolution so one image becomes a variable number of patches. Then encoding with a vision transformer to produce patch embeddings, projecting into the language model’s embedding space, splicing the projected embeddings into the token embedding sequence at placeholder positions, and finally prefill and decode as usual.</p>
+<p>What that does to the engine is where the work is.</p>
+<p><strong>Prefill cost decouples from token count</strong> , since an image may expand to thousands of tokens and the encoder is a separate model with its own compute profile, so scheduler cost models based on text token counts systematically under-predict.</p>
+<h2 id="preprocessing-is-a-real">Preprocessing is a real</h2>
+<p><strong>bottleneck</strong> , because image decode and resize on the CPU can dominate TTFT for image-heavy traffic, which means that work belongs in a separate process pool overlapped with GPU execution rather than inline in the scheduler thread.</p>
+<p><strong>Encoder outputs are cacheable</strong> , since the same image sent twice produces the same embeddings, so a content-hashed cache of encoder outputs pays for itself immediately in multi-turn conversations about one image.</p>
+<p><strong>Prefix caching needs care</strong> , because the cache key has to cover the image content rather than only the placeholder tokens, or two different images with the same prompt text collide, which is a serious correctness failure.</p>
+<p><strong>Memory spikes</strong> , since the encoder’s activations for a batch of high-resolution images can rival the language model’s and they arrive in bursts. Bound them explicitly, or a burst of image requests will OOM a server that’s been stable for weeks.</p>
+<p>Both features share a lesson worth generalising. The serving engine’s core abstractions, paged pools and grouped GEMMs and content-addressed caches and cost models, get reused rather than replaced when new capabilities arrive. An engine built around those absorbs LoRA and multimodality with modest work, and one built around the idea that a batch is a rectangle of text tokens doesn’t.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Multi-adapter LoRA serving keeps adapters unmerged and applies them as a grouped skinny GEMM over an adapter-segmented batch, with adapter weights in their own paged pool, which is the same machinery as MoE grouped GEMM and paged KV. Multimodal inputs add an encoder with its own cost profile, expensive preprocessing that has to be overlapped, and cacheable encoder outputs. Both have to be part of the prefix-cache key, or you’ll serve one request’s context to another.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>For a 70B model with LoRA rank 16 applied to all attention projections, compute the adapter size and the extra FLOPs per token. What fraction of a decode step is that?</p></li>
+<li><p>Design the batching layout for a step containing requests using four different adapters. What does the grouped operation look like, and how do you avoid padding waste?</p></li>
+<li><p>An image expands to 2,600 tokens. Explain how that breaks a scheduler cost model calibrated on text, and propose a fix.</p></li>
+<li><p><strong>Build:</strong> implement a content-hashed cache for vision encoder outputs and measure TTFT for a multi-turn conversation about one image, with and without the cache.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Kernel Fusion, Graphs, and Chained Dispatch</span>
+        </a>
+        
+        <a href="ch27-the-interconnect-fabric.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Interconnect Fabric</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

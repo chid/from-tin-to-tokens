@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Driver Interface — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link active">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part II: The Hardware Layer</span>
+            <span class="sep">/</span>
+            <span class="current">The Driver Interface</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part II: The Hardware Layer</span>
+            <h1 class="chapter-title">The Driver Interface</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="what-a-gpu-runtime-does">What a GPU runtime does</h2>
+<p>To understand what a from-scratch stack replaces, look at what a runtime actually provides. ROCm and CUDA are small operating systems for the GPU, and they handle device management (discovery, handles, contexts, device loss and recovery), memory management (allocation, virtual address spaces, host and device mapping, peer access, migration), queue management (creation, scheduling, priorities, error handling), code loading, synchronisation through signals and events and fences, and error handling for illegal accesses and page faults and hung contexts.</p>
+<p>All of that is necessary in general. For inference decode most of it is either unused or radically simplifiable, because you have one model in one process on a fixed set of devices, a kernel set loaded once at startup, one or two queues per device, and a dispatch-and-poll synchronisation model. You’re not recovering from faults either, you’re preventing them and failing loudly when prevention doesn’t work.</p>
+<h2 id="where-the-overhead-lives">Where the overhead lives</h2>
+<p>The overhead isn’t in any single component, it’s in the layers of indirection between your code and the hardware. A HIP or CUDA kernel launch traverses the runtime API call, the runtime’s queue management with its locks and state validation, lower-level packet construction, the thunk layer, the kernel ioctl, and finally the GPU command processor. Six steps.</p>
+<p>A from-scratch stack goes from the first to the last in one hop, a function that writes a packet into a ring buffer and rings a doorbell, and everything between disappears.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0036-01.png" alt="FIGURE 5.1: What going below the runtime actually removes" />
+<figcaption aria-hidden="true">FIGURE 5.1: What going below the runtime actually removes</figcaption>
+</figure>
+<ul>
+<li><p><strong><code>1</code></strong> A kernel launch on a vendor runtime descends through the runtime API, queue management with its locks and state validation, packet construction, the thunk layer, and finally the kernel ioctl.</p></li>
+<li><p><strong><code>2</code></strong> A from-scratch stack writes the packet and rings the doorbell itself, so the same work arrives in one hop.</p></li>
+<li><p><strong><code>3</code></strong> Whether that matters depends entirely on the operation. For a small all-reduce the launch machinery is a large fraction of the total, and for a large prefill GEMM it is noise.</p></li>
+</ul>
+<p>How much that’s worth depends entirely on the operation. For small latency-sensitive work, the allreduce in tensor-parallel decode or a tiny elementwise kernel, the launch machinery is a large fraction of the total. For a big prefill GEMM it’s noise. Any claim of the form “removing the runtime makes things N× faster” that doesn’t name the operation and the size isn’t a claim worth evaluating.</p>
+<h2 id="going-below-the-runtime">Going below the runtime</h2>
+<p>On AMD the interface is <code>/dev/kfd</code> , the compute device file exposed by the <code>amdkfd</code> kernel driver, and its ioctl interface provides device topology alongside sysfs, VM acquisition, memory allocation and mapping, queue creation, and event handling. Code object loading isn’t provided, so you parse the ELF and place the segments yourself, which is Appendix C.</p>
+<p>On NVIDIA the equivalent is the CUDA driver API over <code>/dev/nvidia*</code> , and the structural difference matters more than it might appear. AMD’s KFD is a kernel ioctl interface any language can call directly, while NVIDIA’s driver API is a userspace C library wrapping an undocumented kernel interface, so “below the runtime” is a much shorter drop on AMD. That single fact is the biggest reason a project like the one in this book targets AMD hardware.</p>
+<h2 id="hand-encoding-ioctls-in-rust">Hand-encoding ioctls in Rust</h2>
+<p>The ioctl request number encodes direction, type, command number, and argument size, exactly as <code>&lt;asm-generic/ioctl.h&gt;</code> does, and in Rust those become <code>const fn</code> s so the request numbers are compile-time constants.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_NRBITS<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">8</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_TYPEBITS<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">8</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_SIZEBITS<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">14</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_NRSHIFT<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_TYPESHIFT<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> IOC_NRSHIFT <span class="op">+</span> IOC_NRBITS<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_SIZESHIFT<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> IOC_TYPESHIFT <span class="op">+</span> IOC_TYPEBITS<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_DIRSHIFT<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> IOC_SIZESHIFT <span class="op">+</span> IOC_SIZEBITS<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_WRITE<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> IOC_READ<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> <span class="kw">fn</span> ioc(dir<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> typ<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> nr<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span> size<span class="op">:</span> <span class="dt">usize</span>) <span class="op">-&gt;</span> <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    (dir <span class="op">&lt;&lt;</span> IOC_DIRSHIFT)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> (typ <span class="op">&lt;&lt;</span> IOC_TYPESHIFT)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> (nr <span class="op">&lt;&lt;</span> IOC_NRSHIFT)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> ((size <span class="kw">as</span> <span class="dt">u32</span>) <span class="op">&lt;&lt;</span> IOC_SIZESHIFT)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">/// &#39;K&#39; — AMDKFD_IOCTL_BASE</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> KFD_IOCTL_BASE<span class="op">:</span> <span class="dt">u32</span> <span class="op">=</span> <span class="ch">b&#39;K&#39;</span> <span class="kw">as</span> <span class="dt">u32</span><span class="op">;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> <span class="kw">fn</span> iowr<span class="op">&lt;</span>T<span class="op">&gt;</span>(nr<span class="op">:</span> <span class="dt">u32</span>) <span class="op">-&gt;</span> <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    ioc(IOC_READ <span class="op">|</span> IOC_WRITE<span class="op">,</span> KFD_IOCTL_BASE<span class="op">,</span> nr<span class="op">,</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="pp">core::mem::size_of::</span><span class="op">&lt;</span>T<span class="op">&gt;</span>())</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>The argument struct has to mirror the kernel’s exactly. For allocation that’s <code>struct kfd_ioctl_alloc_memory_of_gpu_args</code> .</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>repr<span class="at">(</span>C<span class="at">)]</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="op">,</span> <span class="bu">Default</span><span class="op">,</span> <span class="bu">Clone</span><span class="op">,</span> <span class="bu">Copy</span><span class="at">)]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> AllocMemoryOfGpuArgs <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> va_addr<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>      <span class="co">// to KFD</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> size<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>         <span class="co">// to KFD</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> handle<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>       <span class="co">// from KFD</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> mmap_offset<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>  <span class="co">// in: userptr; out: mmap offset</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> gpu_id<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>       <span class="co">// to KFD</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> flags<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">/// AMDKFD_IOC_ALLOC_MEMORY_OF_GPU = AMDKFD_IOWR(0x16, ...)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> ioc_alloc_memory_of_gpu() <span class="op">-&gt;</span> <span class="pp">libc::</span><span class="dt">c_ulong</span> <span class="op">{</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="pp">iowr::</span><span class="op">&lt;</span>AllocMemoryOfGpuArgs<span class="op">&gt;</span>(<span class="dv">0x16</span>) <span class="kw">as</span> <span class="pp">libc::</span><span class="dt">c_ulong</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> alloc(fd<span class="op">:</span> RawFd<span class="op">,</span> args<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> AllocMemoryOfGpuArgs) <span class="op">-&gt;</span> <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Explicit block: `unsafe fn` no longer carries an implicit unsafe body.</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">libc::</span>ioctl(fd<span class="op">,</span> ioc_alloc_memory_of_gpu()<span class="op">,</span> args <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> _) <span class="op">}</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Every specific in there is the kind of detail that ruins a day if you get it wrong. The magic byte is <code>'K'</code> and not some other letter, the command number for allocation is <code>0x16</code> , and the struct has six fields rather than three.</p>
+<p>It would be comforting to think the encoded size protects you here, and it doesn’t. amdkfd dispatches on the command <em>number</em> alone and then substitutes its own request word, zero-filling a short argument</p>
+<p>struct and ignoring the tail of an over-long one, deliberately, so that structs can grow trailing fields without breaking old binaries. Hand it a three-field allocation struct and the call succeeds with <code>gpu_id</code> and <code>flags</code> silently reading as zero, which allocates against the wrong device with no flags set. There is no clean error to catch. The only thing standing between you and that is your own <code>size_of</code> assertion and a careful read of the header.</p>
+<p><code>#[repr(C)]</code> is non-negotiable, because Rust’s default layout may reorder fields and without it the ioctl writes the right bytes to the wrong offsets, the class of bug that works on one compiler version and breaks on the next.</p>
+<p>So why hand-write these rather than generate them with <code>bindgen</code> ? Three reasons. You can diff every struct against the kernel header. Every field, flag, and offset is visible in your own source. And your build doesn’t depend on kernel headers being present and matching.</p>
+<p>The usual counter-argument, that the UAPI is stable so generated bindings are fine, deserves a precise answer rather than a slogan. The kernel UAPI is <em>backward-compatible</em> rather than <em>frozen</em> , meaning existing ioctl numbers and struct layouts don’t change meaning, while new ioctls and new flag bits get added regularly and some structs gain trailing fields under new command numbers. What that buys you is that code written against today’s header keeps working. What it doesn’t buy you is any guarantee that today’s header describes everything the driver can do. Pin the version you validated against, assert your <code>size_of</code> values in a test, and read the changelog when you move kernels.</p>
+<h2 id="topology-enumeration">Topology enumeration</h2>
+<p>Before you allocate anything you have to find the hardware, and on AMD that means reading sysfs under <code>/sys/class/kfd/kfd/topology/nodes/</code> , where each node directory describes a CPU or GPU with its name, memory banks, caches, and <code>io_links</code> to other nodes.</p>
+<p>One detail here causes more first-day confusion than anything else in the KFD ABI. <strong>The node directory index is not the</strong> <strong><code>gpu_id</code> .</strong> Node directories are numbered in topology order and include CPU nodes, while the <code>gpu_id</code> is a separate identifier, read from the node’s own <code>gpu_id</code> file rather than from its <code>properties</code> , and it’s the value every ioctl expects. Pass a node index where a <code>gpu_id</code> belongs and you get an operation that either fails obscurely or, worse, quietly targets a different device.</p>
+<p>Topology tells you how many GPUs you have, how much memory each carries, which links exist between them and at what bandwidth, and which peers are directly connected, which is everything you need to plan memory placement, parallelism strategy, and collective algorithms.</p>
+<h2 id="the-order-of-operations">The order of operations</h2>
+<p>Here’s the sequence that actually gets you to a running kernel, and every step depends on the one before it.</p>
+<ol type="1">
+<li><p>Open <code>/dev/kfd</code> and query the driver version.</p></li>
+<li><p>Read sysfs topology and map node directories to <code>gpu_id</code> s.</p></li>
+<li><p><strong>Open the amdgpu render node for each GPU</strong> , <code>/dev/dri/renderD&lt;N&gt;</code> , and keep the fd open for as long as you want the device. This step is easy to miss because nothing in the KFD name suggests it, and the next step requires it.</p></li>
+<li><p><strong>Acquire the process VM for each GPU</strong> through <code>ACQUIRE_VM</code> , which takes that render-node fd alongside the <code>gpu_id</code> , because the address space it binds to your process is the render node’s GPU VM rather than something KFD invents. Close the fd and the mapping goes with it. Skip this step entirely and you get confusing failures much later, where allocations succeed but mapping fails, or queues create but never execute.</p></li>
+<li><p>Allocate memory with <code>ALLOC_MEMORY_OF_GPU</code> and map it with <code>MAP_MEMORY_TO_GPU</code> . Allocation and mapping are separate operations, and a buffer that’s allocated but not mapped into a GPU’s address space is invisible to that GPU.</p></li>
+<li><p>Allocate and map the queue’s ring buffer, the read and write pointer pages, and any event page.</p></li>
+<li><p>Create the queue with <code>CREATE_QUEUE</code> using the AQL queue type.</p></li>
+<li><p><strong>Map the doorbell</strong> , which exists only now. <code>CREATE_QUEUE</code> returns a <code>doorbell_offset</code> , and that is an mmap offset on the <code>/dev/kfd</code> fd rather than a device allocation you made earlier. <code>mmap</code> it and your queue’s doorbell is a word inside that mapping. There is nothing to allocate here and nothing to map to the GPU.</p></li>
+<li><p>Load the code object, placing segments in mapped device memory.</p></li>
+<li><p>Write a packet, publish its header, ring the doorbell, wait for the completion signal.</p></li>
+</ol>
+<h2 id="when-going-below-the-runtime-is-worth-it">When going below the runtime is worth it</h2>
+<p>It’s worth it when launch overhead is a serious fraction of useful work, and a 20 µs all-reduce carrying 6 µs of launch machinery is a real 30% win. It’s worth it when you need control over memory placement, because generic allocators make generic choices and inference wants specific buffers in specific memory types. And it’s worth it when you need to fuse across the dispatch boundary, through chained dispatch or device-side synchronisation or persistent kernels, all of which require owning the queue.</p>
+<p>It isn’t worth it for compute-bound work where launch overhead is noise, when you need the runtime’s debugging and profiling tooling, or when the thing you’re building is a serving layer rather than a compute path.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>The driver ABI is the literal interface the runtime wraps, so using it directly is skipping a middleman rather than performing black magic. The <code>repr(C)</code> plus unsafe ioctl pattern is how you do it in Rust and the explicitness is a feature. Get the details exactly right, magic byte <code>'K'</code> , command <code>0x16</code> for allocation, the six-field allocation struct, <code>gpu_id</code> distinct from node index, and <code>ACQUIRE_VM</code> before anything else, because at this layer the gap between working and mysteriously broken is one wrong constant.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Compute the ioctl request number for <code>AMDKFD_IOC_ALLOC_MEMORY_OF_GPU</code> by hand from the encoding above and verify it against your kernel header.</p></li>
+<li><p>amdkfd zero-fills a short argument struct rather than rejecting it. Write the test that would have caught a three-field allocation struct before it reached the driver, and explain what the call would otherwise have done.</p></li>
+<li><p><strong>Build:</strong> open <code>/dev/kfd</code> , issue <code>GET_VERSION</code> , and enumerate sysfs topology, printing each node’s <code>gpu_id</code> , memory size, and <code>io_links</code> . Confirm that node index and <code>gpu_id</code> differ on your machine.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch04-gpu-architecture-for-inference.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">GPU Architecture for Inference</span>
+        </a>
+        
+        <a href="ch06-device-memory.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Device Memory</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

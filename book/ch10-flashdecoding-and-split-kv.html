@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlashDecoding and Split-KV — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link active">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">FlashDecoding and Split-KV</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">FlashDecoding and Split-KV</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="why-decode-attention-is-different">Why decode attention is different</h2>
+<p>In prefill, FlashAttention hands query blocks to workgroups, and with thousands of query rows there’s parallelism to spare. In decode there’s one query row per sequence per head, so on a 256-CU GPU serving a single sequence you get a handful of busy CUs, hundreds idle, and, worse than the idle silicon, nowhere near enough outstanding memory requests to saturate HBM.</p>
+<p><strong>Flash-Decoding</strong> (Dao, Haziza, Massa, and Sizov, 2023, and frequently miscited) fixes this by parallelising along the KV axis instead. The related FlashDecoding++ (Hong et al., 2023) attacks the same problem from a different angle, using a unified maximum value to avoid the rescaling step altogether.</p>
+<h2 id="split-kv-parallelism">Split-KV parallelism</h2>
+<p>Partition the KV cache into <em>S</em> chunks and hand each to a different workgroup. Each one loads the shared query vector, computes scores against its own chunk of K, and runs online softmax over that chunk to produce a partial (m, Z, O). Then the <em>S</em> partial results get combined with the merge formula from Chapter 9.</p>
+<p>The number of splits is the main tuning parameter, and it cuts both ways. More splits mean more workgroups and more memory-level parallelism, up to the point where each workgroup has too little work to amortise its own startup and the combine step starts costing more than the split saves.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0062-01.png" alt="FIGURE 10.1: Decode attention parallelises along the cache, not the query" />
+<figcaption aria-hidden="true">FIGURE 10.1: Decode attention parallelises along the cache, not the query</figcaption>
+</figure>
+<ul>
+<li><p><strong><code>1</code></strong> There is only one query row in decode, so parallelising over queries gives one workgroup per head and leaves hundreds of compute units idle.</p></li>
+<li><p><strong><code>2</code></strong></p>
+<ul>
+<li>Split the cache instead. Each chunk gets its own workgroup, which runs online softmax over its own slice.</li>
+</ul></li>
+<li><p><strong><code>3</code></strong> Each produces a partial triple, a running maximum, denominator and unnormalised output. These merge exactly and in any order, which is what makes the whole scheme correct.</p></li>
+<li><p><strong><code>4</code></strong> The merge is a tree of depth log2(S), not a serial loop. Getting that wrong once cost 510 microseconds against 48 at a million tokens, and it dominated a split phase that was already fast.</p></li>
+</ul>
+<h2 id="the-combine-step">The combine step</h2>
+<p>Each partial result is a triple (m_i, Z_i, O_i), merged as</p>
+<pre><code>m = max over i of m_i
+Z = Σ e^(m_i − m)·Z_i
+O = Σ e^(m_i − m)·O_i  /  Z</code></pre>
+<p>A tree reduction over <em>S</em> partials has depth <strong>log₂(S)</strong> and total work <strong>O(S·d)</strong> . You will sometimes see the cost given as √S, which is wrong. The √S that does show up in real implementations is something else entirely, a two-pass reduction where the first pass uses about √S workgroups each merging about √S partials, chosen to balance parallelism against launch count.</p>
+<p>Getting the combine right matters more than getting the split right, and the measurements make the point better than the argument does. At 1M context, a single-workgroup combine, one CU walking <em>S</em> partials serially, took about 510 µs and completely dominated a split phase costing a fraction of that. Restructuring it as a two-pass tree reduction brought the combine to about 48 µs and took the end-toend kernel from 859 to 3,419 GB/s. The lesson generalises to any split-combine kernel. Profile the combine first, because it’s the part that silently serialises.</p>
+<h2 id="split-count-heuristics">Split-count heuristics</h2>
+<table>
+<thead>
+<tr>
+<th><strong>SEQUENCE LENGTH</strong></th>
+<th><strong>SPLITS</strong></th>
+<th><strong>TOKENS PER SPLIT</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≤ 4,096</td>
+<td>32</td>
+<td>~128</td>
+</tr>
+<tr>
+<td>≤ 32,768</td>
+<td>256</td>
+<td>~128</td>
+</tr>
+<tr>
+<td>≤ 262,144</td>
+<td>1,024</td>
+<td>~256</td>
+</tr>
+<tr>
+<td>≥ 1,048,576</td>
+<td>2,048–4,096</td>
+<td>~256–512</td>
+</tr>
+</tbody>
+</table>
+<p>You want enough workgroups resident to saturate memory bandwidth while leaving each one enough tokens to fill its prefetch pipeline. Too few tokens per split and the workgroup spends its life ramping up, too many splits and the combine tree grows.</p>
+<p>In a batched server the calculus shifts, because with <em>B</em> concurrent sequences there are already <em>B</em> × <em>H_kv</em> independent units of work, so the splits needed per sequence fall. A good implementation computes the split count from total resident workgroups rather than from sequence length alone.</p>
+<h2 id="memory-level-parallelism-or-what-actually-gets-you-to-the-ceiling">Memory-level parallelism, or what actually gets you to the ceiling</h2>
+<p>Two structural properties dominate everything else here, and both took several rewrites to find.</p>
+<p><strong>Wide loads.</strong> Issue the widest load the ISA supports, 128-bit, <code>half8</code> on AMD and <code>float4</code> on NVIDIA. With 16 lanes cooperating per token, each lane issuing one 128-bit load, a single instruction moves 1 KB, where narrow loads waste both issue slots and cache-line efficiency.</p>
+<p><strong>Prefetch depth ahead of the reduction.</strong> This is the one that’s easy to get wrong and expensive to diagnose. A cross-lane reduction, a <code>ds_bpermute</code> butterfly or a warp shuffle, is a wavefront-wide synchronisation point, so a load issued immediately before one can’t overlap with anything. The wavefront stalls on it, in-flight loads cap at one, and the kernel becomes latency-bound no matter how high its occupancy climbs. Issuing eight tokens’ worth of wide loads <em>before</em> any reduction lifted mainarch’s split kernel to 4,796 GB/s, which is 60% of peak and 83% of the sustained ceiling.</p>
+<p>The diagnostic that found this is worth stealing. Three structurally different rewrites of the split kernel, a narrow <code>half2</code> version, an LDS-staged <code>float4</code> version, and a 16-lane wide <code>half8</code> version, all plateaued at exactly 229 GB/s. Identical plateaus across different code mean the bottleneck isn’t in the code, and in that instance it was a scratch buffer sitting in host memory (Chapter 6). Only after fixing that did the kernel differences become visible at all.</p>
+<h2 id="chained-dispatch">Chained dispatch</h2>
+<p>FlashDecoding needs two phases with a dependency between them, and done naively that’s two dispatches with a host wait in the middle, on every layer of every token.</p>
+<p>With chained dispatch (Chapter 25), both packets go into the ring with the barrier bit set on the second, the host rings the doorbell once, and waits once. The GPU orders the phases itself, and for a 94-layer model that removes 94 host round-trips per token from the attention path alone.</p>
+<p>This is the first place where owning the queue pays for itself, and it’s why the dispatch chapter comes before the kernel chapters in the build order.</p>
+<h2 id="performance-measured-against-the-ceiling">Performance, measured against the ceiling</h2>
+<p>Concrete numbers from mainarch on one MI355X, decode attention for <strong>one KV head</strong> at 1M context with head dimension 128, so 512 MiB of FP16 KV read per layer per head. A full 4-KV-head layer is four times the work.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>CONFIGURATION</strong></th>
+<th><strong>TIME</strong></th>
+<th><strong>BANDWIDTH</strong></th>
+<th><strong>% OF 8 TB/S PEAK</strong></th>
+<th><strong>% OF 5,800 GB/S SUSTAINED</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial working kernel</td>
+<td>39 ms</td>
+<td>13.5 GB/s</td>
+<td>0.2%</td>
+<td>0.2%</td>
+</tr>
+<tr>
+<td>After combine parallelised</td>
+<td>—</td>
+<td>859 GB/s</td>
+<td>10.7%</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>Split kernel alone</td>
+<td>—</td>
+<td>4,796–5,092 GB/s</td>
+<td>60–64%</td>
+<td>83–88%</td>
+</tr>
+<tr>
+<td>Full split + combine, FP16 KV</td>
+<td>157 µs</td>
+<td>3,419 GB/s</td>
+<td>42.7%</td>
+<td>59%</td>
+</tr>
+<tr>
+<td>Full split + combine, FP8 KV</td>
+<td>107 µs</td>
+<td>—</td>
+<td>—</td>
+<td>1.47× vs FP16</td>
+</tr>
+</tbody>
+</table>
+<p>Two honest observations about that table. The end-to-end number, 59% of sustained, sits well below the split kernel in isolation at 83 to 88%, and the difference is the combine phase plus the pipeline drain between phases, which is where the remaining work lives. And the FP8 result is reproduces the arithmetic of the FP16 path to a maximum relative error of 3.89e-7 against an f64 oracle fed the same dequantised keys and values, so that number bounds the <em>kernel’s</em> error and not the cost of quantisation, which this chapter puts at around 2% relative L2 for E4M3. It is 1.47× faster rather than the 2× the byte count suggests, because the combine and the query side don’t shrink.</p>
+<p>The general method is worth stating plainly. Compute the theoretical floor as bytes divided by sustained bandwidth, measure the actual, and account for the difference with named mechanisms. “We’re at 59%” isn’t a finding. “We’re at 59%, of which 12 points are the combine tree and 20 are prefetch ramp-up in the first window” is a plan.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Decode attention is a memory problem. FlashDecoding parallelises along the KV axis and merges partial softmax results, and the combine is a log-depth tree reduction, not √S and certainly not a serial loop, which is the mistake that costs an order of magnitude. Reaching the bandwidth ceiling needs wide loads and, more importantly, enough prefetch depth ahead of every cross-lane reduction that loads actually overlap. Identical performance plateaus across different implementations mean the bottleneck is outside the kernel.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>At 1M context with one KV head of dimension 128 in FP8, compute the bytes read and the floor time at 5,800 GB/s. Compare with the measured 107 µs above and account for the difference. Then scale to all four KV heads and state the per-layer figure.</p></li>
+<li><p>Derive the depth and total work of a tree reduction over <em>S</em> partials, and explain when a two-pass √S-wide reduction beats a log₂(S)-deep binary one on real hardware.</p></li>
+<li><p>Your split kernel achieves 85% of sustained bandwidth in isolation but the full attention operation achieves 55%. Enumerate the possible causes and design an experiment for each.</p></li>
+<li><p><strong>Build:</strong> implement split-KV decode attention, sweep split count and prefetch depth on a 2-D grid, and plot achieved bandwidth. Find where increasing splits starts to hurt and explain why.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch09-flashattention-and-tiling.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">FlashAttention and Tiling</span>
+        </a>
+        
+        <a href="ch11-kv-cache-quantisation.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">KV Cache Quantisation</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

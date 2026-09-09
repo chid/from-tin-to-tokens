@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edge and Resource-Constrained Inference — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link active">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VIII: The Hardware Landscape</span>
+            <span class="sep">/</span>
+            <span class="current">Edge and Resource-Constrained Inference</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VIII: The Hardware Landscape</span>
+            <h1 class="chapter-title">Edge and Resource-Constrained Inference</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="a-different-problem">A different problem</h2>
+<p>Datacentre inference optimises aggregate throughput under latency SLOs across many users. Edge inference has one user and a completely different set of constraints.</p>
+<p>Memory is tight, since consumer GPUs have 8 to 24 GB and phones have 4 to 16 GB of shared RAM with an OS willing to kill you for using it. Thermals bite, because sustained inference throttles a phone in minutes. Energy is battery. Batch size is always 1, so every amortisation argument in Part IV disappears. And compute is heterogeneous, with CPU and integrated GPU and NPU each having different memory access characteristics and often sharing one memory bus.</p>
+<p>Batch-1, memory-bound, on a bandwidth-poor device is the hardest corner of this book’s roofline, which is why the techniques here are so aggressive.</p>
+<h2 id="llama.cpp">llama.cpp</h2>
+<p>The reference implementation, and a genuinely different engineering culture from the datacentre engines. GGUF puts quantised weights and metadata and tokeniser in one file. CPU SIMD covers AVX2 and AVX-512 on x86 and NEON and SVE on ARM, with quantised formats designed so the dot product is efficient in SIMD through block layouts that unpack into registers cheaply. Backends span CUDA, Metal, Vulkan, ROCm, SYCL, and CPU. Partial offload through <code>--n-gpu-layers</code> places some layers on GPU and runs the rest on CPU. And weights are memory-mapped, so the OS pages them in on demand and several processes can share one copy.</p>
+<p>On partial offload the arithmetic is worth doing rather than guessing. Time per token is roughly GPU layers times GPU layer time plus CPU layers times CPU layer time, and CPU layer time is typically 10 to 50× GPU layer time on a machine with a discrete GPU. So the marginal value of moving one more layer to the GPU is large and roughly constant until VRAM runs out. Offload as many as fit, and if only some fit, prefer whichever layers are largest.</p>
+<h2 id="powerinfer-and-neuron-level-sparsity">PowerInfer and neuron-level sparsity</h2>
+<p><strong>PowerInfer</strong> (Song et al., SOSP 2024) exploits <strong>activation sparsity in ReLU-family models</strong> , not MoE routing. The two get conflated constantly and the distinction matters, because they have different requirements.</p>
+<p>The observation is that in models with ReLU-style activations, neuron activation follows a power law. A small set of hot neurons activates for almost every input while the majority are cold, activating rarely and input-dependently.</p>
+<p>The design preloads hot neurons onto the GPU, keeps cold neurons on the CPU, and uses a small online predictor to decide which neurons a given input will activate so only the necessary computation runs. Hot work runs on the GPU, cold on the CPU, with neuron-aware sparse operators on both, and the result is large speedups over CPU-offloading baselines on a single consumer GPU.</p>
+<p>Note the prerequisite. The model has to be activation-sparse, and models using SwiGLU or GeLU are far less sparse than ReLU ones, which is why some of this work gets paired with ReLU-fication, fine-tuning a model to restore activation sparsity. PowerInfer-2 extends the approach to smartphones with a segmented cache and I/O-aware pipelining.</p>
+<p>For <em>MoE</em> offloading on constrained hardware, which is a genuinely different technique, the relevant work exploits expert-level rather than neuron-level sparsity, keeping frequently routed experts resident, offloading the rest, and prefetching based on the router’s output for the current token.</p>
+<h2 id="mlc-llm-and-compilation">MLC-LLM and compilation</h2>
+<p>MLC-LLM compiles models through TVM to a backend-specific artefact, CUDA or Metal or Vulkan or WebGPU or WASM, with the compiler handling fusion, memory layout, and scheduling for the target and producing native code with no framework runtime.</p>
+<p>That’s what makes browser and phone deployment tractable on platforms with no vendor compute stack, and it’s the edge instance of the same trade as Chapter 34. Give up hand-written kernels, gain portability.</p>
+<h2 id="compression-for-edge">Compression for edge</h2>
+<p><strong>Quantisation</strong> is the load-bearing technique. A 7B model is about 14 GB in FP16, 4 GB at 4-bit, and 2.5 GB at 2-bit, and four-bit with importance-matrix calibration is the practical sweet spot, fitting most consumer hardware while retaining most quality. Two-bit fits on phones with visible degradation.</p>
+<p><strong>Distillation</strong> produces a smaller model that mimics a larger one. Not a runtime technique, since it happens before deployment, and often the right answer anyway, because a well-distilled 3B model usually beats a 7B model crushed to 2 bits.</p>
+<p><strong>Pruning</strong> comes in structured form, removing whole heads or channels for real speedup and some quality loss, or unstructured form, zeroing individual weights, which needs sparse kernels to realise any gain and most edge runtimes lack them.</p>
+<p><strong>Speculative decoding</strong> deserves a mention here specifically because edge is where it shines. Batch 1 is exactly the regime where spare compute exists (Chapter 19), and a tiny draft model or n-gram lookup can give a real multiple on a device with no batching to exploit.</p>
+<h2 id="when-edge-inference-makes-sense">When edge inference makes sense</h2>
+<p>For it, privacy since data never leaves the device, latency since there’s no network round-trip, cost since nobody rents a cloud GPU, and offline capability.</p>
+<p>Against it, the largest models can’t run at all, quantised small models are measurably weaker than frontier models served remotely, there’s no batching so per-device efficiency is poor, and you have to ship and support a binary across a fragmented hardware landscape.</p>
+<p>The pattern most products land on is hybrid, with a small local model handling latency-sensitive and private work and escalating to a remote model when the task requires it. That routing decision is itself a systems design problem, and it’s where a lot of applied work now sits.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Edge inference is batch-1, memory-bound, on bandwidth-poor hardware, so aggressive compression is mandatory. llama.cpp makes it work across every backend through GGUF and SIMD kernels, and you offload as many layers to the GPU as VRAM allows because the CPU-to-GPU per-layer gap is 10 to 50×. PowerInfer exploits <em>neuron-level</em> activation sparsity in ReLU-family models rather than MoE routing, placing hot neurons on the GPU and cold ones on the CPU. Four-bit quantisation is the sweet spot, distillation often beats extreme quantisation, and speculative decoding is unusually effective here because batch 1 leaves compute idle.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A 13B model at 4-bit is 7.5 GB and the GPU has 6 GB of usable VRAM. Given a GPU layer time of 0.4 ms and a CPU layer time of 12 ms, compute tokens per second for every feasible offload split and find the optimum.</p></li>
+<li><p>Explain why PowerInfer’s approach requires activation sparsity and what changes for a SwiGLU model. What would you measure to decide whether it applies?</p></li>
+<li><p>Compare a 3B model at 8-bit with a 7B model at 2-bit at roughly equal memory. What would you measure to choose, and why is perplexity insufficient?</p></li>
+<li><p><strong>Build:</strong> measure tokens per second and energy per token for a quantised model at several offload splits on your own machine. Plot both against split and identify the knee.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch34-specialised-silicon.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Specialised Silicon</span>
+        </a>
+        
+        <a href="ch36-correctness-validation.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Correctness Validation</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

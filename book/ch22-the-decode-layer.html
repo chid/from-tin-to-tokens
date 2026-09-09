@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Decode Layer — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link active">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part V: Model Execution</span>
+            <span class="sep">/</span>
+            <span class="current">The Decode Layer</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part V: Model Execution</span>
+            <h1 class="chapter-title">The Decode Layer</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-modern-decoder-layer">The modern decoder layer</h2>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0107-04.png" alt="FIGURE 22.1: A decoder layer, and the one ordering that bites" />
+<figcaption aria-hidden="true">FIGURE 22.1: A decoder layer, and the one ordering that bites</figcaption>
+</figure>
+<ul>
+<li><p>0 <strong><code>1</code></strong> The normalisation and projection stages. RMSNorm has to accumulate its sum of squares in FP32, and the epsilon goes inside the square root, because models are trained that way.</p></li>
+<li><p>O <strong><code>2</code></strong> RoPE, where the pairing convention and the base frequency both have to match the checkpoint. Getting the pairing wrong produces a model that is fluent locally and wrong globally.</p></li>
+<li><p>O <strong><code>3</code></strong> The KV append branches off after RoPE, not before. The cache stores rotated keys, and caching them unrotated means rotating on every read, which is both slower and a different computation.</p></li>
+<li><p>fe) <strong><code>4</code></strong> The residual stream runs past everything and should be kept in the widest precision you can afford, because it is the path along which small errors accumulate across 94 layers.</p></li>
+</ul>
+<p>Every box is a kernel or a chain of them. Chapter 10 covered attention and Chapter 24 covers the MoE block, so this chapter is about the connective tissue, the elementwise and normalisation kernels, and about the numerics that decide whether the whole thing is correct. That second part is where the time goes, because these operations are individually trivial and collectively capable of producing a model that runs perfectly and answers slightly worse than it should.</p>
+<h2 id="rmsnorm">RMSNorm</h2>
+<p>RMSNorm replaced LayerNorm in essentially every modern model.</p>
+<pre><code>RMSNorm(x) = x / sqrt(mean(x²) + ε) · w</code></pre>
+<p>There’s no mean subtraction, so it’s one pass and one reduction instead of two. The ε placement matters, because <code>sqrt(mean(x²) + ε)</code> and <code>sqrt(mean(x²)) + ε</code> are different functions and models get trained with the first, and Qwen3 uses ε = 1e-6.</p>
+<p>Accumulate the sum of squares in FP32 at minimum. Summing 4,096 squared values in FP16 loses precision badly and in BF16 it’s worse, and this is the most common numerics bug in a hand-written norm kernel because it shows up as a small systematic error that survives every layer rather than as anything obviously broken.</p>
+<p>The kernel is memory-bound, reading <em>x</em> once and writing <em>y</em> once, with a ceiling of 2 × hidden × dtype bytes over bandwidth, and a good implementation gets close to it. Which means it should be fused with its neighbours (Chapter 25) rather than optimised in isolation.</p>
+<p><strong>QK-norm</strong> is worth calling out separately. Several recent models, Qwen3 included, apply RMSNorm to each attention head’s query and key vectors before RoPE, which stabilises training and changes the layer’s kernel graph. It’s a per-head normalisation over the head dimension with its own learned weight, applied to 64 query heads and 4 key heads, and implemented naively as one dispatch per head that’s 68 dispatches per layer for something that should be one. Chapter 25 has the bill.</p>
+<h2 id="rope">RoPE</h2>
+<p>RoPE encodes position by rotating pairs of dimensions.</p>
+<pre><code>θ_i     = p · base^(−2i/d)
+q&#39;[2i]   = q[2i]·cos θ_i − q[2i+1]·sin θ_i
+q&#39;[2i+1] = q[2i]·sin θ_i + q[2i+1]·cos θ_i</code></pre>
+<p>Five implementation details decide whether it’s correct.</p>
+<p><strong>The pairing convention.</strong> Some implementations pair adjacent elements, (2i, 2i+1), and others pair halves, (i, i + d/2). Both exist in the wild and the checkpoint was trained with one of them, so using the other produces a model that generates fluent nonsense, coherent locally and wrong globally, which is a uniquely annoying failure to diagnose.</p>
+<p><strong>The base frequency.</strong> Qwen3-235B-A22B uses 1e6 in its original release and 5e6 in Instruct-2507. Llama 1 and 2 use 10,000 and Llama 3 raised it to 500,000, with scaling configs on top for the extended variants. Read it from the config and never hard-code it.</p>
+<p><strong>Precision.</strong> Compute θ and its sine and cosine in FP32 or FP64 and cache them, because computing angles in FP16 at position 1,000,000 loses the low bits of the position outright. FP16 can’t even represent 1,000,001 exactly.</p>
+<p><strong>Scaling.</strong> If the config specifies YaRN or another scheme (Chapter 14) it changes θ per dimension and adds an attention temperature, and that’s part of the model rather than a serving option.</p>
+<p><strong>Apply to Q and K only</strong> , never V.</p>
+<h2 id="swiglu">SwiGLU</h2>
+<pre><code>SwiGLU(x) = SiLU(gate(x)) ⊙ up(x),     SiLU(x) = x·σ(x)</code></pre>
+<p>The gating is elementwise and effectively free, since both projections are computed anyway, and fusing the activation into the epilogue of the <code>up</code> projection saves a full round-trip of the intermediate through HBM. For a hidden size of 4,096 and intermediate 1,536 per expert, that round-trip isn’t negligible when it happens 8 times per layer and 94 times per token.</p>
+<h2 id="numerics-conversion-and-rounding">Numerics, conversion, and rounding</h2>
+<p>The conversions between storage and compute formats are load-bearing.</p>
+<p><strong>FP32 to FP16 or BF16 must round to nearest even.</strong> Truncation biases every value toward zero, and a per-layer bias of 1e-4 in a consistent direction accumulates to 1e-2 over 94 layers, because systematic errors add while random ones grow as √n. Round-to-nearest-even is the IEEE default for a reason and hardware conversion instructions implement it, so use them rather than shifting bits yourself.</p>
+<p><strong>Subnormals.</strong> FP16 subnormals, magnitudes below 6.1e-5, appear in real activations. Flushing them to zero is a legitimate performance choice on some hardware, provided it’s a <em>choice</em> , applied consistently, and reflected in your reference implementation, or your oracle will disagree with your kernel for reasons that aren’t bugs.</p>
+<p><strong>Overflow.</strong> FP32 values exceeding 65,504 have to saturate to ±inf in FP16 rather than wrapping, which is where BF16 checkpoints bite (Chapter 21).</p>
+<p><strong>E8M0 scales.</strong> For MXFP4 the block scale is exponent-only, value = 2^(x−127), and you round <strong>up</strong> when converting a computed scale. Over- estimating the scale shrinks the quantised values, which is safe, while under-estimating causes elements to saturate at the top of the FP4 range, which isn’t. The reverse direction is exact.</p>
+<h2 id="assembling-the-layer">Assembling the layer</h2>
+<pre><code>1.  RMSNorm(x)                        → xn
+
+2.  QKV projection (GEMV or GEMM)     → q, k, v
+
+3.  Per-head QK-norm                  → q, k
+
+4.  RoPE(q, k, position)              → q, k
+
+5.  Append k, v to the paged KV cache</code></pre>
+<p><code>6.  Attention (FlashDecoding, paged, GQA)  → attn</code></p>
+<pre><code>7.  O-projection                      → o
+
+8.  x = x + o                         (residual)
+
+9.  RMSNorm(x)                        → xn2
+
+10. MoE or dense FFN                  → ffn
+rust
+11. x = x + ffn                       (residual)</code></pre>
+<p>Two ordering details are easy to get backwards. The KV append at step 5 has to happen after RoPE, because the cache stores rotated keys, and caching pre-RoPE keys means rotating them on every read, which is both slower and a different computation. And the residual stream should be kept in the highest precision you can afford, FP32 being common even when everything else is FP16 or BF16, because it’s the path along which small errors accumulate across 94 layers.</p>
+<p>Correctness of the assembled layer depends on all of that being right simultaneously, which is why the per-step f64 oracle of Chapter 36 isn’t optional. As a reference point, mainarch’s assembled Qwen3architecture layer, with hidden 4,096, 64Q/4KV of dimension 128, MoE top-8, and context 2,048,</p>
+<p>validates at relative L2 error <strong>3.28e-5</strong> against an f64 reference that mirrors the FP16 datapath and roundtrips through FP16 at each store. That’s the number a correct FP16 layer should produce. 1e-2 means a bug, and 1e-8 means your reference isn’t independent.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>The decode layer is the atomic unit of a transformer, and its correctness rests on numerics that are easy to get subtly wrong. RMSNorm accumulating in FP32 with ε inside the square root, RoPE’s pairing convention and base frequency read from the config and computed in FP32, round-to-nearest-even on every narrowing conversion, E8M0 scales rounded up, keys cached after rotation, and the residual stream kept wide. Each of those produces a model that runs, and only some of them produce a model that’s right.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Show that a systematic per-layer relative error of 1e-4 accumulates differently from a random one across 94 layers, and estimate both.</p></li>
+<li><p>Two implementations of RoPE differ only in pairing convention. Describe what the model’s output looks like under the wrong one and why it isn’t obviously broken.</p></li>
+<li><p>Why must the KV cache store post-RoPE keys? What would change in the attention kernel if it stored preRoPE keys, and what would that cost?</p></li>
+<li><p><strong>Build:</strong> implement RMSNorm with FP16 accumulation and with FP32 accumulation, and measure the relative L2 error of each against an f64 reference for hidden sizes from 1,024 to 16,384.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch21-weight-loading-and-model-formats.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Weight Loading and Model Formats</span>
+        </a>
+        
+        <a href="ch23-the-autoregressive-loop.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Autoregressive Loop</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

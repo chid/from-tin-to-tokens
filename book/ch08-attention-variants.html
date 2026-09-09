@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attention Variants — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link active">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">Attention Variants</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part III: Attention and the KV Cache</div>
+          <h2>Overview</h2>
+          <p>From multi-head to multi-query and grouped-query attention; online softmax and SRAM tiling with FlashAttention; FlashDecoding; KV quantization; and paged block memory management.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">Attention Variants</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Attention is the operation at the heart of every transformer and the reason inference is hard. It computes a weighted average of value vectors where the weights come from how well a query matches a set of keys, and in training the expensive part is that every query attends to every key, which is quadratic in sequence length.</p>
+<p>Inference has a different problem. During decode, each new token reads the keys and values of every token before it, so the cost isn’t governed by quadratic compute, it’s governed by the size of that cache and the bandwidth needed to stream it. Which means the attention variant a model uses decides the cache size, which decides the bandwidth pressure, which decides how fast you can generate. Everything in this chapter is a different answer to the question of how to make that cache smaller.</p>
+<h2 id="multi-head-attention">Multi-Head Attention</h2>
+<p>MHA is the original from Vaswani et al. in 2017, where every head has its own query, key, and value projections. Per layer, per sequence, the cache costs</p>
+<pre><code>KV bytes = 2 × S × H × d × b</code></pre>
+<p>and for a 64-head model with head dimension 128 at a million tokens in FP16 that’s 2 × 1e6 × 64 × 128 × 2, which is <strong>32 GB for one layer</strong> . Across 94 layers, 3 TB, more than an entire 8-GPU node’s memory for a single sequence.</p>
+<p>MHA is the most expressive variant and at long context it’s simply unusable, which is why very few new large models use it.</p>
+<h2 id="multi-query-attention">Multi-Query Attention</h2>
+<p>Shazeer’s 2019 answer was to share a single key and value head across all query heads, dropping the cache to</p>
+<pre><code>KV bytes = 2 × S × 1 × d × b</code></pre>
+<p>an <em>H</em> -fold reduction, 64× for a 64-head model. The cost is quality, since one KV head serving all query heads loses representational capacity, and the original work reported minor quality degradation against the multi-head baseline, with the training-instability results coming later, from the GQA paper. MQA shows up in PaLM, Falcon-40B, and StarCoder, and it sits at the aggressive end of the spectrum while remaining ordinary attention.</p>
+<h2 id="grouped-query-attention">Grouped-Query Attention</h2>
+<p>GQA (Ainslie et al., 2023) splits the difference with <em>H_kv</em> KV heads, each shared by <em>G</em> = <em>H_q</em> / <em>H_kv</em> query heads.</p>
+<pre><code>KV bytes = 2 × S × H_kv × d × b</code></pre>
+<p>Real configurations look like this.</p>
+<table>
+<thead>
+<tr>
+<th><strong>MODEL</strong></th>
+<th><strong>QUERY HEADS</strong></th>
+<th><strong>KV HEADS</strong></th>
+<th><strong>GROUP G</strong></th>
+<th><strong>KV VS MHA</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Llama-3-8B</td>
+<td>32</td>
+<td>8</td>
+<td>4</td>
+<td>4× smaller</td>
+</tr>
+<tr>
+<td>Llama-3-70B</td>
+<td>64</td>
+<td>8</td>
+<td>8</td>
+<td>8× smaller</td>
+</tr>
+<tr>
+<td>Qwen3-235B-A22B</td>
+<td>64</td>
+<td>4</td>
+<td>16</td>
+<td>16× smaller</td>
+</tr>
+<tr>
+<td>Mistral-7B</td>
+<td>32</td>
+<td>8</td>
+<td>4</td>
+<td>4× smaller</td>
+</tr>
+</tbody>
+</table>
+<p>One caution for anyone quoting those from memory, because this pair gets swapped constantly. Llama-3-70B has 64 query heads, not 32, and the 32Q/8KV configuration belongs to the 8B model.</p>
+<p>GQA is the mainstream choice for open models, quality sits close to MHA, and Ainslie et al. showed that GQA uptrained from an MHA checkpoint recovers nearly all of it at close to MQA’s speed.</p>
+<p>Here’s the part that gets missed. GQA helps twice, and the second benefit is larger than the first. The obvious win is capacity, 16× less cache. The subtler win is bandwidth <em>efficiency</em> , because as Chapter 1 showed, arithmetic intensity is (2/b)×G, so a group of 16 means every KV element pulled from HBM gets consumed by 16 query heads. A decode kernel that reads the KV cache once per KV head and broadcasts across the group is 16× more efficient than one that naively reads per query head, and kernels that fail to exploit this are a depressingly common source of 8× to 16× slowdowns. They also look completely correct, which is what makes them expensive.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0054-01.png" alt="FIGURE 8.1: Why grouped-query attention helps twice" />
+<figcaption aria-hidden="true">FIGURE 8.1: Why grouped-query attention helps twice</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> One KV head, read from HBM exactly once. In a 64-query, 4-KV-head model there are four of these instead of sixty-four, which is the capacity win everyone quotes.</p></li>
+<li><p>O <strong><code>2</code></strong> Sixteen query heads consume that same data inside the kernel without going back to memory. This is the bandwidth win, and it is the larger of the two.</p></li>
+<li><p>O <strong><code>3</code></strong> Arithmetic intensity is therefore (2/b) x G, group size over KV byte width, which is 16 FLOP/byte in FP16 against a ridge point near 300. A kernel that re-reads per query head throws all of it away and still looks correct.</p></li>
+</ul>
+<h2 id="multi-head-latent-attention">Multi-Head Latent Attention</h2>
+<p>MLA, introduced in DeepSeek-V2 in 2024, takes an entirely different route. Rather than sharing KV heads, it <strong>compresses</strong> them into a low-rank latent.</p>
+<p>Keys and values get projected into a shared latent vector of dimension <em>d_c</em> , and the per-head K and V are reconstructed at attention time by an up-projection. RoPE can’t be applied to a compressed representation and then decompressed consistently, so MLA splits the key into a compressible part and a small <strong>decoupled RoPE</strong> component cached separately.</p>
+<p>For DeepSeek-V3, with 128 heads of dimension 128, <code>kv_lora_rank</code> of 512, and <code>qk_rope_head_dim</code> of 64, the cache per token per layer works out at</p>
+<pre><code>MLA:  512 + 64      = 576 values
+MHA:  2 × 128 × 128 = 32,768 values</code></pre>
+<p>roughly a <strong>57× reduction</strong> against MHA, about 70 KB per token for the whole model against 192 to 328 KB per token for typical GQA models of comparable size.</p>
+<p>The cost is compute, since the up-projection is a matrix multiply per token. For decode that’s a good trade, because you read 57× fewer bytes and pay for it with FLOPs a memory-bound kernel has spare,</p>
+<p>but it changes the roofline position qualitatively and MLA decode kernels can actually become computebound at large batch, which never happens with GQA.</p>
+<p>There’s an implementation subtlety here that decides whether MLA pays off at all, usually called <strong>absorption</strong> . Because the up-projection matrices are fixed, you can algebraically fold them into the query and output projections and compute attention directly in the latent space, never materialising per-head K and V. Implementations that skip this pay the memory saving <em>and</em> the compute cost, getting the worst of both, so every serious MLA kernel absorbs.</p>
+<p>MLA is why DeepSeek-V2, V3, R1, and their successors are economical to serve at long context despite being very large.</p>
+<h2 id="sliding-window-and-hybrid-layer-stacks">Sliding window and hybrid layer stacks</h2>
+<p>A fourth axis is which tokens a layer attends to at all. Sliding-window attention caps each query’s view at the most recent <em>w</em> tokens, which makes the per-layer cache constant in sequence length rather than linear. Mistral-7B popularised it, and Gemma-2 and others interleave sliding-window layers with fullattention layers so the model keeps long-range capability through a minority of layers while most of them hold a bounded cache.</p>
+<p>For an inference engine that’s a scheduling and memory-management concern as much as a kernel one. Different layers grow at different rates, so the block allocator needs per-layer policies, and eviction for a windowed layer is trivial, you drop whatever falls out of the window, while eviction for a full layer is anything but.</p>
+<h2 id="linear-and-hybrid-attention">Linear and hybrid attention</h2>
+<p>The most significant architectural movement of 2025 and 2026 is the return of linear-complexity sequence mixers, gated linear attention and state-space models and gated DeltaNet, interleaved with a minority of full-attention layers. The inference-relevant property is that a linear layer keeps a <strong>fixed-size recurrent state</strong> rather than a growing KV cache, so its decode cost per token doesn’t depend on context length at all.</p>
+<p>For a serving engine that’s not a drop-in change. A hybrid model needs two kinds of per-sequence state, paged KV blocks for attention layers and fixed-size state tensors for linear layers, each with its own allocator. It needs prefix caching that understands recurrent state, which can’t be shared from an arbitrary midpoint the way a KV prefix can, since you can only reuse state at a point where you saved it. And it needs different prefill kernels, because linear layers prefill with a chunked scan rather than a quadratic attention.</p>
+<p>Worth caring about even if you’re not serving one today, because the memory-bandwidth argument that drives every decision in this book applies to these architectures with completely different constants, and an engine built on the assumption that per-sequence state grows linearly with context will need real work to accommodate one that doesn’t.</p>
+<h2 id="choosing-an-attention-variant">Choosing an attention variant</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>VARIANT</strong></th>
+<th><strong>PER-TOKEN KV</strong></th>
+<th><strong>QUALITY</strong></th>
+<th><strong>USED IN</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MHA</td>
+<td>2·H·d</td>
+<td>Best</td>
+<td>Older models, small models</td>
+</tr>
+<tr>
+<td>MQA</td>
+<td>2·d</td>
+<td>Some degradation</td>
+<td>PaLM, Falcon-40B, StarCoder</td>
+</tr>
+<tr>
+<td>GQA</td>
+<td>2·H_kv·d</td>
+<td>Near-MHA</td>
+<td>Llama-3, Qwen3, Mistral, Gemma</td>
+</tr>
+<tr>
+<td>MLA</td>
+<td>d_c + d_rope</td>
+<td>Comparable, needs absorption</td>
+<td>DeepSeek-V2/V3/R1</td>
+</tr>
+<tr>
+<td>Sliding window</td>
+<td>2·H_kv·d, capped at w</td>
+<td>Task-dependent</td>
+<td>Mistral, Gemma-2 (hybrid)</td>
+</tr>
+<tr>
+<td>Linear / hybrid</td>
+<td>Fixed state</td>
+<td>Improving rapidly</td>
+<td>Hybrid MoE models, 2025–</td>
+</tr>
+</tbody>
+</table>
+<p>As an engine builder you rarely choose the variant, the model chooses for you. What you choose is whether your KV manager, kernels, and scheduler can express all of them, and the engines that struggled hardest with the 2025 model releases were the ones whose KV cache assumed a single uniform layer type.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>The attention variant sets the KV cache size, which sets memory bandwidth pressure, which sets decode speed. GQA is the mainstream choice and helps twice, less cache and higher arithmetic intensity, provided your kernel reads each KV head once and broadcasts across its group. MLA compresses KV about 57× into a latent and has to be implemented with absorption to pay off. Sliding-window, hybrid, and linear layers break the assumption that per-sequence state grows linearly with context, and a KV manager that can’t express that assumption will need rewriting.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Compute per-token KV bytes in FP16 and FP8 for each row of the table above, for a 94-layer model with <em>d</em> = 128. Which configurations let a 1M-token sequence fit in 288 GB alongside 118 GB of four-bit weights?</p></li>
+<li><p>Derive why decoupled RoPE is necessary in MLA. What breaks if you apply RoPE to the latent and upproject afterwards?</p></li>
+<li><p>A GQA decode kernel measures at exactly 1/16 of the bandwidth you expect on a 64Q/4KV model. What’s the most likely bug?</p></li>
+<li><p><strong>Build:</strong> implement decode attention twice, once reading KV per query head and once per KV head with broadcast, and measure both. Confirm the ratio matches the group size.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch07-command-queues-and-dispatch.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Command Queues and Dispatch</span>
+        </a>
+        
+        <a href="ch09-flashattention-and-tiling.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">FlashAttention and Tiling</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

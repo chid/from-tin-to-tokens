@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Interconnect Fabric — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link active">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VI: Multi-GPU and Distributed</span>
+            <span class="sep">/</span>
+            <span class="current">The Interconnect Fabric</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part VI: Multi-GPU and Distributed</div>
+          <h2>Overview</h2>
+          <p>Multi-GPU communication lands directly on the critical path of every token. A tensor-parallel model runs two collectives per layer. This part covers the interconnect fabric, collective communication algorithms, parallelism models, and disaggregated serving.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VI: Multi-GPU and Distributed</span>
+            <h1 class="chapter-title">The Interconnect Fabric</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="gpu-interconnects">GPU interconnects</h2>
+<p><strong>AMD Infinity Fabric</strong> , or xGMI, gives MI355X <strong>seven</strong> links per GPU for roughly <strong>1,075 GB/s of aggregate peer bandwidth per GPU</strong> . In the standard 8-GPU node every GPU has a direct link to every other, a fully connected mesh with no switch, and each pairwise link runs around 153 GB/s bidirectional.</p>
+<p>Be careful with what those numbers mean, because per-link and aggregate figures get conflated constantly. A <em>pair</em> of GPUs talking to each other uses one link and gets that link’s bandwidth, while a GPU participating in an 8-way collective drives all seven and approaches the aggregate. Any figure like “864 GB/s per link” is an aggregate number that lost its label somewhere.</p>
+<p>Measured rather than specified, mainarch’s <code>xgmi_probe</code> microbenchmark on 8×MI355X records a <strong>single-link write at about 72 GB/s</strong> , consistent with 153 GB/s bidirectional, and per-GPU all-to-all throughput that <em>rises with transfer size</em> , 133 GB/s at 8 MiB, 181 at 16 MiB, 324 at 64 MiB.</p>
+<p>That ramp is the single most actionable fact in this chapter. Fabric bandwidth isn’t a constant you can plug into a model, it’s a function of transfer size, and algorithms that chop a large transfer into many small per-chunk kernels never leave the ramp.</p>
+<p><strong>NVIDIA NVLink</strong> gives H100 fourth-generation links at 900 GB/s aggregate per GPU with NVSwitch providing all-to-all in an 8-GPU node, and B200 fifth generation at 1.8 TB/s. Rack-scale NVL72 systems extend one NVLink domain across 72 GPUs.</p>
+<p><strong>Scale-out</strong> means InfiniBand, NDR at 400 Gb/s or XDR at 800, or RoCE over Ethernet, with GPUDirect RDMA so NICs read and write GPU memory without staging through the host.</p>
+<h2 id="topology-and-its-consequences">Topology and its consequences</h2>
+<p>Within a node the two dominant topologies behave differently for collective design. A <strong>fully connected mesh</strong> gives every GPU a private link to every peer, so a collective where all eight GPUs drive all seven of their links simultaneously uses the full bisection with no shared switch to contend for. A <strong>switched</strong> topology gives every GPU one fat pipe to a switch that provides all-to-all, which is simpler to reason about with the switch as the shared resource.</p>
+<p>Across nodes the network is the fabric, an order of magnitude slower and two orders higher in latency, which is why single-node topologies dominate inference deployment decisions. Fitting the model in one node is worth a great deal.</p>
+<h2 id="the-asymmetry-or-why-push-beats-pull">The asymmetry, or why push beats pull</h2>
+<p>Here’s a finding that reshapes collective design once you internalise it. On these fabrics, <strong>remote writes</strong></p>
+<h2 id="stream-better-than-remote-reads-."><strong>stream better than remote reads</strong> .</h2>
+<p>The reason is straightforward once stated. A remote write is fire-and-forget, so the source issues stores and moves on with many in flight, while a remote read is a request-response round trip, so the number in flight is bounded by the requester’s outstanding-request capacity and each one’s latency is fully exposed.</p>
+<p>Measured on MI355X, switching the all-gather phase from pull, where each GPU reads what it lacks, to push, where each owner writes its chunk to all peers, took 64 MiB bus bandwidth from <strong>58 to 80 GB/s</strong> . Converting the reduce-scatter phase to writes as well, scattering into peers’ staging buffers and then summing locally at HBM speed, took it from <strong>80 to 104 GB/s</strong> . Same data volume, same topology, same hardware, and the direction of the transfer was worth 1.8×.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0127-02.png" alt="FIGURE 27.1: Build every collective around writes" />
+<figcaption aria-hidden="true">FIGURE 27.1: Build every collective around writes</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Eight modules, each with a direct link to every other. There is no switch to contend for, so a collective where all eight drive all seven of their links uses the full bisection.</p></li>
+<li><p>O <strong><code>2</code></strong> A remote write is fire-and-forget, so many can be in flight at once. Measured on this fabric, a single link write sustains about 72 GB/s.</p></li>
+<li><p>O <strong><code>3</code></strong> A remote read is a request and a response, so the number in flight is bounded by outstanding-request capacity and every latency is exposed. Switching the all-gather from pull to push was worth 58 to 80 GB/s, and converting the reducescatter as well took it to 104.</p></li>
+</ul>
+<p>Design every collective around pushing.</p>
+<h2 id="peer-access">Peer access</h2>
+<p>Peer access from Chapter 6 is the mechanism. Allocate in one GPU’s VRAM, map into another’s address space, and let kernels load and store across the fabric directly.</p>
+<p>The detail that matters for correctness is the memory model. A store to peer memory isn’t visible to the peer’s subsequent loads until it’s ordered by a release at <strong>system scope</strong> , because agent scope isn’t enough when the consumer is a different agent. On gfx9-class hardware that means system-scope atomics with release and acquire semantics, <code>memory_scope_all_svm_devices</code> , plus the corresponding memory barrier. Get the scope wrong and you get a collective that’s correct in testing and intermittently wrong under load, which is the worst possible outcome because it looks like it works.</p>
+<h2 id="what-the-latency-floor-actually-is">What the latency floor actually is</h2>
+<p>You will see a figure of about 20 µs quoted as the floor for a small all-reduce, sometimes described as physics. It isn’t, and why it isn’t is instructive.</p>
+<p>The measured floor for mainarch’s <strong>host-driven</strong> all-reduce at 1 KiB across 8 GPUs is 20.5 µs, which is a real number and a good one against RCCL’s 47.3 µs at the same size. But it’s an <em>implementation</em> floor, one host-to-device handoff plus one round of fabric synchronisation plus one return.</p>
+<p>The actual physical bound is far lower. Recent work measuring the speed-of-light latency of GPU collectives on NVLink puts the two-GPU bound at about <strong>1.4 µs</strong> , built from two L2 round trips of roughly 0.31 µs each plus a remote store latency of 0.79 µs, and demonstrates barrier-free one-shot kernels achieving <strong>2.37 µs</strong> where NCCL’s ring takes about 11. The same work identifies the dominant cost in small-message collectives precisely, which is <strong>global memory barriers</strong> , each costing over 1 µs, so that two barrier calls can be 40% of a 5 µs four-GPU all-reduce.</p>
+<p>So the correct statement is that the physical floor is around a microsecond, host-driven implementations sit at tens of microseconds because of the host handoff and the barriers, and getting from one to the other means removing the host from the loop and removing barriers from the algorithm. That’s a research programme with a known direction rather than a wall.</p>
+<h2 id="topology-aware-peer-ordering">Topology-aware peer ordering</h2>
+<p>When a GPU has to reach several peers, contact them in an order that reflects the fabric, direct xGMI or NVLink peers first, then PCIe-attached peers, then remote nodes. On a fully connected node all peers are equidistant and the ordering is a formality, while in partially connected topologies, some 4-GPU configurations and multi-node systems and GPUs split across NUMA domains, it matters a great deal, and the ordering comes from reading <code>io_links</code> in sysfs or the equivalent device properties.</p>
+<p>Related and often overlooked is <strong>rank placement</strong> , meaning which process gets which physical GPU. A tensor-parallel group spread across two NUMA domains or two PCIe roots performs very differently from one that isn’t, and the mapping is usually decided by an environment variable nobody has looked at.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Know your fabric’s real numbers. MI355X has 7 xGMI links per GPU totalling about 1,075 GB/s, each pairwise link around 153 GB/s bidirectional, and measured per-GPU throughput that ramps with transfer size from 133 GB/s at 8 MiB to 324 GB/s at 64 MiB. Build every collective around remote writes, which measured 1.8× better than reads for the same data movement. And don’t mistake an implementation floor for physics, since the speed-of-light bound for a small all-reduce is around a microsecond while host-driven implementations sit at tens, with the gap being host handoff and memory barriers, both removable.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Distinguish per-link, per-GPU aggregate, and bisection bandwidth for an 8-GPU fully connected node with 153 GB/s bidirectional links. Which applies to a pairwise copy, and which to an 8-way all-gather?</p></li>
+<li><p>Explain mechanically why remote writes achieve higher sustained bandwidth than remote reads, in terms of outstanding transactions.</p></li>
+<li><p>Given the measured all-to-all ramp of 133, 181, and 324 GB/s at 8, 16, and 64 MiB, estimate the penalty of splitting a 64 MiB collective into eight 8 MiB kernels. What does that imply about chunking strategy?</p></li>
+<li><p><strong>Build:</strong> write a peer-bandwidth probe measuring write and read throughput between every GPU pair and produce the bandwidth matrix. Does your node match its documented topology?</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch26-adapters-and-multimodal-inputs.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Adapters and Multimodal Inputs</span>
+        </a>
+        
+        <a href="ch28-collectives-for-inference.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Collectives for Inference</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

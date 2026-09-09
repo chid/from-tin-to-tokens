@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correctness Validation — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link active">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IX: Proof, Testing, and Production</span>
+            <span class="sep">/</span>
+            <span class="current">Correctness Validation</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part IX: Proof, Testing, and Production</div>
+          <h2>Overview</h2>
+          <p>Building an inference stack is half the work. You also have to prove it is correct, measure it honestly, and make it survive production traffic. This part covers correctness validation, roofline performance measurement, production architecture, and the recommended build order.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IX: Proof, Testing, and Production</span>
+            <h1 class="chapter-title">Correctness Validation</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="why-this-is-harder-than-it-looks">Why this is harder than it looks</h2>
+<p>A wrong inference stack doesn’t crash. It generates fluent, plausible text that’s slightly worse than it should be, and nothing fires. No assertion, no red test, no user reporting that the sixteenth layer’s RoPE pairing is transposed. The quality loss hides inside the model’s ordinary variance, where it can sit for months.</p>
+<p>Which is why correctness for inference needs a stronger method than “the output looks reasonable.”</p>
+<h2 id="the-reference-oracle-methodology">The reference oracle methodology</h2>
+<p>Implement the same mathematics independently, at higher precision, and compare. The reference has to be four things.</p>
+<p><strong>Independent</strong> , meaning pure host code sharing no source with the kernel under test, because if both use the same helper for RoPE angles and the helper is wrong, the test passes and the model is broken. That’s the most important property and the easiest to lose.</p>
+<p><strong>High precision</strong> , meaning f64, which has 52 mantissa bits against f16’s 10 and f32’s 23, so computing the reference in f64 removes rounding as a variable and any disagreement beyond expected f16 rounding is a real difference in what was computed.</p>
+<p><strong>Faithful to the datapath</strong> , which sounds like it contradicts the previous point and doesn’t. The reference computes in f64 while round-tripping through the storage precision at exactly the points the kernel does, so if the kernel stores an f16 intermediate the reference should too. Otherwise you’re comparing two different algorithms and chasing phantom errors.</p>
+<p><strong>Per-step</strong> , comparing at every stage rather than only at the end.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0163-01.png" alt="FIGURE 36.1: The oracle, and the way it quietly stops working" />
+<figcaption aria-hidden="true">FIGURE 36.1: The oracle, and the way it quietly stops working</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> One input drives both paths. The GPU path is the thing under test. O <strong><code>2</code></strong> The reference computes the same mathematics in f64 on the host, and it round-trips through the storage precision at exactly the points the kernel does, so you are comparing one algorithm rather than two.</p></li>
+<li><p>O <strong><code>3</code></strong> The comparator reports scale-invariant relative L2. A correct FP16 layer lands near 1e-5, and 1e-2 is a bug. O <strong><code>4</code></strong> The failure mode is a shared component. If both paths use the same wrong RoPE helper, the test passes and the model is broken, which is why golden vectors from a genuinely different implementation are the only real defence. Agreement below 1e-8 is evidence of this, not of quality.</p></li>
+</ul>
+<h2 id="relative-l2-as-the-metric">Relative L2 as the metric</h2>
+<pre><code>rel_L2 = ‖kernel − reference‖₂ / ‖reference‖₂</code></pre>
+<p>Scale-invariant, well-behaved, and it aggregates over a tensor without being dominated by one element.</p>
+<p>Typical values from a working stack, measured against an f64 reference.</p>
+<table>
+<thead>
+<tr>
+<th><strong>OPERATION</strong></th>
+<th><strong>PRECISION</strong></th>
+<th><strong>OBSERVED</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decode attention</td>
+<td>FP16 KV</td>
+<td>3.3e-7 (max rel err)</td>
+</tr>
+<tr>
+<td>Decode attention</td>
+<td>FP8 KV</td>
+<td>3.89e-7 (max rel err)</td>
+</tr>
+<tr>
+<td>MoE FFN (real dims)</td>
+<td>FP16</td>
+<td>5.8e-4 (rel-L2)</td>
+</tr>
+<tr>
+<td>Router weights</td>
+<td>FP32</td>
+<td>9e-18 (essentially exact)</td>
+</tr>
+<tr>
+<td>Full decoder layer</td>
+<td>FP16 datapath</td>
+<td>3.28e-5 (rel-L2)</td>
+</tr>
+<tr>
+<td>4-layer model, per-step logits</td>
+<td>FP16 datapath</td>
+<td>9.49e-4 (max rel-L2)</td>
+</tr>
+<tr>
+<td>Multi-GPU all-reduce</td>
+<td>FP32</td>
+<td>bit-exact against CPU</td>
+</tr>
+</tbody>
+</table>
+<p>Read the pattern rather than the individual numbers. Error grows with the number of chained FP16 operations, so a single attention kernel sits at 1e-7, a full layer at 1e-5, and a four-layer model’s logits at 1e-3, because rounding accumulates. Knowing what your stack <em>should</em> produce at each level is what lets you recognise 1e-2 as a bug.</p>
+<p>As rules of thumb, below 1e-3 for a full layer is consistent with correct FP16 arithmetic, above 1e-2 is a bug, and <strong>below 1e-8 for an FP16 kernel means your reference isn’t independent</strong> and you’ve accidentally tested the kernel against itself.</p>
+<h2 id="choose-the-metric-carefully">Choose the metric carefully</h2>
+<p>A cautionary tale that generalises. An early MoE correctness check used per-element relative error with an epsilon in the denominator to avoid dividing by zero.</p>
+<pre><code>err = |a − b| / (|b| + 1e-2)</code></pre>
+<p>On synthetic test data with small output magnitudes the epsilon dominated the denominator and the metric read 0.17, apparently catastrophic. The kernel was correct all along and the metric was wrong, and switching to scale-invariant relative L2 gave 5.8e-4.</p>
+<p>Two lessons. A metric with a magic constant will betray you as soon as your data’s scale changes, and synthetic test data always has a different scale from real data. And, more expensively, <strong>when a test fails, suspect the test</strong> . A failing test is evidence about the system <em>including the test</em> , and time spent debugging a correct kernel against a broken metric is the most common way correctness work goes wrong.</p>
+<h2 id="per-step-validation">Per-step validation</h2>
+<p>For a multi-layer model, compare at every step. Run the reference for token <em>t</em> in f64, mirroring the kernel’s storage rounding, run the GPU path for the same token, compare logits and ideally each layer’s output, and if error exceeds threshold at layer <em>k</em> then the bug is at or before layer <em>k</em> .</p>
+<p>Per-step comparison is what makes debugging tractable, because systematic errors accumulate linearly across layers, so a 1e-4 per-layer bias becomes 1e-2 by layer 94 and by then every layer looks wrong. Catching it where it enters is the difference between an afternoon and a week.</p>
+<h2 id="moe-tie-breaks">MoE tie-breaks</h2>
+<p>Router top-k selection can tie and the GPU breaks ties by index order, so a reference breaking them differently selects different experts and produces a large, meaningless disagreement.</p>
+<p>The fix that makes MoE testable is to have <strong>the reference follow the GPU’s selections</strong> , reading back the chosen expert indices and routing weights and using exactly those, which isolates the expert FFN computation from the routing decision. Then test routing separately by comparing indices and weights directly, where the correct comparison is exact equality of indices rather than a floating-point tolerance.</p>
+<p>The same principle applies to sampling. To test the model, compare logits rather than sampled tokens, because a single differing logit near the top of the distribution changes the token and makes the comparison meaningless.</p>
+<h2 id="the-circularity-risk">The circularity risk</h2>
+<p>The failure mode of oracle testing is circularity, where the reference shares an assumption with the kernel so both are wrong together and the test passes.</p>
+<p><strong>Shared formula</strong> , where both implement RoPE with the same incorrect pairing convention, gets mitigated by deriving the reference from the model’s specification and validating against a third implementation, a published reference or a framework, at least once. <strong>Shared constants</strong> , where both use ε = 1e-5 for a model trained with 1e-6, gets mitigated by reading constants from the checkpoint’s config in both paths and asserting them. <strong>Shared layout</strong> , where both assume the same wrong weight transposition, gets mitigated by deriving the layout from the checkpoint’s tensor shapes rather than from the kernel’s expectations, and it’s insidious because a consistently transposed weight often still produces plausible output.</p>
+<p>The strongest defence is <strong>golden vectors</strong> , a small set of inputs with outputs captured from a trusted implementation of the same checkpoint, stored in the repository and checked in CI. They catch the entire class of shared-assumption errors that no amount of internal consistency will, and if you can’t run a reference implementation on your hardware, produce them elsewhere and transfer the file, since the whole point is that the trusted implementation should be a <em>different</em> implementation.</p>
+<h2 id="testing-the-test">Testing the test</h2>
+<p>A test that has never failed is a formality, so validate the oracle by breaking things on purpose.</p>
+<p><strong>Inject bugs.</strong> Change a rounding mode, transpose a matrix, swap a dimension, use the wrong ε, shift a RoPE index by one, and check each gets caught, recording <em>by how much</em> , which calibrates your thresholds against real failure magnitudes. <strong>Check sensitivity</strong> , since the oracle has to distinguish FP16 rounding at 1e-5 from a real bug at 1e-2, and if both pass the threshold is too loose while if rounding fails it’s too tight. And <strong>find the boundary</strong> by sweeping the magnitude of an injected error until detection begins, which is your actual sensitivity rather than your intended one.</p>
+<h2 id="numerical-edge-cases">Numerical edge cases</h2>
+<p>Beyond the oracle, test rounding, verifying that narrowing conversions round to nearest even rather than toward zero. Test subnormals, verifying handling matches between kernel and reference and that whichever flush-to-zero mode you use is applied consistently. Test NaN and inf, verifying they propagate rather than becoming garbage and that a NaN anywhere in a batch doesn’t corrupt other sequences, which is a real failure mode in fused batched kernels. Test overflow, verifying FP32 to FP16 saturates rather than wrapping, using a BF16 checkpoint containing values above 65,504 (Chapter 21). And test boundary shapes, sequence length 1, exactly one block, exactly one token past a block boundary, and a full block table.</p>
+<h2 id="beyond-numerics-does-it-produce-the-right-text">Beyond numerics, does it produce the right text</h2>
+<p>Numerical correctness is necessary and not sufficient, because a stack can be numerically perfect and wrong at the system level. The chat template misapplied, special tokens mishandled, the wrong EOS, a stop string truncating one character late, a sampling parameter interpreted differently.</p>
+<p>Four tests catch those. <strong>End-to-end golden generations</strong> , fixed prompt, greedy sampling, fixed seed, comparing the exact output string against a stored value, which are sensitive to everything, which is what you want, and which will occasionally fail for benign reasons, which is why a human should review rather than auto-update them. <strong>Cross-engine comparison</strong> , running the same checkpoint through a mature engine and comparing greedy outputs, where divergence points at a real difference without telling you which side is right, though it does tell you where to look. <strong>Task benchmarks with confidence intervals</strong> for anything lossy, quantisation or compression or sparsity, because a 1-point difference on a 200question benchmark is noise. And <strong>long-context probes</strong> , needle-in-a-haystack at several depths, which catch the position-encoding and cache-management bugs short prompts never reach.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>The f64 oracle is the gold standard for kernel correctness, built from independent code at high precision, faithful to the datapath’s rounding points, and compared per step with scale-invariant relative L2. Know the error magnitudes a correct stack produces, 1e-7 for a kernel, 1e-5 for a layer, 1e-3 for a few layers of logits, so you can recognise a bug. Guard against circularity with golden vectors from a genuinely different implementation, and against metric bugs by suspecting the test when it fails. Then test the system rather than only the numbers, templates and stop conditions and long-context behaviour included.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Explain why an FP16 kernel agreeing with an f64 reference to 1e-10 is evidence of a problem. What problem?</p></li>
+<li><p>Design an oracle for the paged attention kernel of Chapter 12 that would catch a block-table off-by-one, and show why a randomly generated block table catches it while a sequential one doesn’t.</p></li>
+<li><p>A quantised model scores within noise on aggregate benchmarks while users report degraded performance on long documents. Design the evaluation that would have caught this before release.</p></li>
+<li><p><strong>Build:</strong> write an f64 reference for the full decoder layer of Chapter 22 and validate your GPU implementation against it. Then inject five distinct bugs and record the rel-L2 each produces.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch35-edge-and-resource-constrained-inference.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Edge and Resource-Constrained Inference</span>
+        </a>
+        
+        <a href="ch37-performance-measurement.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Performance Measurement</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

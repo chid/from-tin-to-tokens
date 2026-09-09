@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuous Batching — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link active">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IV: The Serving Engine</span>
+            <span class="sep">/</span>
+            <span class="current">Continuous Batching</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part IV: The Serving Engine</div>
+          <h2>Overview</h2>
+          <p>A stack with world-class kernels and a naive scheduler loses to the opposite combination on every metric a user notices. This part builds continuous batching, request scheduling, prefix caching, chunked prefill, speculative decoding, and tokenisation.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IV: The Serving Engine</span>
+            <h1 class="chapter-title">Continuous Batching</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="static-batching-and-why-it-wastes-so-much">Static batching, and why it wastes so much</h2>
+<p>In static batching, requests get grouped when they arrive and the batch runs to completion before anyone new can join. Start four requests, watch three of them finish quickly while the fourth generates a long answer, and three of your four slots sit idle until it’s done.</p>
+<p>On a workload with realistic variance in output length, and every real workload has that, the idle fraction is enormous. You’re paying for a GPU and using a fraction of it for reasons that have nothing to do with hardware.</p>
+<p>Continuous batching, also called iteration-level or in-flight batching, lets requests join and leave at any decode step. A finished request frees its slot immediately, so the engine never runs a half-empty batch while work waits in the queue.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0081-07.png" alt="FIGURE 15.1: Continuous batching turns idle slots into throughput" />
+<figcaption aria-hidden="true">FIGURE 15.1: Continuous batching turns idle slots into throughput</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Static batching groups requests at arrival and runs the batch to completion. Three of these four finish early.</p></li>
+<li><p>O <strong><code>2</code></strong> Their slots stay empty until the longest request in the batch is done. On any workload with realistic variance in output length, that dead area is most of what you are paying for.</p></li>
+<li><p>O <strong><code>3</code></strong> Continuous batching makes the scheduling unit one decode step, so a finished request frees its slot immediately.</p></li>
+<li><p>O <strong><code>4</code></strong> A new request joins mid-flight. It needs KV blocks from a shared pool right now, which is exactly why continuous batching requires paged KV rather than merely benefiting from it.</p></li>
+</ul>
+<h2 id="orca-and-iteration-level-scheduling">Orca and iteration-level scheduling</h2>
+<p>The foundational paper is Orca (Yu et al., OSDI 2022), which made the scheduling unit one decode step rather than one request. Orca also introduced <em>selective batching</em> , batching the operations that can be</p>
+<p>batched across requests of differing lengths, which is the linear layers where tokens are independent rows, while handling attention per sequence because each sequence attends to a different history. That split is still exactly how every engine works today.</p>
+<p>Here’s the loop, in the form all of them implement.</p>
+<pre><code>loop {
+    // 1. Reclaim
+    for req in finished { free_kv_blocks(req); notify_client(req); }
+    // 2. Admit — as many queued requests as the KV budget allows
+    while let Some(req) = queue.peek() {
+        if !can_allocate(req) { break; }
+        admit(req);
+    }
+    // 3. Preempt if the running set no longer fits
+    while !fits_in_budget(running) {
+        let victim = choose_victim(running);
+        evict(victim);            // recompute or swap
+    }
+    // 4. Build the step: decode tokens for all running requests,
+    //    plus one prefill chunk if the token budget allows
+    let batch = build_batch(running, token_budget);
+    // 5. Execute one forward pass
+    let logits = model.forward(batch);
+    // 6. Sample, append to KV, check stop conditions
+    let tokens = sampler.sample(logits, batch.params);
+    for (req, tok) in zip(batch.reqs, tokens) {
+        req.append(tok);
+        if req.is_finished() { finished.push(req); }
+        else { stream_to_client(req, tok); }
+    }
+}</code></pre>
+<p>Everything in the rest of Part IV, and a fair amount of Part IX, is a refinement of one of those six steps.</p>
+<h2 id="why-this-needs-paged-kv">Why this needs paged KV</h2>
+<p>The dependency is structural rather than convenient. A joining request needs KV blocks for its prompt right now, out of a pool shared with everyone else. A finishing request has to return its blocks immediately rather than when the batch drains. And the attention kernel has to handle a batch where one sequence sits at token 10 and another at token 900,000, following each sequence’s own block table.</p>
+<p>Without paging you’d pre-allocate a contiguous maximum-length buffer per slot, which caps concurrency at VRAM divided by maximum length regardless of what anyone actually uses. Paging is what makes concurrency depend on real demand.</p>
+<h2 id="batched-attention">Batched attention</h2>
+<p>The batched decode kernel handles every running sequence in one launch, and each sequence brings one query vector per query head, its own block table, its own sequence length, and, with quantisation, its own scale metadata. The kernel parallelises over sequences, KV heads, and KV splits.</p>
+<p>Two details decide whether it performs.</p>
+<p><strong>Ragged batching.</strong> Sequence lengths differ by orders of magnitude, so padding to the maximum wastes almost all the work. The standard representation is a cumulative-sequence-length array, the varlen or ragged layout, plus a flattened token dimension, so the kernel indexes directly into each sequence’s data with no padding at all.</p>
+<p><strong>Split budget across sequences.</strong> Chapter 10’s split count was derived for one sequence filling the GPU, but with <em>B</em> sequences the total workgroup budget is shared, so splits per sequence should fall as batch size rises. Engines compute this from a target number of total resident workgroups rather than from persequence heuristics, because a fixed split count that’s right at batch 1 is badly wrong at batch 64.</p>
+<h2 id="prefill-and-decode-in-the-same-loop">Prefill and decode in the same loop</h2>
+<p>Both phases share the loop, and the scheduler decides each iteration whether to spend its budget on decode, one token per running sequence, or on prefill, many tokens for a new one, or on both.</p>
+<p>vLLM used to alternate, with prefill-only and decode-only iterations, which produced the interference pattern Chapter 18 describes and got replaced by chunked prefill, now the default. Every iteration runs decode for all running sequences plus as many prefill tokens as the budget allows. SGLang interleaves similarly while exploiting radix-tree prefix sharing so that prefill work often gets skipped entirely.</p>
+<p>The unifying abstraction is a <strong>token budget</strong> per iteration, <code>max_num_batched_tokens</code> . Each running sequence contributes one token, prefill contributes the remainder, and the budget is sized so the iteration takes a predictable amount of time. Predictable iteration time is what makes inter-token latency predictable, and inter-token latency is what users perceive.</p>
+<h2 id="the-throughput-and-latency-trade">The throughput and latency trade</h2>
+<p>Bigger batches raise throughput, because the weight and KV reads amortise across more tokens, and raise per-token latency, because each step does more work. Smaller batches do the reverse. So far, so obvious.</p>
+<p>The shape of the curve is the part worth internalising. At batch 1 decode is entirely bandwidth-bound on weights, so doubling the batch nearly doubles throughput at nearly no latency cost, since the same weights get read once for two tokens. That continues until the weight read is amortised and either attention, which scales with batch times context, or raw compute becomes the bottleneck, after which throughput gains flatten and latency rises roughly linearly.</p>
+<p>Which gives you a practical rule. Increase batch size until you’re no longer weight-bandwidth-bound, then stop when the latency SLO binds. Where that point sits depends on model size, context length, and quantisation, so it has to be measured per deployment rather than configured from a default.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Continuous batching converts GPU idle time into throughput by letting requests join and leave at every decode step. It requires paged KV for dynamic block allocation, a scheduler to decide which requests advance, and ragged batched attention to handle per-sequence lengths and block tables in one kernel. The per-iteration token budget is the control knob that makes inter-token latency predictable, and batch size trades latency for throughput along a curve that’s nearly free at first, while decode is weightbandwidth-bound, and expensive afterwards.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A dense 94-layer model in FP8 has 120 GB of weights. At 5,800 GB/s, how long does one decode step take if it’s purely weight-bandwidth-bound? Now give each sequence an 8K-token KV cache with 4 KV heads of dimension 128 in FP8, and find the batch size at which total attention reads match the weight read.</p></li>
+<li><p>Explain why padding a ragged batch to the maximum sequence length is worse than it first appears, using a workload with lengths distributed log-uniformly between 100 and 100,000.</p></li>
+<li><p><strong>Build:</strong> write a simulator for the loop above with synthetic requests (arrival process, prompt lengths, output lengths). Measure throughput and P99 inter-token latency against batch cap and reproduce the shape of the trade-off curve.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch14-long-context-attention.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Long-Context Attention</span>
+        </a>
+        
+        <a href="ch16-request-scheduling.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Request Scheduling</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

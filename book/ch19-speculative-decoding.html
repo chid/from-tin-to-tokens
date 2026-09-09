@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speculative Decoding — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link active">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IV: The Serving Engine</span>
+            <span class="sep">/</span>
+            <span class="current">Speculative Decoding</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IV: The Serving Engine</span>
+            <h1 class="chapter-title">Speculative Decoding</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-one-token-per-forward-pass-ceiling">The one-token-per-forward-pass ceiling</h2>
+<p>Standard autoregressive decoding produces one token per forward pass, because token <em>t+1</em> can’t start until <em>t</em> is known. Per-token latency is therefore one full pass through every layer, and at small batch that pass is dominated by reading the weights, a fixed cost paid per token no matter how few FLOPs the token actually needs.</p>
+<p>Which points straight at the opportunity. If a forward pass is bandwidth-bound on weights, it has compute sitting idle, and verifying several candidate tokens in one pass costs almost nothing extra because the weights get read once either way.</p>
+<h2 id="draft-then-verify">Draft then verify</h2>
+<p>A cheap model or head proposes <em>k</em> candidate continuations. The target model processes all <em>k</em> in a single forward pass, producing the distribution at each position. Then you accept the longest prefix consistent with the target’s distribution and resample at the first rejection.</p>
+<p>The result is <em>a</em> accepted tokens per target forward pass, where <em>a</em> is the mean acceptance length, and throughput improves by roughly <em>a</em> at small batch.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0095-01.png" alt="FIGURE 19.1: Spend idle compute to buy fewer serial steps" />
+<figcaption aria-hidden="true">FIGURE 19.1: Spend idle compute to buy fewer serial steps</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> A small draft model, or a lightweight head on the target itself, proposes k candidate tokens.</p></li>
+<li><p>O <strong><code>2</code></strong> The target verifies all k in a single forward pass. At small batch that pass is bandwidth-bound on weights, so the compute to check several candidates is very nearly free.</p></li>
+<li><p>O <strong><code>3</code></strong> Rejection sampling accepts the longest consistent prefix and resamples at the first mismatch, which makes the output distribution exactly what the target alone would have produced.</p></li>
+<li><p>O <strong><code>4</code></strong> The rejected tail is discarded, and both KV caches have to be rolled back to the accept point, which is easy with paging and awkward without.</p></li>
+</ul>
+<h2 id="rejection-sampling-preserves-the-distribution">Rejection sampling preserves the distribution</h2>
+<p>This is the property that makes speculative decoding respectable rather than a quality trade. For a candidate <em>x</em> with target probability <em>p(x)</em> and draft probability <em>q(x)</em> , accept with probability min(1, p(x)/q(x)), and on rejection sample from the normalised residual max(0, p(x) − q(x)).</p>
+<p>The resulting token sequence is distributed <strong>exactly</strong> as if the target model had generated it alone, so speculative decoding is a pure latency optimisation rather than an approximation.</p>
+<p>Two caveats bite in practice. Exactness holds for the sampling distribution rather than bit-for-bit output, since batching the verification changes reduction orders and outputs differ from unspeculated greedy decoding the same way any batch-size change does, which Chapter 20 explains. And exactness depends on the draft’s probabilities being the ones actually used in the accept test, so implementations that draft with a different temperature or top-p than they verify against are no longer distributionpreserving. That’s a common bug and an easy one to miss, because the output still looks fine.</p>
+<h2 id="medusa">Medusa</h2>
+<p>Medusa (Cai et al., 2024) adds <em>k</em> lightweight heads to the target model, where the <em>k</em> -th extra head predicts the token at position <em>t+k+1</em> , all from the same hidden state, then verifies a tree of candidates</p>
+<p>rather than a single sequence. No separate model to load or schedule, and lower acceptance than a good draft model because the heads predict independently and can’t condition on each other.</p>
+<h2 id="eagle">EAGLE</h2>
+<p>EAGLE (Li et al., 2024) drafts in the target model’s <strong>feature space</strong> , where a small autoregressive head predicts the next hidden state and that gets projected through the target’s LM head. Feature-level drafting is more accurate than token-level, partly because a hidden state carries more information than a sampled token and partly because the draft head can condition on the target’s own representation.</p>
+<p><strong>EAGLE-3</strong> from 2025 is the current reference point. It drops the feature-regression objective in favour of direct token prediction, fuses low, middle, and high-level features from the target, and trains with a training-time test procedure that simulates multi-step drafting. Reported results are roughly <strong>3.0 to 6.5× speedup</strong> over vanilla autoregressive decoding with mean acceptance length up to about 7.5 on code generation, 20 to 40% better than EAGLE-2, and it exhibits a scaling law where more draft training data keeps improving acceptance, which the original EAGLE didn’t.</p>
+<p>Those headline numbers are batch-1 latency measurements. In a loaded server the same technique reports around <strong>1.38× throughput at batch 64</strong> in SGLang, and the gap between 6.5× and 1.38× isn’t a contradiction. It’s the entire story of when speculation helps.</p>
+<h2 id="when-it-helps-and-when-it-hurts">When it helps and when it hurts</h2>
+<p>Speculation converts spare compute into fewer serial steps, so whether you have spare compute decides everything, and that depends on batch size.</p>
+<p>At <strong>small batch</strong> the forward pass is bandwidth-bound on weights and the compute units are idle, so verifying <em>k</em> tokens costs almost nothing and speculation is close to a free <em>a</em> × on latency. At <strong>large batch</strong> the machine is already saturated, so verifying <em>k</em> candidates per sequence multiplies the work by <em>k</em> and yields only <em>a</em> tokens, which means that unless <em>a</em> approaches <em>k</em> you’ve <em>lost</em> throughput.</p>
+<p>Break-even is roughly <em>a</em> &gt; the cost of verifying <em>k</em> tokens over the cost of one token, which at large batch approaches <em>a</em> &gt; <em>k</em> . Which is why production systems make speculation <strong>adaptive</strong> , speculating aggressively when the batch is small, reducing <em>k</em> as load rises, and disabling it under saturation. An engine that speculates at a fixed depth regardless of load will help at 3 a.m. and hurt at peak.</p>
+<p>Acceptance is also workload-dependent, with code and structured output drafting extremely well because continuations are predictable, and free-form creative text drafting much worse.</p>
+<h2 id="implementation-challenges">Implementation challenges</h2>
+<p><strong>Memory.</strong> A draft model has to be resident, and for a 70B FP16 target at 140 GB a 7B FP16 draft is 14 GB, which is smaller than people tend to assume. EAGLE-style heads are far smaller, typically a few hundred MB, which is a large part of their appeal.</p>
+<p><strong>KV cache for the draft.</strong> The draft has its own cache, its own paging, and its own rollback on rejection, so rejected tokens have to be removed from both caches, which means the KV append path needs to be undoable. Easy with paging, awkward without.</p>
+<p><strong>Tree verification.</strong> Medusa and EAGLE verify a <em>tree</em> of candidates, which needs attention with a custom mask expressing the tree structure. That’s a real kernel requirement rather than a detail.</p>
+<p><strong>Batched speculation.</strong> Different sequences accept different numbers of tokens in the same step, so the batch becomes ragged in a new dimension and the scheduler has to handle variable per-sequence progress per iteration.</p>
+<p><strong>Interaction with prefix caching.</strong> Draft-model KV is a second cache with its own hit rates, so the sharing logic gets duplicated or the draft becomes the bottleneck.</p>
+<h2 id="the-economics">The economics</h2>
+<p>You pay for one draft pass, which is cheap, plus one target pass over <em>k</em> tokens instead of 1. You get <em>a</em> tokens per target pass instead of 1.</p>
+<p>At batch 1 with EAGLE-3-class acceptance that’s a large latency win for a modest memory cost, and it’s the single most effective technique for interactive single-user latency. At high batch it’s a throughput loss unless carefully bounded. Both statements are true at once, which is why any benchmark claim about speculative decoding has to state its batch size before it means anything.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Speculative decoding breaks the one-token-per-pass ceiling by spending idle compute on verifying multiple candidates, and rejection sampling keeps the output distribution exact. EAGLE-3 reaches 3.0 to 6.5× at batch 1 with acceptance lengths up to about 7.5, and about 1.38× throughput at batch 64, because the technique converts spare compute into speed and a saturated server has none. Make speculation depth adaptive to load, and never quote a speedup without its batch size.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Derive the break-even acceptance length as a function of batch size for a model where a decode step costs <code>t_w + B·t_a</code> , weights plus per-sequence attention, and verifying <em>k</em> tokens costs <code>t_w + B·k·t_a</code> .</p></li>
+<li><p>Explain why drafting with a different temperature than verification breaks distribution preservation, and give the corrected accept test.</p></li>
+<li><p>Design the KV rollback path for tree-structured speculation over a paged cache. What’s the cost of rejecting at depth 1 against depth 5?</p></li>
+<li><p><strong>Build:</strong> implement n-gram speculation, drafting by finding the prompt’s last occurrence of the current suffix. Measure acceptance length on a summarisation workload and on a creative-writing workload, and explain the difference.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch18-chunked-prefill.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Chunked Prefill</span>
+        </a>
+        
+        <a href="ch20-tokenisation-sampling-structured-output.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Tokenisation, Sampling, and Structured Output</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

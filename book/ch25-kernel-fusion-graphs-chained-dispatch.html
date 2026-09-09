@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kernel Fusion, Graphs, and Chained Dispatch — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link active">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part V: Model Execution</span>
+            <span class="sep">/</span>
+            <span class="current">Kernel Fusion, Graphs, and Chained Dispatch</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part V: Model Execution</span>
+            <h1 class="chapter-title">Kernel Fusion, Graphs, and Chained Dispatch</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>CHAPTER 25 · KERNEL FUSION, GRAPHS, AND CHAINED DISPATCH</p>
+<h2 id="the-host-overhead-problem">The host overhead problem</h2>
+<p>Every kernel dispatch costs host time, constructing the packet, writing kernarg, ringing the doorbell, and, if you wait, polling the completion signal. Measured on mainarch’s unfused path that full cycle is about <strong>13 µs</strong> , and an assembled Qwen3-architecture layer issued roughly <strong>350</strong> of them for <strong>4.6 ms per layer</strong> . Across 94 layers that’s 430 ms per token, almost all of it the GPU waiting for the host.</p>
+<p>Where did 350 dispatches come from? That number isn’t inherent, and knowing its composition tells you how to fix it. 136 of them were per-head QK-norm and RoPE launches, and 64 more were per-head attention launches, so a layer that batches those across heads has an order of magnitude fewer.</p>
+<p>Which gives you three tiers of fix, in the order you should apply them. <strong>Fuse within a kernel</strong> , one launch over all heads instead of one per head, which is the biggest single win and pure kernel work. <strong>Remove the wait between launches</strong> through chained dispatch or graphs, which removes the round-trip rather than the launch. And <strong>remove the launch entirely</strong> with a persistent megakernel. Most engines stop after the second tier and are right to.</p>
+<p>CHAPTER 25 · KERNEL FUSION, GRAPHS, AND CHAINED DISPATCH</p>
+<p><img src="assets/images/from-tin-to-tokens-v1.0.pdf-0119-01.png" /></p>
+<h2 id="figure-25.1-four-ways-to-spend-a-layers-worth-of-host-time"><strong><code>FIGURE 25.1</code></strong> Four ways to spend a layer’s worth of host time</h2>
+<ul>
+<li><p><strong><code>1</code></strong> Per-kernel dispatch with a wait after each one. A measured layer issued roughly 350 of these at about 13 microseconds a cycle, so 4.6 ms of which almost all is the GPU waiting for the host.</p></li>
+<li><p><strong><code>2</code></strong> Fusing the per-head kernels comes first and is the biggest single win, because 200 of those 350 launches were one-perhead QK-norm, RoPE and attention calls.</p></li>
+<li><p><strong><code>3</code></strong> Chained dispatch, or a graph on a vendor runtime, removes the round trips rather than the launches. One doorbell, one wait.</p></li>
+<li><p><strong><code>4</code></strong> A persistent megakernel removes the launches too, and its real prize is keeping activations in registers across what used to be kernel boundaries. The costs are occupancy coupling, deadlock risk, and losing every per-kernel timing you had.</p></li>
+</ul>
+<h2 id="chained-dispatch">Chained dispatch</h2>
+<p>The AQL barrier bit from Chapter 7 lets you enqueue a dependency chain and wait once. Write every packet for a layer’s kernels into the ring, set the barrier bit on each packet that must not start until its predecessor completes, ring the doorbell <strong>once</strong> , let the command processor execute the chain in order, and wait once on the final packet’s completion signal.</p>
+<p><em>N</em> round-trips become one. In mainarch’s collectives work this is what made the fused reduce-scatter/allgather algorithm possible at all, since the two phases chain on the queue with the barrier bit ordering them, so one GPU can broadcast while another is still reducing and a single host synchronisation ends the whole operation. It beat the unfused scheme at every message size, even 1 KiB, where it went from 24 µs to 20.5 µs.</p>
+<p>Two requirements come with it, both learned the hard way. Chained dispatches need <strong>distinct kernarg slots</strong> per in-flight dispatch (Chapter 7), because sharing one means they race. And you want <strong>a nosignal mode</strong> , since intermediate packets in a chain don’t need completion signals and allocating one per packet wastes memory and signal-update traffic. Only the last packet needs one.</p>
+<p>CHAPTER 25 · KERNEL FUSION, GRAPHS, AND CHAINED DISPATCH</p>
+<h2 id="graphs-which-is-what-everyone-else-does">Graphs, which is what everyone else does</h2>
+<p>Chained dispatch is what you build when you own the queue. On a vendor runtime the equivalent is a <strong>graph</strong> , CUDA Graphs on NVIDIA and HIP Graphs on AMD, where you capture a sequence of launches once and thereafter replay the whole thing with a single call. The driver has already resolved the dependency structure, so per-launch CPU cost collapses from microseconds to a fraction of one.</p>
+<p>This is the single highest-leverage optimisation available to anyone building on a runtime, which is why every production engine uses it. If you’re on a runtime and haven’t enabled graphs, do that before optimising anything else in the dispatch path.</p>
+<p>The practical issues are worth knowing. <strong>Static shapes</strong> , since a captured graph has fixed shapes and fixed pointers while decode batch size and sequence lengths change constantly, which gets handled by capturing graphs for a set of bucketed batch sizes and padding up to the nearest bucket. <strong>Attention is the awkward part</strong> , because its work depends on per-sequence lengths, and vLLM’s answer is <strong>piecewise</strong> graphs, capturing the parts of the model with static structure and running the attention kernels outside the graph, splitting at the attention boundaries. That gets most of the launch savings without fighting the dynamic part. <strong>Memory pools have to be stable</strong> , since captured graphs embed device pointers and the allocator has to return the same addresses on replay, which is why engines use dedicated graph-capture memory pools. And <strong>capture costs something</strong> , seconds of startup and held memory per graph, so bucket coarsely.</p>
+<h2 id="the-replay-optimisation">The replay optimisation</h2>
+<p>The same idea one level lower, for a stack that owns its queue. A decode step issues an identical kernel sequence every token, differing only in a few pointers, the KV write position and output buffer and current length, so you record the packet templates and kernarg layouts once and each step patch only the fields that changed before re-submitting.</p>
+<p>That reduces per-token host work to a handful of stores. It’s what a hand-rolled stack builds instead of graphs, and it can go further than a graph because you control exactly which bytes get patched where a graph’s update API is coarser.</p>
+<h2 id="the-megakernel">The megakernel</h2>
+<p>The end of the road is a <strong>persistent megakernel</strong> , one kernel launched once that stays resident and executes the entire decode step internally, looping over layers with device-side scheduling and synchronisation.</p>
+<p>It eliminates launches, doorbell writes, and signal polls entirely, and it enables something the others can’t. Activations stay in registers and LDS across what used to be kernel boundaries, so the QKV projection’s output can feed attention without ever going to HBM. That’s the real prize, not the launch overhead but the memory traffic that kernel boundaries force.</p>
+<p>Mirage’s persistent kernel compiler reports 1.2 to 6.7× over non-fused decode, and several projects have demonstrated very high batch-1 token rates on single GPUs with hand-written persistent decode kernels.</p>
+<p>The costs are severe and worth stating plainly. <strong>Every kernel has to fit one occupancy budget</strong> , since the megakernel’s register and LDS allocation is the maximum over all fused stages, so one register-</p>
+<p>CHAPTER 25 · KERNEL FUSION, GRAPHS, AND CHAINED DISPATCH</p>
+<p>hungry stage lowers occupancy for everything. <strong>Device-side synchronisation is dangerous</strong> , because grid-wide and cross-GPU barriers require the participating workgroups to be co-resident and deadlock if they aren’t. In mainarch’s collectives work an unguarded device-side spin wedged the command processor badly enough that queues couldn’t be evicted and the GPU only recovered on process exit, so every device-side spin needs a watchdog bound and the launch geometry has to guarantee coresidency. <strong>Debuggability collapses</strong> , with no per-kernel timings, no intermediate buffers to inspect, and profilers reporting one enormous kernel. And <strong>flexibility collapses</strong> , since a new model architecture is a rewrite.</p>
+<p>Megakernels are right for a fixed model on fixed hardware where latency is the product. They’re wrong while you’re still changing the model.</p>
+<h2 id="table-driven-execution">Table-driven execution</h2>
+<p>A pragmatic middle ground represents the decode step as <em>data</em> , a table of kernel descriptors and kernarg layouts and dependencies, with a small engine walking the table issuing dispatches. Adding a layer type or reordering becomes a data change.</p>
+<p>The benefit is that one dispatch engine serves many architectures, which is exactly what a serving system needs. The costs are one level of indirection per dispatch and much less informative stack traces. It composes well with replay, since the table is what you record.</p>
+<h2 id="when-to-fuse">When to fuse</h2>
+<table>
+<thead>
+<tr>
+<th><strong>APPROACH</strong></th>
+<th><strong>HOST COST PER LAYER</strong></th>
+<th><strong>FLEXIBILITY</strong></th>
+<th><strong>USE WHEN</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Per-kernel dispatch with wait</td>
+<td>N × ~13 µs</td>
+<td>Full</td>
+<td>Bringing up, debugging</td>
+</tr>
+<tr>
+<td>Fused multi-head kernels</td>
+<td>(N/10) × ~13 µs</td>
+<td>Full</td>
+<td>Always, do this first</td>
+</tr>
+<tr>
+<td>Chained dispatch or graphs</td>
+<td>~one wait</td>
+<td>Good</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Replay or graph update</td>
+<td>~1 µs</td>
+<td>Good</td>
+<td>Steady-state decode</td>
+</tr>
+<tr>
+<td>Persistent megakernel</td>
+<td>~0</td>
+<td>Low</td>
+<td>Fixed model, latency is the product</td>
+</tr>
+</tbody>
+</table>
+<p>The order matters. Fuse redundant per-head launches before you engineer around the launches, because that tier is cheap and it shrinks the problem the other tiers have to solve.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Once you own the queue, the host becomes a scheduler rather than a participant. Fuse per-head kernels first, since the 350-dispatch layer was mostly 200 per-head launches. Then remove the round-trips with chained dispatch, using the barrier bit with distinct kernarg slots and signals only on the last packet, or on a runtime with graphs, which is the highest-leverage change available to most teams and why piecewise CUDA graph capture is standard. The megakernel goes further by keeping activations on chip across former kernel boundaries, at the cost of occupancy coupling, deadlock risk that demands watchdogs, and debuggability.</p>
+<p>CHAPTER 25 · KERNEL FUSION, GRAPHS, AND CHAINED DISPATCH</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A layer issues 350 dispatches at 13 µs each. Compute the per-token cost at 94 layers, then recompute for 30 dispatches after fusing per-head kernels, for 30 chained dispatches with one wait, and for a graph replay at 1 µs.</p></li>
+<li><p>Why does a grid-wide device-side barrier deadlock if the grid isn’t co-resident? Design a launch-geometry check that guarantees co-residency and a watchdog that fails safely if it’s wrong.</p></li>
+<li><p>Explain why piecewise graph capture splits at attention boundaries. What would it take to capture attention too?</p></li>
+<li><p><strong>Build:</strong> implement chained dispatch for a two-kernel sequence and measure the difference against dispatch-wait-dispatch. Add a third kernel and confirm the saving scales with chain length.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch24-mixture-of-experts-inference.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Mixture-of-Experts Inference</span>
+        </a>
+        
+        <a href="ch26-adapters-and-multimodal-inputs.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Adapters and Multimodal Inputs</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

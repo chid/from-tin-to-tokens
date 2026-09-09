@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Rust — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link active">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part I: Foundations</span>
+            <span class="sep">/</span>
+            <span class="current">Why Rust</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part I: Foundations</span>
+            <h1 class="chapter-title">Why Rust</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-stakes-at-this-layer">The stakes at this layer</h2>
+<p>Building an inference compute stack means writing raw ioctl structures that match kernel headers, managing device memory addresses, and constructing binary command packets byte by byte, all without a garbage collector, a runtime, or any abstraction between you and the driver.</p>
+<p>It also means doing that without C’s usual accompaniments, the use-after-frees and buffer overflows and dangling pointers. On a datacentre GPU those don’t politely segfault your process. Depending on how fault handling is configured, a bad device pointer can wedge the command processor, trigger a device reset, and take down every workload on the machine, so the cost of a memory safety bug at this layer isn’t a stack trace, it’s an incident.</p>
+<p>Rust gives you C-level control without C’s usual accompaniments. But the argument for Rust here isn’t the generic memory-safety pitch, it’s something more specific, and it took building one of these to see it clearly.</p>
+<h2 id="the-unsafe-boundary-is-the-architecture">The unsafe boundary is the architecture</h2>
+<p>The natural shape for a Rust inference stack is a boundary between two crates.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>platform<span class="op">-</span>sys    — raw<span class="op">,</span> <span class="kw">unsafe</span><span class="op">,</span> hand<span class="op">-</span>encoded kernel ioctls</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>platform<span class="op">-</span>core   — safe device APIs<span class="op">,</span> GPU dispatch<span class="op">,</span> attention kernels</span></code></pre></div>
+<p>The <code>sys</code> crate is deliberately unsafe. It holds <code>repr(C)</code> structs mirroring kernel headers, <code>libc::ioctl</code> calls, and raw file descriptor operations, and every function is <code>unsafe fn</code> because the caller has to guarantee the fd is valid and the arguments are correct. That crate is auditable in a way generated bindings aren’t, since you can put it beside the kernel header and check it field by field.</p>
+<p>The <code>core</code> crate wraps all of that in a safe API. <code>open()</code> hands back a struct owning the device fd through <code>OwnedFd</code> , <code>alloc_vram()</code> returns a <code>DeviceBuffer</code> that owns its allocation handle and frees it on <code>Drop</code> , and <code>dispatch()</code> takes a typed <code>Kernel</code> , a <code>KernargBuilder</code> , and grid dimensions. A caller using the safe API can’t hand a raw host pointer to a GPU kernel argument without writing <code>unsafe</code> , because the safe API never exposes raw pointers in the first place.</p>
+<p>That boundary is the architecture. It isn’t a style preference, it’s the load-bearing design decision, and misusing a device pointer above the boundary becomes a compile error rather than a hardware fault.</p>
+<p>It’s worth being precise about what the boundary buys and what it doesn’t, because overselling it is how people get surprised later. The type system gives you <strong>spatial</strong> safety, meaning no double-free, no useafter-free of the Rust object, no confusing a device virtual address with a host pointer. It can’t give you <strong>temporal</strong> safety against the device, because the GPU runs asynchronously and dropping a <code>DeviceBuffer</code> the command processor is still reading is a use-after-free that no borrow checker can see. The borrow is held by hardware. Enforcing that stays manual, through kernarg slot management and wait-before-drop discipline in the dispatch loop, and Chapters 7 and 25 cover the machinery.</p>
+<p>Two more limits worth stating plainly. <code>repr(C)</code> guarantees Rust lays a struct out the way C would, but nothing verifies your struct matches <em>this kernel’s</em> header, so that check is either a human reading two files or a test asserting <code>size_of</code> and <code>offset_of</code> against known constants. And the compiler can’t see inside the GPU kernel at all, so whatever the code object does with the arguments you hand it sits entirely outside Rust’s guarantees.</p>
+<h2 id="why-the-dispatch-loop-isnt-async">Why the dispatch loop isn’t async</h2>
+<p>Write packet, ring doorbell, poll signal. That loop is synchronous, and it wants to stay that way.</p>
+<p>It’s a busy-poll on a memory-mapped value, not an I/O operation, so adding <code>tokio</code> or any async runtime would bolt a reactor and a thread pool onto something already measured in microseconds, introduce wakeup latency of the same order as the operation itself, and solve a multiplexing problem the compute path doesn’t have. The loop is deliberately <code>fn</code> rather than <code>async fn</code> , and when the compute path needs concurrency, as it does for multi-GPU collectives, it uses threads pinned to devices.</p>
+<p>None of which means async has no place. The serving layer above, with its HTTP handling and request queuing and streaming responses and cancellation, is naturally async and <code>tokio</code> with <code>axum</code> is exactly right for it. The separation mirrors the architecture, sync for compute and async for serving, with an explicit boundary between them, usually a channel and a dedicated executor thread. Getting that boundary wrong, by running model steps on the async runtime’s worker pool, is one of the most common performance bugs in Rust serving code, because a 30 ms blocking model step starves every other task sharing that worker.</p>
+<h2 id="what-rust-costs-you">What Rust costs you</h2>
+<p>The trade-offs are real and it would be dishonest to skip them.</p>
+<p>Compile times are a genuine tax on iteration, tens of seconds for an incremental check and minutes for a clean release build, which is worth spending effort on through workspace splitting, <code>cargo check</code> in the inner loop, and a fast linker.</p>
+<p>The GPU ecosystem is thin. There’s no mature Rust path for AMD kernel compilation, no first-class Rust CUDA driver binding, no Rust GPU profiler. Kernels get written in OpenCL C or HIP or CUDA C, compiled at build time, and loaded by parsers you write yourself.</p>
+<p>FFI friction never fully goes away, since every kernel struct has to be mirrored exactly and the compiler can’t verify the mirror is faithful. And <code>unsafe</code> doesn’t disappear either. The <code>sys</code> crate is entirely unsafe and the <code>core</code> crate has unsafe blocks for pointer dereferences, volatile access, and mmap. The safety boundary is a discipline rather than a proof.</p>
+<h2 id="why-a-from-scratch-builder-uses-none-of-the-rust-ml-ecosystem">Why a from-scratch builder uses none of the Rust ML ecosystem</h2>
+<p>Candle, Burn, tch-rs, and mistral.rs all exist and all work, and a from-scratch stack that intends to sit below the vendor runtime uses none of them, for one architectural reason. Every one of those libraries sits <em>on</em> a vendor runtime, so pulling one in would reintroduce exactly the layer you set out to eliminate.</p>
+<p>That’s not a criticism, they serve a different purpose. For building inference <em>applications</em> on existing runtimes they’re excellent, and writing your own driver bindings for that job would be malpractice.</p>
+<p>What a from-scratch builder does use is the foundational crates. <code>serde</code> for model metadata, <code>bytemuck</code> for byte casting, <code>libc</code> for ioctls, <code>memmap2</code> for checkpoint mapping, <code>sha2</code> for integrity checks, <code>rayon</code> for host-side preprocessing. Everything GPU-specific, the ELF loader and ioctl bindings and packet constructor and kernarg builder and signal polling, gets built.</p>
+<h2 id="what-c-gives-you-and-what-rust-gives-you-instead">What C gives you, and what Rust gives you instead</h2>
+<p>C gives direct memory access, zero-overhead abstraction, and complete hardware control, along with use-after-free, buffer overflows, and undefined behaviour. C++ adds RAII and templates while keeping the footguns and throwing in a build system that turns cross-language integration into a project of its own.</p>
+<p>Rust gives the same control, since <code>unsafe</code> blocks provide raw pointer arithmetic and volatile access and FFI, while wrapping the common case in a type system that eliminates the most dangerous bug classes and making the boundary explicit. You know exactly where the type system has stopped protecting you, and those are the blocks you audit.</p>
+<p>For GPU work specifically, the sharpest advantage is the newtype pattern. In C a device pointer is a raw <code>u64</code> , indistinguishable from a host pointer or a handle or a length. In Rust a <code>DeviceBuffer</code> wraps that <code>u64</code> in a type that can’t be confused with anything else, can’t be constructed outside the allocator, and can’t be cloned by accident, which turns an entire class of runtime bugs into compile errors.</p>
+<p>The second advantage gets discussed less and matters more over a project’s life, and that’s <strong>fearless refactoring</strong> . At this layer the design you want in month six isn’t the design you wrote in month one, and the difference between a stack that keeps improving and one that ossifies is whether you can restructure the memory model or the dispatch path without introducing silent corruption. When the compiler enumerates every break you rewrite, and when it doesn’t you work around, and working around is how systems calcify.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Rust’s value in an inference stack is the unsafe boundary, raw kernel interfaces in an unsafe crate with safe APIs above. The type system prevents spatial pointer mistakes at compile time, while temporal safety against an asynchronous device stays a manual discipline, as does verifying that <code>repr(C)</code> mirrors match the real headers. The dispatch loop is synchronous by design and async belongs to the serving layer behind an explicit boundary. The Rust ML ecosystem serves application-level inference on existing runtimes, so a from-scratch builder works below it rather than on top of it.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Write the safety contract for a function returning <code>&amp;mut [u8]</code> that aliases GPU-visible memory. What must the caller guarantee, and what mechanism in the dispatch loop actually enforces it? Then explain why the receiver has to be <code>&amp;mut self</code> rather than <code>&amp;self</code> , and what goes wrong before the GPU is involved at all if it isn’t.</p></li>
+<li><p>Give a concrete example of a bug that <code>repr(C)</code> doesn’t prevent, then design a test that would catch it at build time.</p></li>
+<li><p>A colleague proposes running model steps as <code>tokio</code> tasks so the server can “handle more concurrency.” Explain in terms of the executor’s scheduling model why this reduces throughput, and describe the correct structure.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch02-the-inference-ecosystem.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">The Inference Ecosystem</span>
+        </a>
+        
+        <a href="ch04-gpu-architecture-for-inference.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">GPU Architecture for Inference</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

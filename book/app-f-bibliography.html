@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix F: Bibliography — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link active">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Appendices</span>
+            <span class="sep">/</span>
+            <span class="current">Appendix F: Bibliography</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Appendices</span>
+            <h1 class="chapter-title">Appendix F: Bibliography</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Entries carry enough bibliographic detail to locate the work regardless of identifier drift, and arXiv identifiers are provided as a convenience and were current at the time of writing.</p>
+<h2 id="attention-and-kernels">Attention and kernels</h2>
+<ul>
+<li><p>Vaswani et al., <em>Attention Is All You Need</em> , NeurIPS 2017. arXiv:1706.03762</p></li>
+<li><p>Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding</em> , 2021. arXiv:2104.09864</p></li>
+<li><p>Zhang and Sennrich, <em>Root Mean Square Layer Normalization</em> , NeurIPS 2019. arXiv:1910.07467</p></li>
+<li><p>Shazeer, <em>GLU Variants Improve Transformer</em> , 2020. arXiv:2002.05202</p></li>
+<li><p>Shazeer, <em>Fast Transformer Decoding: One Write-Head Is All You Need</em> (MQA), 2019. arXiv:1911.02150</p></li>
+<li><p>Ainslie et al., <em>GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints</em> , EMNLP 2023. arXiv:2305.13245</p></li>
+<li><p>Dao et al., <em>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness</em> , NeurIPS 2022. arXiv:2205.14135</p></li>
+<li><p>Dao, <em>FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning</em> , 2023. arXiv:2307.08691</p></li>
+<li><p>Shah et al., <em>FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-Precision</em> , 2024. arXiv:2407.08608</p></li>
+<li><p>Dao, Haziza, Massa, and Sizov, <em>Flash-Decoding for Long-Context Inference</em> , PyTorch and Stanford CRFM blog, October 2023.</p></li>
+<li><p>Hong et al., <em>FlashDecoding++: Faster Large Language Model Inference on GPUs</em> , 2023. arXiv:2311.01282</p></li>
+<li><p>Ye et al., <em>FlashInfer: Efficient and Customizable Attention Engine for LLM Inference Serving</em> , MLSys 2025. arXiv:2501.01005</p></li>
+<li><p>DeepSeek-AI, <em>DeepSeek-V2</em> (MLA), 2024. arXiv:2405.04434</p></li>
+<li><p>DeepSeek-AI, <em>DeepSeek-V3 Technical Report</em> , 2024. arXiv:2412.19437</p></li>
+</ul>
+<h2 id="serving-systems">Serving systems</h2>
+<ul>
+<li><p>Yu et al., <em>Orca: A Distributed Serving System for Transformer-Based Generative Models</em> , OSDI 2022.</p></li>
+<li><p>Kwon et al., <em>Efficient Memory Management for Large Language Model Serving with PagedAttention</em> , SOSP 2023. arXiv:2309.06180</p></li>
+<li><p>Zheng et al., <em>SGLang: Efficient Execution of Structured Language Model Programs</em> , 2023. arXiv:2312.07104</p></li>
+<li><p>Agrawal et al., <em>Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve</em> , OSDI 2024. arXiv:2403.02310</p></li>
+<li><p>Holmes et al., <em>DeepSpeed-FastGen: High-throughput Text Generation for LLMs via MII and DeepSpeed-Inference</em> , 2024. arXiv:2401.08671</p></li>
+<li><p>Zhong et al., <em>DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving</em> , OSDI 2024. arXiv:2401.09670</p></li>
+<li><p>Patel et al., <em>Splitwise: Efficient Generative LLM Inference Using Phase Splitting</em> , ISCA 2024. arXiv:2311.18677</p></li>
+<li><p>Qin et al., <em>Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving</em> , FAST 2025. arXiv:2407.00079</p></li>
+<li><p>Prabhu et al., <em>vAttention: Dynamic Memory Management for Serving LLMs without PagedAttention</em> , 2024. arXiv:2405.04437</p></li>
+<li><p>Sheng et al., <em>S-LoRA: Serving Thousands of Concurrent LoRA Adapters</em> , 2023. arXiv:2311.03285</p></li>
+<li><p>Pan and Li, <em>A Survey of LLM Inference Systems</em> , 2025. arXiv:2506.21901</p></li>
+</ul>
+<h2 id="speculative-decoding">Speculative decoding</h2>
+<ul>
+<li><p>Leviathan, Kalman, and Matias, <em>Fast Inference from Transformers via Speculative Decoding</em> , ICML 2023. arXiv:2211.17192</p></li>
+<li><p>Chen et al., <em>Accelerating Large Language Model Decoding with Speculative Sampling</em> , 2023. arXiv:2302.01318</p></li>
+<li><p>Cai et al., <em>Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads</em> , 2024. arXiv:2401.10774</p></li>
+<li><p>Li et al., <em>EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty</em> , ICML 2024. arXiv:2401.15077</p></li>
+<li><p>Li et al., <em>EAGLE-3: Scaling up Inference Acceleration of Large Language Models via Training-Time Test</em> , 2025. arXiv:2503.01840</p></li>
+</ul>
+<h2 id="quantisation-and-compression">Quantisation and compression</h2>
+<ul>
+<li><p>Frantar et al., <em>GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers</em> , ICLR 2023. arXiv:2210.17323</p></li>
+<li><p>Lin et al., <em>AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration</em> , MLSys 2024. arXiv:2306.00978</p></li>
+<li><p>Xiao et al., <em>SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models</em> , ICML 2023. arXiv:2211.10438</p></li>
+<li><p>Frantar, Castro, Chen, Hoefler, and Alistarh, <em>MARLIN: Mixed-Precision Auto-Regressive Parallel Inference on Large Language Models</em> , PPoPP 2025. arXiv:2408.11743</p></li>
+<li><p>Zhang et al., <em>SageAttention: Accurate 8-Bit Attention for Plug-and-play Inference Acceleration</em> , ICLR 2025. arXiv:2410.02367</p></li>
+<li><p>Zhang et al., <em>SageAttention2: Efficient Attention with Thorough Outlier Smoothing and Per-thread INT4 Quantization</em> , ICML 2025. arXiv:2411.10958</p></li>
+<li><p>Zhang et al., <em>SageAttention3: Microscaling FP4 Attention for Inference and an Exploration of 8-Bit Training</em> , 2025. arXiv:2505.11594</p></li>
+<li><p>Open Compute Project, <em>OCP Microscaling Formats (MX) Specification</em> , 2023.</p></li>
+<li><p>NVIDIA, <em>Introducing NVFP4 for Efficient and Accurate Low-Precision Inference</em> , 2025, and <em>Quantization-Aware Distillation for NVFP4 Inference Accuracy Recovery</em> , 2026.</p></li>
+<li><p>Zhang et al., <em>H2O: Heavy-Hitter Oracle for Efficient Generative Inference of Large Language Models</em> , NeurIPS 2023. arXiv:2306.14048</p></li>
+<li><p>Xiao et al., <em>Efficient Streaming Language Models with Attention Sinks</em> (StreamingLLM), ICLR 2024. arXiv:2309.17453</p></li>
+<li><p>Wang et al., <em>Model Tells You Where to Merge: Adaptive KV Cache Merging for LLMs on Long-Context Tasks</em> , 2024. arXiv:2407.08454</p></li>
+<li><p>Liu et al., <em>MiniCache: KV Cache Compression in Depth Dimension for Large Language Models</em> , NeurIPS 2024. arXiv:2405.14366</p></li>
+<li><p>Li et al., <em>A Survey on Large Language Model Acceleration based on KV Cache Management</em> , 2024. arXiv:2412.19442</p></li>
+</ul>
+<h2 id="long-context-and-sparsity">Long context and sparsity</h2>
+<ul>
+<li><p>Chen et al., <em>Extending Context Window of Large Language Models via Positional Interpolation</em> , 2023. arXiv:2306.15595</p></li>
+<li><p>Peng et al., <em>YaRN: Efficient Context Window Extension of Large Language Models</em> , ICLR 2024. arXiv:2309.00071</p></li>
+<li><p>An et al., <em>Training-Free Long-Context Scaling of Large Language Models</em> (dual chunk attention), ICML 2024. arXiv:2402.17463</p></li>
+<li><p>Qwen Team, <em>Qwen2.5-1M Technical Report</em> , 2025. arXiv:2501.15383</p></li>
+<li><p>Qwen Team, <em>Qwen3 Technical Report</em> , 2025. arXiv:2505.09388</p></li>
+<li><p>Jiang et al., <em>MInference 1.0: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention</em> , NeurIPS 2024. arXiv:2407.02490</p></li>
+<li><p>Yuan et al., <em>Native Sparse Attention: Hardware-Aligned and Natively Trainable Sparse Attention</em> , 2025. arXiv:2502.11089</p></li>
+<li><p>DeepSeek-AI, <em>DeepSeek-V3.2-Exp: Boosting Long-Context Efficiency with DeepSeek Sparse Attention</em> , 2025. The reference for DSA, the production sparse attention described in Chapter 14.</p></li>
+<li><p>Tang et al., <em>Quest: Query-Aware Sparsity for Efficient Long-Context LLM Inference</em> , ICML 2024. arXiv:2406.10774</p></li>
+<li><p>Liu, Zaharia, and Abbeel, <em>Ring Attention with Blockwise Transformers for Near-Infinite Context</em> , 2023. arXiv:2310.01889</p></li>
+</ul>
+<h2 id="parallelism-and-communication">Parallelism and communication</h2>
+<ul>
+<li><p>Shoeybi et al., <em>Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism</em> , 2019. arXiv:1909.08053</p></li>
+<li><p>Korthikanti et al., <em>Reducing Activation Recomputation in Large Transformer Models</em> (sequence parallelism), MLSys 2023. arXiv:2205.05198</p></li>
+<li><p>Shazeer et al., <em>Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</em> , ICLR 2017. arXiv:1701.06538</p></li>
+<li><p>Fedus, Zoph, and Shazeer, <em>Switch Transformers</em> , JMLR 2022. arXiv:2101.03961</p></li>
+<li><p>Hwang et al., <em>MSCCL++: Rethinking GPU Communication Abstractions for AI Inference</em> , ASPLOS 2026. arXiv:2504.09014</p></li>
+<li><p>Shen et al., <em>Every Microsecond Matters: Achieving Near Speed-of-Light Latency in GPU Collectives</em> , 2026. arXiv:2607.16100</p></li>
+</ul>
+<h2 id="model-execution-adapters-and-edge">Model execution, adapters, and edge</h2>
+<ul>
+<li><p>Hu et al., <em>LoRA: Low-Rank Adaptation of Large Language Models</em> , ICLR 2022. arXiv:2106.09685</p></li>
+<li><p>Song et al., <em>PowerInfer: Fast Large Language Model Serving with a Consumer-grade GPU</em> , SOSP 2024. arXiv:2312.12456</p></li>
+<li><p>Xue et al., <em>PowerInfer-2: Fast Large Language Model Inference on a Smartphone</em> , 2024. arXiv:2406.06282</p></li>
+<li><p>Willard and Louf, <em>Efficient Guided Generation for Large Language Models</em> (Outlines), 2023. arXiv:2307.09702</p></li>
+<li><p>Dong et al., <em>XGrammar: Flexible and Efficient Structured Generation Engine for Large Language Models</em> , 2024. arXiv:2411.15100</p></li>
+<li><p>Thinking Machines Lab, <em>Defeating Nondeterminism in LLM Inference</em> , 2025, and the <code>batch_invariant_ops</code> library.</p></li>
+<li><p>LMSYS, <em>Towards Deterministic Inference in SGLang and Reproducible RL Training</em> , 2025.</p></li>
+</ul>
+<h2 id="hardware-documentation">Hardware documentation</h2>
+<ul>
+<li><p>AMD, <em>AMD CDNA 4 Architecture White Paper</em> , 2025.</p></li>
+<li><p>AMD, <em>AMD Instinct MI355X GPU Datasheet</em> , 2025.</p></li>
+<li><p>AMD, <em>AMD Instinct CDNA3 and CDNA4 Instruction Set Architecture Reference Guides</em> .</p></li>
+<li><p>AMD ROCm Blogs, <em>Occupancy Math on the AMD MI355X GPU (CDNA4)</em> , 2025.</p></li>
+<li><p>Linux kernel, <code>include/uapi/linux/kfd_ioctl.h</code> .</p></li>
+<li><p>HSA Foundation, <em>HSA Platform System Architecture Specification</em> , for AQL packet formats.</p></li>
+<li><p>NVIDIA, <em>Hopper Tuning Guide</em> , <em>Blackwell Tuning Guide</em> , and the <em>CUDA C++ Programming Guide</em> compute-capability tables.</p></li>
+<li><p>Google Cloud, <em>TPU v7 (Ironwood) documentation</em> , 2026.</p></li>
+</ul>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="app-e-glossary.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Appendix E: Glossary</span>
+        </a>
+        
+        <a href="index.html" class="pager-card next">
+          <span class="pager-label">Finish →</span>
+          <span class="pager-title">Table of Contents</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

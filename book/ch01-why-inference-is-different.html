@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Inference Is Different — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link active">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part I: Foundations</span>
+            <span class="sep">/</span>
+            <span class="current">Why Inference Is Different</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Part I: Foundations</div>
+          <h2>Overview</h2>
+          <p>The hardware constraints that shape LLM inference, how the open-source inference ecosystem divides the problem, and why a from-scratch stack is built in Rust.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part I: Foundations</span>
+            <h1 class="chapter-title">Why Inference Is Different</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-two-phases-of-generation">The two phases of generation</h2>
+<p>Ask a language model to finish a sentence and the work splits into two phases that want opposite things from the hardware.</p>
+<p><strong>Prefill</strong> processes the prompt. Every input token is available at once, so the computation is dense matrix multiplication and the machine can be kept genuinely busy. <strong>Decode</strong> generates the new tokens one at a time, each one attending to everything that came before it, and the per-token computation is a matrixvector product that spends almost all of its time waiting for memory.</p>
+<p>The two phases are different enough that production systems run them with separate kernels, separate batch sizes, separate scheduling policies, and at the largest scale on separate machines. vLLM’s chunked-prefill scheduler, SGLang’s prefix reuse, TensorRT-LLM’s in-flight batching, and the whole disaggregated architecture of Chapter 30 exist because of this split, and a system that treats the two phases the same leaves a great deal of performance on the table.</p>
+<p>Almost every design decision in the rest of this book follows from which phase you’re optimising and how you handle the handoff between them, so it’s worth getting the distinction properly in mind before anything else.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0013-01.png" alt="FIGURE 1.1: Prefill and decode are two different machines" />
+<figcaption aria-hidden="true">FIGURE 1.1: Prefill and decode are two different machines</figcaption>
+</figure>
+<ul>
+<li><p><strong><code>1</code></strong> Prefill takes the whole prompt at once through a wide door. The work is dense matrix multiplication and the machine can be kept genuinely busy.</p></li>
+<li><p><strong><code>2</code></strong> Decode moves one token at a time. There is no way to widen the door, because token t+1 cannot start until t is known.</p></li>
+<li><p>O <strong><code>3</code></strong> For that single token, the reader sweeps the entire stored history. This is the cost that grows with context and never amortises.</p></li>
+<li><p><strong><code>4</code></strong> Same building, opposite bottlenecks. Prefill wants FLOPs, decode wants bytes, and a system that treats them the same loses on both.</p></li>
+</ul>
+<h2 id="the-decode-memory-wall">The decode memory wall</h2>
+<p>Decode attention is what makes long-context inference hard, and the reason becomes obvious the moment you write down the arithmetic instead of talking about it in the abstract.</p>
+<p>Generating token <em>t</em> means each attention layer computes</p>
+<pre><code>O = softmax(scale · q · Kᵀ) · V</code></pre>
+<p>where <em>q</em> is one query vector, the current token, and <em>K</em> and <em>V</em> are the cached keys and values for every token before it. For one layer of one sequence, that cache costs</p>
+<pre><code>KV bytes = 2 × S × H_kv × d × bytes_per_element
+
+           ↑
+           K and V</code></pre>
+<p>and the leading 2 is the single most commonly dropped factor in this entire field. Plug in Qwen3-235BA22B at a million tokens, with 4 KV heads of dimension 128 in FP16, and you get 2 × 1e6 × 4 × 128 × 2 bytes, which is 2.05 GB for one layer. Across 94 layers that’s <strong>192 GB of KV cache for a single</strong></p>
+<p><strong>sequence belonging to a single user</strong> . More than two H100s’ worth of memory, held for one conversation.</p>
+<p>In FP8 the same sequence needs 96 GB, which fits inside one MI355X with room left for the weights, and that one line of arithmetic is why KV precision is an architectural concern rather than a microoptimisation.</p>
+<p>Now here’s the part that hurts. Every generated token reads all of it. Not once per request, once per token, per layer.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0014-04.png" alt="FIGURE 1.2: Every generated token reads the entire cache" />
+<figcaption aria-hidden="true">FIGURE 1.2: Every generated token reads the entire cache</figcaption>
+</figure>
+<ul>
+<li>O <strong><code>1</code></strong> One block per token, appended at the near end and never modified again. That is what makes prefix sharing safe. O <strong><code>2</code></strong> The query for the token being generated right now. One vector. O <strong><code>3</code></strong> It reads every block on the tape. Not once per request, once per token, per layer. O <strong><code>4</code></strong> At a million tokens with four KV heads of dimension 128 in FP16, that tape is 2.05 GB for one layer, and 192 GB across 94 layers.</li>
+</ul>
+<h2 id="arithmetic-intensity-computed-properly">Arithmetic intensity, computed properly</h2>
+<p>You’ll often see decode attention quoted as having an arithmetic intensity of about 1, which is true for multi-head attention in FP16 and misleading everywhere else. The general case is more useful and takes about four lines to derive.</p>
+<p>Count the FLOPs for one decode step of one layer. Computing <em>q·Kᵀ</em> costs 2 FLOPs, one multiply and one add, per element of <em>K</em> per query head, and the <em>P·V</em> product costs the same per element of <em>V</em> . With <em>H_q</em> query heads,</p>
+<pre><code>FLOPs = 4 × S × H_q × d
+Bytes = 2 × S × H_kv × d × b        (b = bytes per KV element)
+AI = FLOPs / Bytes = (2 / b) × (H_q / H_kv) = (2 / b) × G</code></pre>
+<p>where <em>G</em> is the GQA group size. Which gives a table worth memorising.</p>
+<table>
+<thead>
+<tr>
+<th><strong>MODEL SHAPE</strong></th>
+<th><strong>G</strong></th>
+<th><strong>KV DTYPE</strong></th>
+<th><strong>AI (FLOP/BYTE)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MHA (GPT-2, BERT)</td>
+<td>1</td>
+<td>FP16</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Llama-3-70B (64Q/8KV)</td>
+<td>8</td>
+<td>FP16</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Qwen3-235B (64Q/4KV)</td>
+<td>16</td>
+<td>FP16</td>
+<td>16</td>
+</tr>
+<tr>
+<td>Qwen3-235B, FP8 KV</td>
+<td>16</td>
+<td>FP8</td>
+<td>32</td>
+</tr>
+</tbody>
+</table>
+<p>Two things fall out of that. Grouped-query attention doesn’t just shrink the cache, it raises arithmetic intensity, because every KV element pulled from HBM gets consumed by <em>G</em> different query heads inside the kernel. And quantising the cache raises intensity for the same reason quantising anything does, since you’re doing the same work with fewer bytes.</p>
+<p>So where does that leave us against the hardware? On MI355X, peak FP16 matrix throughput is 2.5 PFLOPS dense against 8 TB/s of HBM, which puts the roofline knee at</p>
+<pre><code>2.5e15 / 8e12 ≈ 310 FLOP/byte</code></pre>
+<p>and H100’s 989 TFLOPS against 3.35 TB/s gives roughly 295. Decode attention at an intensity of 16 is therefore about <strong>20× below the ridge point</strong> , not marginally below it. This isn’t a borderline case that careful tuning might push into compute-bound territory, it’s deep in memory-bound country and it’s staying there.</p>
+<p>Which sets up the thesis for every kernel chapter that follows. Decode speed is governed by two things, how few bytes you spend per KV entry and how close to the bandwidth ceiling your kernel gets, and adding compute units does nothing for either.</p>
+<h2 id="the-roofline-model">The roofline model</h2>
+<p>The roofline plots achievable throughput against arithmetic intensity, bounded above by two lines, the compute ceiling and bandwidth × intensity. Where they cross is the <strong>ridge point</strong> . Below it you’re memorybound and more FLOPs are useless, above it you’re compute-bound and bandwidth is irrelevant.</p>
+<p>The textbook version of the model leaves out two things that matter in practice.</p>
+<p>First, use achievable bandwidth rather than peak. A ridge point computed from spec bandwidth is optimistic, and one computed from measured streaming bandwidth sits further right. Both are useful numbers as long as you know which one you’re holding, because a kernel graded against the wrong ceiling looks better or worse than it really is.</p>
+<p>Second, caches move the line. The roofline assumes every byte comes from HBM, but on a chip with 256 MB of last-level cache a decode step whose working set fits in cache has a completely different</p>
+<p>effective bandwidth. At medium context lengths this is the difference between a kernel that looks broken and one that looks impossible, so always check whether your working set fits before you start optimising.</p>
+<p>Prefill lives on the other side of the ridge. Batched prefill attention is a GEMM with intensity proportional to the tile size, hundreds of FLOPs per byte, comfortably compute-bound. That’s why the two phases need different kernels, different batch sizes, and different scheduling. They’re not two settings of the same problem, they’re on opposite sides of the roofline.</p>
+<h2 id="why-general-purpose-runtimes-carry-overhead-inference-doesnt-need">Why general-purpose runtimes carry overhead inference doesn’t need</h2>
+<p>ROCm and CUDA exist to serve everything, and everything is a demanding customer. Training, inference, graphics, HPC, arbitrary numbers of contexts and queues and memory types, safety across concurrent processes, recovery from device loss, debugging support. Every one of those responsibilities costs something in launch latency, in indirection, in generic code paths handling cases your workload never reaches.</p>
+<p>Inference decode is the opposite kind of workload. One model, one chip, one loop, run thousands of times a second, and against that the runtime’s generality stops being a feature and becomes a tax collected on every token. Tensor-parallel decode makes this concrete, because it runs an all-reduce on every layer and those all-reduces are tiny, a few tens of kilobytes, which puts them squarely in the regime where synchronisation and launch cost decide the time and bandwidth barely matters.</p>
+<p>How large is the tax? Measured on 8×MI355X with 1 KiB payloads, mainarch’s direct-to-driver all-reduce finishes in 20.5 µs against RCCL’s 47.3 µs, a 2.3× gap at exactly the message size tensor-parallel decode actually uses.</p>
+<p>Before that sounds like a victory lap, neither number is anywhere near the physical limit. Recent work measuring GPU collectives on NVLink puts the speed-of-light bound for a small two-GPU all-reduce at about 1.4 µs and achieves 2.37 µs where NCCL’s ring takes 11, which tells you that most of what both stacks are spending is software rather than physics. Chapter 28 comes back to this.</p>
+<p>None of which is a criticism of runtimes. ROCm and CUDA solve real problems that a narrow stack simply declines to solve, and the observation here is much smaller. A system built only for inference decode can shed overhead that a general-purpose runtime has to carry, and for the small latencysensitive operations decode runs on every layer of every token, that overhead is a large fraction of the whole.</p>
+<h2 id="the-economics">The economics</h2>
+<p>Inference is the layer that turns a trained model into revenue, so the unit economics are simple enough to fit on one line.</p>
+<pre><code>cost per token = (GPU cost per hour) / (tokens per second × 3600)</code></pre>
+<p>Every optimisation in this book, FlashAttention and paged KV and continuous batching and quantisation and kernel fusion, exists to push tokens per second up so that cost per token comes down. Double the throughput and you’ve halved the cost of serving.</p>
+<p>Two refinements make that model usable rather than merely true.</p>
+<p>Throughput is a property of the node, not the request. An optimisation that halves per-request latency while also halving batch size hasn’t changed cost per token at all, so the number that matters economically is aggregate tokens/second/GPU at a fixed service-level objective, which Chapter 37 calls <em>goodput</em> .</p>
+<p>And latency has a price that isn’t linear. Below the point where a user perceives streaming as smooth, somewhere around 20 to 30 output tokens per second, making it faster buys you very little. Above that threshold a latency failure costs you the request outright. That asymmetry is why production systems optimise latency-constrained throughput rather than either quantity by itself.</p>
+<h2 id="when-to-go-below-the-runtime-and-when-not-to">When to go below the runtime, and when not to</h2>
+<p>Going below the runtime, talking to the driver ABI instead of HIP or CUDA, isn’t automatically the right move. It’s right when the workload is narrow and repeated, which inference decode certainly is, when the overhead is a serious fraction of the useful work, as it is for a 20 µs all-reduce with 6 µs of launch machinery inside it, and when you have the expertise to debug at this level, because a bad GPU pointer can take down a node rather than a process.</p>
+<p>It’s wrong when the workload is diverse, when the overhead is noise against the work, as it is for large compute-bound prefill GEMMs, and when you need the runtime’s error recovery, debugging tools, or ecosystem.</p>
+<p>That’s an engineering trade-off rather than a philosophical position. Most inference deployments should use an existing engine, and building from scratch earns its keep when you need extreme control over latency, when you’re targeting hardware the existing engines serve poorly, or when you intend to innovate on the compute path itself. The honest version of that last reason is that you can’t innovate below a layer you’ve never built.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Inference decode is a narrow, repeated, memory-bound workload. Its arithmetic intensity is (2/b)×G, group size over KV byte width, which for a modern GQA model in FP16 works out around 16 FLOP/byte against a ridge point near 300, roughly 20× inside the memory-bound regime. Throughput is set by bytes moved rather than FLOPs available. Prefill is the opposite problem, and every architectural decision in an inference stack traces back to that split.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Compute the KV cache size per layer and for the whole model, in FP16 and FP8, for Llama-3-70B (80 layers, 64 query heads, 8 KV heads, head dimension 128) at 128K context. How many concurrent 128K sessions fit in one 80 GB H100 alongside the FP8 weights?</p></li>
+<li><p>Derive the arithmetic intensity of decode attention for MLA (Chapter 8), where the cache stores a 512dimension latent plus a 64-dimension RoPE component per token and the up-projection happens inside the kernel. Why is MLA’s roofline position qualitatively different from GQA’s?</p></li>
+<li><p>A vendor claims their accelerator delivers 10× the FLOPs of an H100 at the same memory bandwidth. By how much does single-stream decode of a GQA model speed up? Justify your answer with the roofline.</p></li>
+<li><p><strong>Build:</strong> write a program that streams a large buffer from device memory and reports achieved GB/s, then compare against the vendor peak. Repeat with a buffer small enough to fit in last-level cache and explain the difference.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="introduction.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Introduction</span>
+        </a>
+        
+        <a href="ch02-the-inference-ecosystem.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Inference Ecosystem</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

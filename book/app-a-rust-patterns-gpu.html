@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix A: Rust Patterns for GPU Programming — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link active">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Appendices</span>
+            <span class="sep">/</span>
+            <span class="current">Appendix A: Rust Patterns for GPU Programming</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+        <div class="part-intro-banner">
+          <div class="part-badge">Appendices</div>
+          <h2>Overview</h2>
+          <p>Reference architectures, kernel packet specifications, ELF object loaders, reference ecosystem guide, glossary, and bibliography.</p>
+        </div>
+        
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Appendices</span>
+            <h1 class="chapter-title">Appendix A: Rust Patterns for GPU Programming</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <p>Each pattern is presented as a lesson, what it prevents, what it enables, and the engineering context that makes it worth the trouble.</p>
+<h2 id="reprc-for-kernel-abi-structs">repr(C)` for kernel ABI structs</h2>
+<p>This prevents struct layout mismatch between Rust and the kernel. Without <code>#[repr(C)]</code> Rust may reorder fields for packing, and the ioctl writes the right bytes to the wrong offsets, which is silent corruption that can change with a compiler version. It enables direct ioctl calls from Rust that stay auditable field by field against the kernel header.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>repr<span class="at">(</span>C<span class="at">)]</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="op">,</span> <span class="bu">Default</span><span class="op">,</span> <span class="bu">Clone</span><span class="op">,</span> <span class="bu">Copy</span><span class="at">)]</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> AllocMemoryOfGpuArgs <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> va_addr<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>      <span class="co">// to KFD</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> size<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>         <span class="co">// to KFD</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> handle<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>       <span class="co">// from KFD</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> mmap_offset<span class="op">:</span> <span class="dt">u64</span><span class="op">,</span>  <span class="co">// in: userptr; out: mmap offset</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> gpu_id<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>       <span class="co">// to KFD</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> flags<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">/// AMDKFD_IOC_ALLOC_MEMORY_OF_GPU = AMDKFD_IOWR(0x16, ...)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">fn</span> ioc_alloc_memory_of_gpu() <span class="op">-&gt;</span> <span class="pp">libc::</span><span class="dt">c_ulong</span> <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="pp">iowr::</span><span class="op">&lt;</span>AllocMemoryOfGpuArgs<span class="op">&gt;</span>(<span class="dv">0x16</span>) <span class="kw">as</span> <span class="pp">libc::</span><span class="dt">c_ulong</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> alloc(fd<span class="op">:</span> RawFd<span class="op">,</span> args<span class="op">:</span> <span class="op">&amp;</span><span class="kw">mut</span> AllocMemoryOfGpuArgs) <span class="op">-&gt;</span> <span class="dt">i32</span> <span class="op">{</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Explicit block: `unsafe fn` no longer carries an implicit unsafe body.</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">unsafe</span> <span class="op">{</span> <span class="pp">libc::</span>ioctl(fd<span class="op">,</span> ioc_alloc_memory_of_gpu()<span class="op">,</span> args <span class="kw">as</span> <span class="op">*</span><span class="kw">mut</span> _) <span class="op">}</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Non-negotiable for any Rust code calling a C ABI, and the size assertion is not decoration either. amdkfd dispatches on the command number and zero-fills a short argument struct rather than rejecting it, so a struct missing its trailing fields is accepted and the missing values read as zero. The assertion is the only thing that turns that into a build error instead of a call against the wrong device.</p>
+<h2 id="compile-time-layout-assertions">Compile-time layout assertions</h2>
+<p>These prevent silent ABI drift in any struct shared with hardware or the kernel, meaning dispatch packets, signal structures, and ioctl arguments. They enable the cheapest possible ABI test, running on every build with no harness at all.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>const_<span class="op">:()=</span>assert<span class="op">!(</span>core<span class="op">::</span>mem<span class="op">::</span>size_of<span class="op">::&lt;</span>AqlKernelDispatchPacket<span class="op">&gt;()==</span><span class="dv">64</span><span class="op">);</span></span></code></pre></div>
+<p>For structures where field <em>offsets</em> matter, the AQL packet being the obvious case, assert offsets too. Rust’s <code>offset_of!</code> makes that a one-liner per field, and those lines have caught more real bugs per character than any other code in a driver-level crate.</p>
+<h2 id="ownedfd-for-device-handle-lifetime">OwnedFd` for device handle lifetime</h2>
+<p>This prevents use-after-close. The device fd has to outlive every allocation and queue, and if it closes early, GPU operations fail in ways that look like hardware problems. It enables the fd’s lifetime to become an ownership invariant, since the <code>Kfd</code> struct owns the <code>OwnedFd</code> and <code>DeviceBuffer</code> s hold <code>Arc&lt;Kfd&gt;</code> , so the fd can’t close while any buffer exists.</p>
+<p>It’s the Rust equivalent of RAII for file descriptors with the additional guarantee that the type can’t be duplicated accidentally.</p>
+<h2 id="drop-for-gpu-memory">Drop` for GPU memory</h2>
+<p>This prevents VRAM leaks, the most common failure mode in a long-running server, and double-frees. It enables RAII for device memory, so spatial safety comes free.</p>
+<p>The limit is that <code>Drop</code> gives spatial safety and not temporal safety, since the GPU may still be reading the buffer when it runs and no borrow can express a borrow held by hardware. Wait on the relevant completion signal first, and let the unretired-dispatch counter tell you whether you need to.</p>
+<h2 id="cell-for-hot-path-interior-mutability">Cell` for hot-path interior mutability</h2>
+<p>This prevents the cost of <code>RefCell</code> ’ s borrow flag or <code>Mutex</code> ’s atomic on a path running thousands of times per second, and it enables zero-cost mutation through a shared reference in the single-threaded dispatch loop.</p>
+<p><code>Cell&lt;T&gt;</code> requires <code>T: Copy</code> , which suits counters and indices, and its most valuable property isn’t performance. <code>Cell</code> isn’t <code>Sync</code> , so if someone later tries to share the queue across threads the compiler objects rather than the hardware.</p>
+<h2 id="arc-for-shared-device-handles">Arc` for shared device handles</h2>
+<p>This prevents duplicating a device fd, which drivers either reject or turn into a double-close hazard, and it enables several <code>GpuDevice</code> values sharing one <code>Kfd</code> and its process VM.</p>
+<p>The atomic refcount is negligible next to any GPU operation, and for multi-GPU code in one process this is the natural ownership model.</p>
+<h2 id="include_bytes-for-embedded-gpu-kernels">include_bytes!` for embedded GPU kernels</h2>
+<p>This prevents runtime file I/O for kernel loading along with a class of deployment bugs where the binary and its kernels drift apart, and it enables self-contained binaries, since the kernel bytes are <code>&amp;'static [u8]</code> available immediately.</p>
+<pre><code>staticATTENTION_CO:&amp;[u8]=include_bytes!(concat!(env!(&quot;OUT_DIR&quot;),
+&quot;/attention.co&quot;));</code></pre>
+<p>The code object gets produced by a <code>build.rs</code> step invoking the GPU compiler, so embedding it means the kernel and the host code are versioned together, which matters more than it sounds because a mismatched kernel ABI produces garbage rather than an error.</p>
+<h2 id="newtype-for-device-pointers">Newtype for device pointers</h2>
+<p>This prevents pointer confusion, since a device VA is a <code>u64</code> indistinguishable in C from a host pointer or a handle or a length, and it enables compile-time prevention of the most dangerous class of GPU bug.</p>
+<h2 id="pub-struct-devicebuffer"><strong><code>pub struct DeviceBuffer</code></strong> <code>{</code></h2>
+<pre><code>handle:u64,
+va:u64,// not reachable as a bare integer from outside
+size:u64,
+kfd:Arc&lt;Kfd&gt;,
+}</code></pre>
+<p>Zero-cost, and it composes. A <code>KernargBuilder</code> accepting only <code>&amp;DeviceBuffer</code> for pointer arguments makes an entire error class unexpressible.</p>
+<h2 id="typed-states-for-lifecycle">Typed states for lifecycle</h2>
+<p>This prevents using an object before it’s ready, dispatching to a queue before <code>ACQUIRE_VM</code> or reading a buffer before its DMA completes, and it enables encoding the initialisation sequence in the type system so that <code>Device&lt;Unmapped&gt;</code> simply has no <code>dispatch</code> method.</p>
+<p>The strongest form, typestate, is often more ceremony than it’s worth, but for a small number of genuinely ordered operations, Chapter 5’s order of operations being the obvious set, it removes a category of bug otherwise found only on hardware.</p>
+<h2 id="errors-that-name-the-thing">Errors that name the thing</h2>
+<p>This prevents the failure mode where a stack returns <code>Err(())</code> from ten layers down and the operator sees “operation failed”, and it enables diagnosis from a log line.</p>
+<p>At this layer, attach the ioctl name, the <code>gpu_id</code> , the VA, the size, and the <code>errno</code> to every error, which <code>anyhow::Context</code> or an equivalent makes cheap. The measure of a good error here is whether it identifies the offending buffer without a debugger.</p>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch39-the-build-order.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">The Build Order</span>
+        </a>
+        
+        <a href="app-b-gpu-command-interfaces.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Appendix B: GPU Command Interfaces</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

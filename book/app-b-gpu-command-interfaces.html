@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appendix B: GPU Command Interfaces — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link active">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Appendices</span>
+            <span class="sep">/</span>
+            <span class="current">Appendix B: GPU Command Interfaces</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Appendices</span>
+            <h1 class="chapter-title">Appendix B: GPU Command Interfaces</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-aql-kernel-dispatch-packet">The AQL kernel dispatch packet</h2>
+<p>64 bytes, little-endian, and the offsets are exact.</p>
+<table>
+<thead>
+<tr>
+<th><strong>OFFSET</strong></th>
+<th><strong>FIELD</strong></th>
+<th><strong>SIZE</strong></th>
+<th><strong>DESCRIPTION</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>header</td>
+<td>2</td>
+<td>Packet type, barrier bit, fence scopes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>setup</td>
+<td>2</td>
+<td>Number of grid dimensions (1–3)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>workgroup_size_x</td>
+<td>2</td>
+<td>Work-items per workgroup, X</td>
+</tr>
+<tr>
+<td>6</td>
+<td>workgroup_size_y</td>
+<td>2</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>8</td>
+<td>workgroup_size_z</td>
+<td>2</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>10</td>
+<td>reserved0</td>
+<td>2</td>
+<td>Must be zero</td>
+</tr>
+<tr>
+<td>12</td>
+<td>grid_size_x</td>
+<td>4</td>
+<td>Total work-items, X</td>
+</tr>
+<tr>
+<td>16</td>
+<td>grid_size_y</td>
+<td>4</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>20</td>
+<td>grid_size_z</td>
+<td>4</td>
+<td>Z</td>
+</tr>
+<tr>
+<td>24</td>
+<td>private_segment_size</td>
+<td>4</td>
+<td>Scratch bytes per work-item</td>
+</tr>
+<tr>
+<td>28</td>
+<td>group_segment_size</td>
+<td>4</td>
+<td>LDS bytes per workgroup</td>
+</tr>
+<tr>
+<td>32</td>
+<td>kernel_object</td>
+<td>8</td>
+<td>VA of the kernel descriptor</td>
+</tr>
+<tr>
+<td>40</td>
+<td>kernarg_address</td>
+<td>8</td>
+<td>VA of the kernel argument buffer</td>
+</tr>
+<tr>
+<td>48</td>
+<td>reserved2</td>
+<td>8</td>
+<td>Must be zero</td>
+</tr>
+<tr>
+<td>56</td>
+<td>completion_signal</td>
+<td>8</td>
+<td>VA of an<code>amd_signal_t</code>, or 0</td>
+</tr>
+</tbody>
+</table>
+<p>The three 8-byte fields are naturally aligned at 32, 40, and 56, grid sizes are 32-bit while workgroup sizes are 16-bit, and <code>kernel_object</code> precedes <code>kernarg_address</code> . Reversing those two produces an immediate fault, which is at least a fast failure.</p>
+<h2 id="the-header">The header</h2>
+<table>
+<thead>
+<tr>
+<th><strong>BITS</strong></th>
+<th><strong>FIELD</strong></th>
+<th><strong>VALUES</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–7</td>
+<td>packet type</td>
+<td>1 = INVALID, 2 = KERNEL_DISPATCH, 3 = BARRIER_AND, …</td>
+</tr>
+<tr>
+<td>8</td>
+<td>barrier</td>
+<td>1 = wait for all preceding packets to complete</td>
+</tr>
+<tr>
+<td>9–10</td>
+<td>acquire fence scope</td>
+<td>0 = none, 1 = agent, 2 = system</td>
+</tr>
+<tr>
+<td>11–12</td>
+<td>release fence scope</td>
+<td>0 = none, 1 = agent, 2 = system</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The barrier bit is bit 8</strong> , and bits 9 and 10 are the acquire fence scope. For cross-GPU visibility both fence scopes have to be <em>system</em> , since agent scope orders only within one device, and that’s the usual cause of collectives that pass their tests and go wrong under load.</p>
+<h2 id="the-doorbell">The doorbell</h2>
+<p>Write the <strong>packet index</strong> , the value returned when you reserved the slot, rather than a byte offset or a count.</p>
+<pre><code>letindex=queue.reserve_slot();// returns the slot&#39;s index
+queue.write_packet_body(index,&amp;dispatch);// header still INVALID
+queue.publish_header(index,header_word);// release store, hands it over
+queue.doorbell.store(index,Ordering::Relaxed);</code></pre>
+<p>The release store that publishes the header is the handover, not the doorbell. A slot whose header reads <code>INVALID</code> is one the command processor skips, so the header must go out last and as a single store.</p>
+<p>Writing <code>index + 1</code> to the doorbell tells the processor that a slot you haven’t published is ready. It fetches a slot still marked <code>INVALID</code> and waits on it, so the symptom is a queue that quietly stops progressing rather than an error.</p>
+<h2 id="completion-signals">Completion signals</h2>
+<p>An <code>amd_signal_t</code> is a 64-byte structure whose <code>value</code> field the command processor updates atomically. Poll it, or bind it to an event and wait on the kernel. In a chain, only the final packet needs one.</p>
+<h2 id="the-cuda-equivalent">The CUDA equivalent</h2>
+<p>CUDA presents streams and events rather than a packet format. A <strong>stream</strong> is roughly an AQL queue, an ordered command sequence. An <strong>event</strong> is roughly a completion signal. <strong><code>cudaLaunchKernel</code></strong> constructs and enqueues the launch, hiding the binary format. And <strong>CUDA Graphs</strong> are roughly chained dispatch, a captured dependency structure replayed with one call.</p>
+<p>The underlying mechanism is the same, ring buffer and doorbell and completion, but the format isn’t public and isn’t intended to be constructed directly. That asymmetry is the practical reason a from-scratch stack targets AMD.</p>
+<h2 id="the-universal-abstraction">The universal abstraction</h2>
+<p>Whatever the vendor, you have a <strong>ring buffer</strong> the host writes commands into, a <strong>doorbell</strong> the host writes to announce them, a <strong>completion signal</strong> the device updates when work is done, and <strong>memory ordering</strong> connecting the three at an explicit scope. Understanding that pattern matters more than knowing any specific packet layout.</p>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="app-a-rust-patterns-gpu.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Appendix A: Rust Patterns for GPU Programming</span>
+        </a>
+        
+        <a href="app-c-code-object-loading.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Appendix C: Code Object Loading</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

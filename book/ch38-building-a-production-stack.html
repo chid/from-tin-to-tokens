@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building a Production Stack — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link active">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IX: Proof, Testing, and Production</span>
+            <span class="sep">/</span>
+            <span class="current">Building a Production Stack</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IX: Proof, Testing, and Production</span>
+            <h1 class="chapter-title">Building a Production Stack</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-api-surface">The API surface</h2>
+<p>The de facto standard is the OpenAI-compatible HTTP API, and adopting it means every existing client works without modification, which is worth more than any design improvement you might make instead.</p>
+<p><code>POST /v1/chat/completions</code> is the primary endpoint, taking model, messages, sampling parameters, tools, and response format. <code>POST /v1/completions</code> is legacy text completion. <code>GET /v1/models</code> reports what’s served.</p>
+<p><strong>Streaming</strong> happens over Server-Sent Events, one delta per token, terminated by a sentinel, and it isn’t a feature bolted on afterwards because it changes the error model. You’ve already sent a 200 before you know whether generation will succeed, so mid-stream failures have to be signalled in-band.</p>
+<p><strong>Cancellation</strong> matters more than it sounds. When a client disconnects the server has to stop generating and free the KV blocks <em>immediately</em> , which is easy to get wrong behind a proxy that buffers, and getting it wrong wastes a large fraction of a busy server’s capacity on abandoned requests.</p>
+<p>In a Rust stack, <code>axum</code> with <code>tokio</code> for the API layer and a channel to the synchronous engine thread is the natural structure (Chapter 3), and the model step stays off the async runtime’s worker pool.</p>
+<h2 id="observability">Observability</h2>
+<p><strong>Metrics</strong> for Prometheus should cover throughput as requests per second and prompt and generated tokens per second, latency as histograms rather than averages for TTFT and TPOT and end-to-end, queue depth and waiting time, KV cache state including blocks used and free and prefix-cache hit rate and preemptions, batch composition including running sequences and prefill tokens per step, GPU utilisation and memory and clocks and temperature and ECC errors, and errors by class.</p>
+<p>The two most diagnostic and most often missing are <strong>prefix-cache hit rate</strong> , which predicts prefill load, and <strong>preemption rate</strong> , which tells you your admission policy is wrong before users do.</p>
+<p><strong>Tracing</strong> through OpenTelemetry wants a span per request with child spans for queueing, prefill, each decode phase, and detokenisation, and in a disaggregated deployment the trace has to cross the prefill and decode boundary or you can’t attribute latency at all.</p>
+<p><strong>Structured logging</strong> wants request IDs that appear in client-facing errors, so a user’s report maps to a trace.</p>
+<h2 id="error-handling">Error handling</h2>
+<p>Malformed requests get a 400 with a specific message, validated before admission. Context too long gets a 400 with the actual limit and the actual token count. Overload gets a 429 with <code>Retry-After</code> , promptly, because queueing beyond capacity converts a throughput problem into universal latency failure. OOM during decode shouldn’t happen if admission and watermarks are right, and when it does you preempt rather than fail, and alert. A GPU fault, a device reset or a hung queue, kills every in-flight request on that device, so you detect it with a watchdog on the completion signal, fail those requests</p>
+<p>explicitly, drain, and restart the worker, because a server that hangs silently on a wedged GPU is worse than one that crashes. And a corrupt checkpoint gets caught by hash verification at load, refusing to serve.</p>
+<h2 id="deployment-and-kubernetes">Deployment and Kubernetes</h2>
+<p>The standard shape starts with a <strong>container</strong> holding the runtime and engine, with weights mounted from a volume or pulled from object storage at startup, since baking 400 GB into an image makes the image unusable.</p>
+<p><strong>Model loading</strong> dominates cold start, minutes for large models, and it’s the central operational constraint. Mitigations are fast local NVMe caches, parallel shard loading, memory-mapped weights shared between processes, and keeping warm spare replicas.</p>
+<p><strong>Health probes</strong> need to be two different things. A <em>readiness</em> probe true only when weights are loaded and a test forward pass has succeeded, and a <em>liveness</em> probe that fails when the engine is wedged. Conflating them routes traffic to a loading pod or lets a wedged pod persist.</p>
+<p><strong>Graceful shutdown</strong> on SIGTERM stops accepting, finishes in-flight requests, then exits, with a termination grace period longer than your longest generation or Kubernetes kills mid-stream.</p>
+<p><strong>Device plugins</strong> request GPUs, and topology-aware scheduling puts a TP=8 replica on eight GPUs of the same node with the right fabric connectivity, where getting it wrong silently costs a large fraction of collective bandwidth.</p>
+<p><strong>Autoscaling</strong> has to use the right signal, and GPU utilisation is a poor one because a memory-bound decode loop shows high utilisation while doing nothing. Scale on queue depth, TTFT percentile, or KV cache pressure, and account for cold start, since an autoscaler with a 3-minute model load and a 30second reaction time is permanently behind the traffic.</p>
+<p><strong>Rollout</strong> has to account for model and engine upgrades changing outputs, so canary a small traffic fraction and compare quality metrics rather than only error rates before proceeding.</p>
+<h2 id="multi-tenancy">Multi-tenancy</h2>
+<p>Per-tenant quotas on rate, concurrency, and context length. Fair scheduling so no tenant monopolises (Chapter 16). Prefix cache isolation where tenants are mutually untrusting, since shared caches leak timing information about others’ prompts (Chapter 17). And adapter isolation, since the adapter has to be part of every cache key (Chapter 26).</p>
+<h2 id="security">Security</h2>
+<p>Never load pickle checkpoints from untrusted sources. Verify weight integrity with hashes against a manifest. Treat the prompt as untrusted input at the tokenisation boundary, since special tokens must not be forgeable from user text (Chapter 20). Bound resource consumption per request with maximum context, maximum output, and maximum images, because without those one request can consume a node. And don’t log prompts and completions by default, since they’re user data and frequently sensitive.</p>
+<h2 id="what-to-build-and-what-to-borrow">What to build and what to borrow</h2>
+<p>Build what’s your differentiator, meaning the compute path with its device interface and kernels and memory management and collectives, the KV manager, and the scheduler if your workload is unusual.</p>
+<p>Borrow everything else. The HTTP framework, the observability stack, container orchestration, the model format, the tokeniser implementation, and the structured-output grammar compiler are each a project in their own right and none of them will make your system faster.</p>
+<h2 id="the-honest-assessment">The honest assessment</h2>
+<p>Most teams should use an existing engine. The compute path is where custom engineering pays and it’s also the hardest part to get right, while the serving layer is equally hard and much less differentiating.</p>
+<p>The hybrid that works is to build the compute path where you have a genuine advantage, unusual hardware or an extreme latency requirement or a technique nobody supports, and integrate it beneath an existing engine’s serving layer through its backend or connector interfaces. Custom performance where it matters, mature infrastructure where it doesn’t.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>A production stack is more than a compute path. It needs an OpenAI-compatible API with correct streaming and cancellation, metrics as histograms with prefix-cache hit rate and preemption rate among them, tracing that crosses process boundaries, explicit handling for overload and GPU faults, and a Kubernetes deployment whose readiness probes and grace periods and autoscaling signals account for multi-minute model loads. Build the compute path, borrow the rest.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Design the health-probe strategy for a server with a 4-minute model load and generations up to 5 minutes. Specify readiness, liveness, grace period, and what each returns during load, steady state, and shutdown.</p></li>
+<li><p>Explain why GPU utilisation is a poor autoscaling signal for decode and propose a composite signal with thresholds.</p></li>
+<li><p>A shared prefix cache leaks timing information between tenants. Quantify what an adversary learns and give two mitigations with their costs.</p></li>
+<li><p><strong>Build:</strong> implement an OpenAI-compatible streaming endpoint with cancellation. Verify with a client that disconnects mid-stream that KV blocks are freed within one decode step.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch37-performance-measurement.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Performance Measurement</span>
+        </a>
+        
+        <a href="ch39-the-build-order.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">The Build Order</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

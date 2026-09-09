@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prefix Caching and RadixAttention — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link active">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part IV: The Serving Engine</span>
+            <span class="sep">/</span>
+            <span class="current">Prefix Caching and RadixAttention</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part IV: The Serving Engine</span>
+            <h1 class="chapter-title">Prefix Caching and RadixAttention</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-observation">The observation</h2>
+<p>Requests to a real inference server share prefixes constantly. Every request in a chat application starts with the same system prompt, few-shot prompts share their examples, multi-turn conversations resend the entire history each turn, agentic loops resend a growing transcript on every tool call, and RAG pipelines resend the same retrieved documents.</p>
+<p>Without prefix caching, every one of those recomputes KV for tokens that were computed moments earlier by a nearly identical request.</p>
+<p>This is frequently the largest single win available in a deployment, and it requires no kernel work whatsoever, which makes it an unusually good place to start.</p>
+<h2 id="hash-based-prefix-caching">Hash-based prefix caching</h2>
+<p>vLLM’s approach identifies each full KV block by a hash of its token IDs <strong>chained with the hash of the preceding block</strong> , so identical content at different positions hashes differently and the match is genuinely a prefix match rather than a coincidence. On arrival, hash the prompt block by block, look each one up, and on a hit map the cached physical block into the new sequence’s block table and bump its reference count, stopping at the first miss and computing the rest.</p>
+<p>It’s simple, O(1) per block, and composes cleanly with the block allocator, which is why it’s on by default.</p>
+<p>Its limitations come from block granularity. Matching happens in whole blocks, so a shared prefix ending mid-block leaves that block uncomputable from cache, and blocks whose content matches while their preceding context differs won’t match, which is correct behaviour rather than a bug.</p>
+<p>On hash collisions, the theoretical risk of two different token sequences hashing identically is real and negligible with a 64-bit-or-wider hash. Engines that care store the token IDs and verify on hit, and since a collision would produce silently wrong output, that verification is cheap insurance.</p>
+<h2 id="radixattention">RadixAttention</h2>
+<p>SGLang maintains a <strong>radix tree</strong> whose edges are token sequences and whose nodes hold references to KV storage.</p>
+<pre><code>root
+├── [system prompt A] ────────► KV for A
+│   ├── [user turn 1] ────────► KV for A+1
+│   │   └── [assistant reply] ► KV for A+1+r
+│   └── [user turn 2] ────────► KV for A+2
+└── [system prompt B] ────────► KV for B</code></pre>
+<p>On arrival you traverse from the root matching tokens, the deepest match is the reusable prefix, and the remainder gets inserted as a new branch, splitting a node if the divergence falls inside an existing edge.</p>
+<p>The properties that matter are longest-prefix match in time proportional to the matched length, node splitting so the tree adapts to whatever prefixes actually occur rather than to a fixed block grid, structureaware eviction where leaves go before internal nodes since an internal node is a prefix of everything beneath it, and automatic sharing, because two requests with a common prefix share it without anyone arranging that. Where the underlying KV pool is token-indexed the reuse granularity is a token, and where it’s page-indexed the practical granularity is a page, same as hashing.</p>
+<p>SGLang’s evaluation reports up to about 6.4× higher throughput than prior systems on workloads with heavy prefix sharing, which is the honest form of the “5 to 10×” figure that gets quoted around. On workloads with no sharing the benefit is zero and the bookkeeping is a small loss.</p>
+<h2 id="cache-hit-economics">Cache hit economics</h2>
+<p>A <strong>full hit</strong> skips prefill entirely and the request goes straight to decode, which for a 2,000-token system prompt on a large model removes tens of milliseconds from TTFT and frees the corresponding GPU time for someone else. A <strong>partial hit</strong> prefills only the uncached suffix, which is the common case in multi-turn chat where each turn’s cached prefix is the whole previous conversation. A <strong>miss</strong> is a full prefill.</p>
+<p>The metric to instrument is the <strong>cached-token fraction</strong> , cached prefill tokens over total prompt tokens. It predicts TTFT and prefill GPU time better than any other single number, and it’s the first thing to look at when a deployment’s TTFT regresses.</p>
+<h2 id="where-prefix-caching-gets-hard">Where prefix caching gets hard</h2>
+<p><strong>Cache scope.</strong> With tensor parallelism every rank holds part of every block, so cache state has to agree across ranks, meaning decisions get made once and broadcast rather than made independently. With data parallelism across replicas, a request routed to a different replica misses a cache that exists elsewhere, which is why prefix-aware routing at the load balancer is worth as much as the cache itself.</p>
+<p><strong>Capacity.</strong> The prefix cache competes with running sequences for the same pool, so too much retention starves concurrency and too little destroys hit rate. That’s a tuning problem with a measurable objective, maximise hit rate times prefill saved minus preemptions caused, and it’s worth actually measuring.</p>
+<p><strong>Correctness of what gets shared.</strong> Two requests can share tokens without sharing everything that affects KV, because they might use different LoRA adapters, different positional scaling configurations, or different cache quantisation. The cache key has to cover every input that changes the computed KV, or you’ll serve one tenant’s adapter output to another, which makes this a security boundary rather than merely a correctness one.</p>
+<p><strong>Multi-tenant isolation.</strong> Shared prefix caches leak timing information, since a fast TTFT reveals that someone else recently sent the same prefix. For adversarial multi-tenancy you partition the cache per tenant and accept the hit rate loss.</p>
+<h2 id="beyond-one-node">Beyond one node</h2>
+<p>The natural extension is a KV cache tier below VRAM, host RAM or local NVMe or a cluster-wide store, so a prefix evicted from GPU memory can be restored rather than recomputed. The comparison is the same one as always. Restoring <em>N</em> tokens of KV costs bytes over link bandwidth, recomputing them costs</p>
+<p><em>N</em> over the prefill rate, and for long prefixes over a fast fabric restoring wins. That’s the foundation of the KV-centric architectures in Chapter 30.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Prefix caching exploits the fact that real workloads resend the same prompt prefixes constantly. Hashbased caching is simple and block-granular with chained hashes, RadixAttention uses a radix tree with node splitting, longest-prefix match, and structure-aware eviction, reported at up to 6.4× throughput on sharing-heavy workloads. The cache key has to cover everything that affects the computed KV, adapter and position scaling and quantisation included, or sharing becomes a correctness and security bug.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>A chat workload has a 1,500-token system prompt and turns averaging 200 tokens, with 8 turns per conversation. Compute total prefill tokens with no caching, with block-granular caching at block size 16, and with ideal token-granular caching.</p></li>
+<li><p>Explain why block hashes must be chained with the previous block’s hash, and construct a concrete failure case for unchained hashes.</p></li>
+<li><p>Design the cache key for a system serving multiple LoRA adapters and two RoPE scaling configurations. What’s the security consequence of omitting either?</p></li>
+<li><p><strong>Build:</strong> implement a radix tree over token sequences with reference counting and LRU eviction of leaves. Replay a synthetic multi-turn chat trace and report the cached-token fraction.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch16-request-scheduling.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Request Scheduling</span>
+        </a>
+        
+        <a href="ch18-chunked-prefill.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Chunked Prefill</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

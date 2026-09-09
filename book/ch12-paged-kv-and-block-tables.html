@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paged KV and Block Tables — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link active">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part III: Attention and the KV Cache</span>
+            <span class="sep">/</span>
+            <span class="current">Paged KV and Block Tables</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part III: Attention and the KV Cache</span>
+            <h1 class="chapter-title">Paged KV and Block Tables</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-paged-kv-idea">The paged KV idea</h2>
+<p>The naive layout stores each sequence’s KV cache contiguously, pre-allocated to the maximum sequence length, which wastes memory twice over. Once for capacity a sequence never uses, and again through fragmentation as sequences of different lengths arrive and depart.</p>
+<p>PagedAttention (Kwon et al., SOSP 2023) borrowed the operating system’s answer, which is <strong>pages</strong> . The logical KV cache, the thing the kernel indexes, becomes a sequence of fixed-size blocks, while the physical cache is a pool of blocks handed out by an allocator, and a per-sequence <strong>block table</strong> maps between them.</p>
+<pre><code>block_table = [5, 2, 8, 1]
+  logical block 0 → physical block 5
+  logical block 1 → physical block 2
+  logical block 2 → physical block 8
+  logical block 3 → physical block 1</code></pre>
+<p>With a block size of 16 tokens, a 100-token sequence occupies 7 blocks and wastes at most 15 token slots, rather than reserving space for 32,768.</p>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0070-01.png" alt="FIGURE 12.1: Paging is what lets two sequences share a prefix" />
+<figcaption aria-hidden="true">FIGURE 12.1: Paging is what lets two sequences share a prefix</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> Each sequence sees a contiguous run of logical blocks. That is the fiction the attention kernel is written against.</p></li>
+<li><p>O <strong><code>2</code></strong> The block table is the page table. One integer lookup per block of 16 to 64 tokens, plus the loss of the compiler’s ability to prove consecutive blocks are contiguous, which is what actually costs you.</p></li>
+<li><p>O <strong><code>3</code></strong> Physical blocks come from one shared pool, so any free block satisfies any request and external fragmentation essentially disappears.</p></li>
+<li><p>O <strong><code>4</code></strong> Two sequences pointing at the same physical block is prefix sharing. It works because the cache is append-only, so a shared block can be extended but never mutated.</p></li>
+</ul>
+<h2 id="the-paged-attention-kernel">The paged attention kernel</h2>
+<p>The kernel changes modestly. It receives the block table and sequence length as arguments, loads the physical index for each logical block, computes the physical address, and reads KV from there. Online softmax and combine are untouched.</p>
+<p>The indirection costs one integer load per block of 16 to 64 tokens plus address arithmetic, and, less obviously, it costs the compiler’s ability to prove that consecutive blocks are contiguous, which is what actually hurts.</p>
+<h2 id="what-paging-really-costs">What paging really costs</h2>
+<p>Here’s the claim that gets repeated most often, and it’s worth correcting carefully because the wrong version is everywhere.</p>
+<p>Paging is <strong>not</strong> free. The vLLM authors and subsequent analyses measured PagedAttention’s decode kernel at <strong>20 to 26% slower</strong> than the equivalent contiguous FasterTransformer kernel, attributed to blocktable lookups and extra branches, and paged prefill kernels in FlashAttention-2 and FlashInfer have been measured at up to <strong>37% and 42% slower</strong> than their non-paged counterparts. That work, the vAttention</p>
+<p>line, argues you can keep paging’s memory benefits while using contiguous virtual memory and the driver’s own page tables, precisely to win that overhead back.</p>
+<p>So the correct statement is that paging costs on the order of 20 to 40% of <em>kernel</em> time and buys nearelimination of KV memory waste, which the vLLM authors measured as a 2 to 4× end-to-end throughput improvement over the prior state of the art at the same latency. For a server that trade is overwhelmingly worth taking, since throughput improves even though the kernel got slower, but a single-sequence benchmark will show paging as a pure loss, and it’s worth knowing which of those two situations you’re measuring.</p>
+<p>Larger blocks reduce the overhead through fewer lookups and longer contiguous runs, at the cost of more internal fragmentation. Block size 16 was the original default, 32 to 128 are common now, and engines increasingly tune it per deployment.</p>
+<h2 id="combining-paging-with-gqa-and-quantisation">Combining paging with GQA and quantisation</h2>
+<p>The real production decode kernel does all three at once. Paging gives the physical address of each KV block, GQA reads each KV head once and broadcasts across its group of query heads, and quantisation stores KV in FP8 or FP4 with per-token scales converted in the datapath.</p>
+<p>The three interact, which is why writing them separately and composing at the end reliably produces a kernel that’s correct and slow. Quantisation scales have to live alongside the data or in a parallel array indexed the same way, which becomes an extra indirection if the layout is wrong. GQA broadcast wants the group’s query heads resident in registers while the shared KV block streams past, competing for register file with the prefetch depth of Chapter 10. The layout has to be designed for all three together.</p>
+<h2 id="kernel-paging-against-manager-paging">Kernel paging against manager paging</h2>
+<p>Two different things share the name and it’s worth separating them. Kernel-level paging, which is this chapter, means the attention kernel follows a block table so the cache needn’t be contiguous, and that’s a kernel technique. Memory-manager paging, which is Chapter 13, is the allocator that owns the block pool, hands blocks to sequences, reclaims them, shares them, and evicts under pressure, and that’s the systems innovation.</p>
+<p>A kernel can consume block tables with no manager behind it, and hard-coding one for a single sequence is exactly how you bring the kernel up. But the value of paging comes from the manager.</p>
+<h2 id="implementation-in-rust">Implementation in Rust</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">pub</span> <span class="kw">struct</span> BlockTable <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    entries<span class="op">:</span> <span class="dt">Vec</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;,</span>   <span class="co">// logical block index -&gt; physical block index</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    block_size<span class="op">:</span> <span class="dt">u32</span><span class="op">,</span>     <span class="co">// tokens per block</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>rust</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span> BlockTable <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> physical_block(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> logical<span class="op">:</span> <span class="dt">u32</span>) <span class="op">-&gt;</span> <span class="dt">Option</span><span class="op">&lt;</span><span class="dt">u32</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span><span class="op">.</span>entries<span class="op">.</span>get(logical <span class="kw">as</span> <span class="dt">usize</span>)<span class="op">.</span>copied()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">pub</span> <span class="kw">fn</span> blocks_for(<span class="op">&amp;</span><span class="kw">self</span><span class="op">,</span> seq_len<span class="op">:</span> <span class="dt">u32</span>) <span class="op">-&gt;</span> <span class="dt">u32</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        seq_len<span class="op">.</span>div_ceil(<span class="kw">self</span><span class="op">.</span>block_size)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Returning <code>Option</code> rather than indexing directly is deliberate. An out-of-range logical block is a bug that has to be caught on the host, because on the GPU it becomes an out-of-bounds read into whatever else lives in VRAM, and with fault handling configured for performance that can be a device reset. A <code>None</code> on the host is free, a VM fault on the device is a node incident.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Kernel-level paging is an indirection through a block table. It isn’t free, with measurements putting paged decode kernels 20 to 26% behind contiguous equivalents and paged prefill up to 42% behind, but it buys near-zero memory waste, which is a much larger win at the system level. Paging, GQA broadcast, and quantisation have to be designed into the kernel’s data layout together, because bolted on separately they compose into something correct and slow.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>For block sizes 16, 32, 64, and 128, compute expected internal fragmentation for a workload with sequence lengths uniform in [100, 4000], and the block-table size for a 1M-token sequence. Recommend a block size and defend it.</p></li>
+<li><p>Explain why a single-sequence microbenchmark makes paging look strictly bad while a server benchmark makes it look strictly good. What should you measure to capture both?</p></li>
+<li><p><strong>Build:</strong> take your Chapter 10 kernel and add block-table indirection. Measure the slowdown at several block sizes and compare with the published 20 to 26% figure.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch11-kv-cache-quantisation.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">KV Cache Quantisation</span>
+        </a>
+        
+        <a href="ch13-kv-cache-memory-management.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">KV Cache Memory Management</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

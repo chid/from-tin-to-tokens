@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KV Cache Compression — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link active">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VII: Quantisation and Compression</span>
+            <span class="sep">/</span>
+            <span class="current">KV Cache Compression</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VII: Quantisation and Compression</span>
+            <h1 class="chapter-title">KV Cache Compression</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="beyond-quantisation">Beyond quantisation</h2>
+<p>Chapter 11 reduced the bytes per KV entry. This chapter reduces the <em>number</em> of entries, or avoids storing some of them at all, through eviction of entries that contribute little, merging of similar entries, cross-layer sharing where one layer’s KV serves several, and offloading of cold entries to a slower tier rather than discarding them.</p>
+<p>These are orthogonal to quantisation and compose with it. They’re also orthogonal to the <em>sparse attention</em> of Chapter 14, which reduces what gets read without reducing what gets stored, and getting that distinction right matters. Sparsity buys speed, compression buys capacity, quantisation buys both.</p>
+<h2 id="attention-sinks-and-why-they-exist">Attention sinks, and why they exist</h2>
+<p>One finding constrains every eviction policy in this chapter. <strong>The first few tokens of a sequence receive disproportionate attention regardless of their content</strong> (Xiao et al., 2023), and evicting them collapses generation immediately rather than gradually.</p>
+<p>The explanation has two parts and you need both. <strong>Softmax must sum to one</strong> , so when a query has no strong affinity for any key the model still has to put its attention mass somewhere, meaning it needs a dump. And <strong>causal masking makes the earliest tokens universally visible</strong> , since the first token is the only key every query can attend to, which during training makes it the natural place to dump excess attention, and the model learns to use it.</p>
+<p>So attention sinks are a structural artefact of the architecture rather than a property of the text, and that’s why StreamingLLM’s remedy is so cheap. Keep the first four or so tokens permanently plus a rolling window of recent tokens and generation stays stable to arbitrary length, where a pure rolling window collapses as soon as the sinks fall out.</p>
+<p>Any eviction policy has to protect the sinks. One that doesn’t will work in testing on short sequences and fail catastrophically in production on long ones.</p>
+<h2 id="h2o-and-score-based-eviction">H2O and score-based eviction</h2>
+<p><strong>H2O</strong> (Zhang et al., 2023) formalises the observation that attention is concentrated, with a small set of heavy-hitter tokens accumulating most of the attention mass while the rest contribute little. It maintains a fixed KV budget and evicts the tokens with the lowest accumulated attention scores, keeping heavy hitters and recent tokens.</p>
+<p>Quality depends strongly on the budget, near-lossless at high retention and degrading as the budget tightens, and degrading <em>non-uniformly</em> , so tasks needing precise recall of specific earlier tokens, retrieval and long-document QA and code editing, fail long before summarisation does.</p>
+<p>The mechanism has a structural cost worth understanding. Computing eviction scores requires the attention weights, which a FlashAttention-style kernel never materialises, so either you produce them at extra cost in work and memory or you approximate them, and the approximation quality bounds the policy’s quality.</p>
+<h2 id="merging-and-cross-layer-sharing">Merging and cross-layer sharing</h2>
+<p><strong>Merging</strong> combines entries rather than discarding them. CaM merges to-be-evicted value states into retained ones so their contribution isn’t lost outright, KVMerger exploits high token-level similarity among key states within a sequence, and D2O merges both keys and values using cosine-similarity weighting with an EMA threshold. Note that “token merging (Bolya et al.)” is sometimes cited here in error. That work is ToMe, which merges tokens in vision transformers and is an entirely different thing.</p>
+<p><strong>Cross-layer sharing</strong> exploits a different redundancy, that KV states in adjacent layers are often highly similar. MiniCache merges KV across consecutive layers from the middle of the model outward, with a retention mechanism for tokens that don’t merge well. Architecturally, models are also being designed with cross-layer KV sharing built in, which is a cleaner solution than recovering it after the fact.</p>
+<p>All merging methods share a trade-off. They’re lossy in ways that are hard to bound analytically, they add per-step computation, and their benefit is highly architecture- and task-dependent.</p>
+<h2 id="adaptive-precision">Adaptive precision</h2>
+<p>The most deployable member of this family, because it’s nearly free to implement on top of a paged cache, is to <strong>vary precision by age</strong> . Recent tokens in FP8 or BF16, older tokens in FP4 or INT4.</p>
+<p>The justification is empirical, that recent tokens receive more attention mass on average, and the implementation is a per-block precision tag in the block table, with the attention kernel dispatching to the right dequantisation path per block, which costs a branch per block rather than per element.</p>
+<p>That’s the most reliable way to get most of four-bit’s capacity benefit at close to FP8’s quality, and it needs none of the score computation or merging machinery above.</p>
+<h2 id="offloading-rather-than-discarding">Offloading rather than discarding</h2>
+<p>If the cache exceeds VRAM, the alternative to compression is a memory hierarchy, hot blocks in HBM, warm in host RAM over PCIe, cold on NVMe or a cluster KV store (Chapter 30).</p>
+<p>The trade is explicit and computable. Fetching a block costs bytes over link bandwidth, recomputing it costs its tokens over the prefill rate, and discarding it costs quality. For a shared prefix many requests will use, fetching wins easily, and for a one-off suffix recomputation is usually cheaper.</p>
+<p>Offloading has a decisive advantage over lossy compression for production use, which is that it’s <strong>exact</strong> . No quality risk to evaluate, no task-dependent failure mode, no need to re-validate when the model changes. Where the bandwidth exists, prefer it.</p>
+<h2 id="the-deployability-caveat">The deployability caveat</h2>
+<p>Lossy KV compression is research-active and carries genuine deployment risk, for three reasons that compound.</p>
+<p><strong>Attention patterns vary</strong> by model, prompt, and task, so a policy tuned on one distribution can fail on another. <strong>Degradation is non-uniform</strong> , so aggregate benchmark scores can hold steady while a specific capability, exact recall or long-range coreference or instruction adherence deep in a context, collapses. Averages hide exactly the failures that matter. And <strong>evaluation has to be adversarial</strong> , since needle-in-a-</p>
+<p>haystack tests at multiple depths, multi-hop retrieval, and tasks requiring verbatim reproduction will surface problems that perplexity and standard benchmarks won’t.</p>
+<p>The recommended order of adoption runs from safest to riskiest. Quantisation (Chapter 11), then sparse attention with a trained or well-validated selector (Chapter 14), then offloading, then adaptive precision, then sink-protected eviction, then merging. Move down the list only when the level above is insufficient, and validate each step on your own traffic.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>KV compression extends context beyond what memory allows and it’s riskier than quantisation. Attention sinks, the first few tokens that absorb excess attention because softmax must sum to one and causal masking makes them universally visible, must never be evicted. Score-based eviction, merging, and crosslayer sharing all trade quality for capacity in ways that are hard to bound, while adaptive precision by block age and exact offloading to a slower tier give most of the benefit with far less risk. Evaluate adversarially, because averages hide the failures that matter.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Explain why a rolling-window KV cache collapses without attention sinks and is stable with four of them retained. What does the model do with the sink tokens’ value vectors?</p></li>
+<li><p>A FlashAttention-style kernel never materialises attention weights. Design a cheap approximation to pertoken attention mass suitable for driving an eviction policy, and state its failure mode.</p></li>
+<li><p>Compare the cost of fetching a 16-token KV block from host memory over PCIe 5.0 with recomputing it at 20,000 tokens/s prefill, for a 94-layer model in FP8. At what block size does fetching win?</p></li>
+<li><p><strong>Build:</strong> implement per-block adaptive precision in a paged KV cache, recent blocks FP8 and older blocks FP4, and measure both memory saving and accuracy on a needle-in-a-haystack test at several context depths.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch31-weight-quantisation.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Weight Quantisation</span>
+        </a>
+        
+        <a href="ch33-nvidia-vs-amd.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">NVIDIA vs AMD</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>

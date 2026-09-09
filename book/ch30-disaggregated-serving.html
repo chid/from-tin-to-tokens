@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disaggregated Serving — From Tin to Tokens</title>
+  <meta name="description" content="From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="book-layout">
+    <aside class="book-sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="sidebar-brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-title">From Tin to Tokens</div>
+      <div class="brand-badge">v1.0</div>
+    </a>
+    <div class="sidebar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebar-search" placeholder="Search chapters..." autocomplete="off" />
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-part-header">Frontmatter</div>
+    <a href="preface.html" class="nav-link">
+      <span class="nav-num">Preface</span>
+      <span class="nav-text">Preface</span>
+    </a>
+    <a href="introduction.html" class="nav-link">
+      <span class="nav-num">Intro</span>
+      <span class="nav-text">Introduction</span>
+    </a>
+    <div class="nav-part-header">Part I: Foundations</div>
+    <a href="ch01-why-inference-is-different.html" class="nav-link">
+      <span class="nav-num">1</span>
+      <span class="nav-text">Why Inference Is Different</span>
+    </a>
+    <a href="ch02-the-inference-ecosystem.html" class="nav-link">
+      <span class="nav-num">2</span>
+      <span class="nav-text">The Inference Ecosystem</span>
+    </a>
+    <a href="ch03-why-rust.html" class="nav-link">
+      <span class="nav-num">3</span>
+      <span class="nav-text">Why Rust</span>
+    </a>
+    <div class="nav-part-header">Part II: The Hardware Layer</div>
+    <a href="ch04-gpu-architecture-for-inference.html" class="nav-link">
+      <span class="nav-num">4</span>
+      <span class="nav-text">GPU Architecture for Inference</span>
+    </a>
+    <a href="ch05-the-driver-interface.html" class="nav-link">
+      <span class="nav-num">5</span>
+      <span class="nav-text">The Driver Interface</span>
+    </a>
+    <a href="ch06-device-memory.html" class="nav-link">
+      <span class="nav-num">6</span>
+      <span class="nav-text">Device Memory</span>
+    </a>
+    <a href="ch07-command-queues-and-dispatch.html" class="nav-link">
+      <span class="nav-num">7</span>
+      <span class="nav-text">Command Queues and Dispatch</span>
+    </a>
+    <div class="nav-part-header">Part III: Attention and the KV Cache</div>
+    <a href="ch08-attention-variants.html" class="nav-link">
+      <span class="nav-num">8</span>
+      <span class="nav-text">Attention Variants</span>
+    </a>
+    <a href="ch09-flashattention-and-tiling.html" class="nav-link">
+      <span class="nav-num">9</span>
+      <span class="nav-text">FlashAttention and Tiling</span>
+    </a>
+    <a href="ch10-flashdecoding-and-split-kv.html" class="nav-link">
+      <span class="nav-num">10</span>
+      <span class="nav-text">FlashDecoding and Split-KV</span>
+    </a>
+    <a href="ch11-kv-cache-quantisation.html" class="nav-link">
+      <span class="nav-num">11</span>
+      <span class="nav-text">KV Cache Quantisation</span>
+    </a>
+    <a href="ch12-paged-kv-and-block-tables.html" class="nav-link">
+      <span class="nav-num">12</span>
+      <span class="nav-text">Paged KV and Block Tables</span>
+    </a>
+    <a href="ch13-kv-cache-memory-management.html" class="nav-link">
+      <span class="nav-num">13</span>
+      <span class="nav-text">KV Cache Memory Management</span>
+    </a>
+    <a href="ch14-long-context-attention.html" class="nav-link">
+      <span class="nav-num">14</span>
+      <span class="nav-text">Long-Context Attention</span>
+    </a>
+    <div class="nav-part-header">Part IV: The Serving Engine</div>
+    <a href="ch15-continuous-batching.html" class="nav-link">
+      <span class="nav-num">15</span>
+      <span class="nav-text">Continuous Batching</span>
+    </a>
+    <a href="ch16-request-scheduling.html" class="nav-link">
+      <span class="nav-num">16</span>
+      <span class="nav-text">Request Scheduling</span>
+    </a>
+    <a href="ch17-prefix-caching-and-radixattention.html" class="nav-link">
+      <span class="nav-num">17</span>
+      <span class="nav-text">Prefix Caching and RadixAttention</span>
+    </a>
+    <a href="ch18-chunked-prefill.html" class="nav-link">
+      <span class="nav-num">18</span>
+      <span class="nav-text">Chunked Prefill</span>
+    </a>
+    <a href="ch19-speculative-decoding.html" class="nav-link">
+      <span class="nav-num">19</span>
+      <span class="nav-text">Speculative Decoding</span>
+    </a>
+    <a href="ch20-tokenisation-sampling-structured-output.html" class="nav-link">
+      <span class="nav-num">20</span>
+      <span class="nav-text">Tokenisation, Sampling, and Structured Output</span>
+    </a>
+    <div class="nav-part-header">Part V: Model Execution</div>
+    <a href="ch21-weight-loading-and-model-formats.html" class="nav-link">
+      <span class="nav-num">21</span>
+      <span class="nav-text">Weight Loading and Model Formats</span>
+    </a>
+    <a href="ch22-the-decode-layer.html" class="nav-link">
+      <span class="nav-num">22</span>
+      <span class="nav-text">The Decode Layer</span>
+    </a>
+    <a href="ch23-the-autoregressive-loop.html" class="nav-link">
+      <span class="nav-num">23</span>
+      <span class="nav-text">The Autoregressive Loop</span>
+    </a>
+    <a href="ch24-mixture-of-experts-inference.html" class="nav-link">
+      <span class="nav-num">24</span>
+      <span class="nav-text">Mixture-of-Experts Inference</span>
+    </a>
+    <a href="ch25-kernel-fusion-graphs-chained-dispatch.html" class="nav-link">
+      <span class="nav-num">25</span>
+      <span class="nav-text">Kernel Fusion, Graphs, and Chained Dispatch</span>
+    </a>
+    <a href="ch26-adapters-and-multimodal-inputs.html" class="nav-link">
+      <span class="nav-num">26</span>
+      <span class="nav-text">Adapters and Multimodal Inputs</span>
+    </a>
+    <div class="nav-part-header">Part VI: Multi-GPU and Distributed</div>
+    <a href="ch27-the-interconnect-fabric.html" class="nav-link">
+      <span class="nav-num">27</span>
+      <span class="nav-text">The Interconnect Fabric</span>
+    </a>
+    <a href="ch28-collectives-for-inference.html" class="nav-link">
+      <span class="nav-num">28</span>
+      <span class="nav-text">Collectives for Inference</span>
+    </a>
+    <a href="ch29-tensor-pipeline-expert-parallelism.html" class="nav-link">
+      <span class="nav-num">29</span>
+      <span class="nav-text">Tensor, Pipeline, and Expert Parallelism</span>
+    </a>
+    <a href="ch30-disaggregated-serving.html" class="nav-link active">
+      <span class="nav-num">30</span>
+      <span class="nav-text">Disaggregated Serving</span>
+    </a>
+    <div class="nav-part-header">Part VII: Quantisation and Compression</div>
+    <a href="ch31-weight-quantisation.html" class="nav-link">
+      <span class="nav-num">31</span>
+      <span class="nav-text">Weight Quantisation</span>
+    </a>
+    <a href="ch32-kv-cache-compression.html" class="nav-link">
+      <span class="nav-num">32</span>
+      <span class="nav-text">KV Cache Compression</span>
+    </a>
+    <div class="nav-part-header">Part VIII: The Hardware Landscape</div>
+    <a href="ch33-nvidia-vs-amd.html" class="nav-link">
+      <span class="nav-num">33</span>
+      <span class="nav-text">NVIDIA vs AMD</span>
+    </a>
+    <a href="ch34-specialised-silicon.html" class="nav-link">
+      <span class="nav-num">34</span>
+      <span class="nav-text">Specialised Silicon</span>
+    </a>
+    <a href="ch35-edge-and-resource-constrained-inference.html" class="nav-link">
+      <span class="nav-num">35</span>
+      <span class="nav-text">Edge and Resource-Constrained Inference</span>
+    </a>
+    <div class="nav-part-header">Part IX: Proof, Testing, and Production</div>
+    <a href="ch36-correctness-validation.html" class="nav-link">
+      <span class="nav-num">36</span>
+      <span class="nav-text">Correctness Validation</span>
+    </a>
+    <a href="ch37-performance-measurement.html" class="nav-link">
+      <span class="nav-num">37</span>
+      <span class="nav-text">Performance Measurement</span>
+    </a>
+    <a href="ch38-building-a-production-stack.html" class="nav-link">
+      <span class="nav-num">38</span>
+      <span class="nav-text">Building a Production Stack</span>
+    </a>
+    <a href="ch39-the-build-order.html" class="nav-link">
+      <span class="nav-num">39</span>
+      <span class="nav-text">The Build Order</span>
+    </a>
+    <div class="nav-part-header">Appendices</div>
+    <a href="app-a-rust-patterns-gpu.html" class="nav-link">
+      <span class="nav-num">A</span>
+      <span class="nav-text">Appendix A: Rust Patterns for GPU Programming</span>
+    </a>
+    <a href="app-b-gpu-command-interfaces.html" class="nav-link">
+      <span class="nav-num">B</span>
+      <span class="nav-text">Appendix B: GPU Command Interfaces</span>
+    </a>
+    <a href="app-c-code-object-loading.html" class="nav-link">
+      <span class="nav-num">C</span>
+      <span class="nav-text">Appendix C: Code Object Loading</span>
+    </a>
+    <a href="app-d-inference-ecosystem-reference.html" class="nav-link">
+      <span class="nav-num">D</span>
+      <span class="nav-text">Appendix D: The Inference Ecosystem Reference</span>
+    </a>
+    <a href="app-e-glossary.html" class="nav-link">
+      <span class="nav-num">E</span>
+      <span class="nav-text">Appendix E: Glossary</span>
+    </a>
+    <a href="app-f-bibliography.html" class="nav-link">
+      <span class="nav-num">F</span>
+      <span class="nav-text">Appendix F: Bibliography</span>
+    </a>
+  </nav>
+</aside>
+<div class="sidebar-backdrop"></div>
+    <div class="book-main">
+      <header class="top-navbar">
+        <div class="navbar-left">
+          <button class="sidebar-toggle-btn" aria-label="Toggle Navigation">☰</button>
+          <div class="breadcrumbs">
+            <a href="index.html">Book</a>
+            <span class="sep">/</span>
+            <span class="crumb-part">Part VI: Multi-GPU and Distributed</span>
+            <span class="sep">/</span>
+            <span class="current">Disaggregated Serving</span>
+          </div>
+        </div>
+        <div class="navbar-right">
+          <button class="theme-toggle-btn" title="Toggle color scheme">🌙 Dark</button>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="pdf-btn" download>📥 PDF</a>
+          <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener" class="github-btn">GitHub</a>
+        </div>
+      </header>
+      
+      <main class="content-wrapper">
+        <article class="content-inner prose">
+          
+          <header class="chapter-header">
+            <span class="chapter-eyebrow">Part VI: Multi-GPU and Distributed</span>
+            <h1 class="chapter-title">Disaggregated Serving</h1>
+          </header>
+          
+          <div class="chapter-body">
+            <h2 id="the-observation">The observation</h2>
+<p>Prefill and decode have opposite resource profiles, which Part IV has been working around rather than resolving. Prefill is compute-bound with high arithmetic intensity, benefits from large batches, and is measured by TTFT. Decode is memory-bandwidth-bound with low arithmetic intensity, benefits from many concurrent sequences, and is measured by TPOT.</p>
+<p>Running both on the same GPU means each interferes with the other’s optimal configuration. Chunked prefill (Chapter 18) mitigates the interference and can’t resolve the deeper conflict, because the two phases want different batch sizes, different parallelism strategies, and increasingly different hardware.</p>
+<p><strong>Disaggregated serving</strong> takes the logical step, separate pools each configured for its phase, with the KV cache transferred between them.</p>
+<h2 id="the-architecture">The architecture</h2>
+<figure>
+<img src="assets/images/from-tin-to-tokens-v1.0.pdf-0139-08.png" alt="FIGURE 30.1: Separate the phases, and the transfer becomes the problem" />
+<figcaption aria-hidden="true">FIGURE 30.1: Separate the phases, and the transfer becomes the problem</figcaption>
+</figure>
+<ul>
+<li><p>O <strong><code>1</code></strong> The prefill pool runs large batches on compute-optimised parts with no decode work interrupting it.</p></li>
+<li><p>O <strong><code>2</code></strong> KV moves layer by layer as it is produced rather than all at once, which hides most of the transfer under the prefill that is still running. That is the difference between the arithmetic being a showstopper and being a design parameter.</p></li>
+<li><p>O <strong><code>3</code></strong> The decode pool runs many concurrent sequences on bandwidth-optimised parts, and the two pools get sized independently, which is the operational win.</p></li>
+<li><p>O <strong><code>4</code></strong> Underneath, a cache tier built from memory and SSD already in the cluster. Treating KV as infrastructure rather than as a worker’s private detail is what makes prefix reuse a cluster-wide property.</p></li>
+</ul>
+<p>The <strong>prefill pool</strong> processes prompts in large batches on high-FLOPS GPUs with parallelism configured for throughput and no decode work interrupting it. The <strong>KV transfer</strong> moves computed blocks to the decode node, layer by layer as they’re produced rather than all at once, which hides most of the transfer under the remaining prefill compute. And the <strong>decode pool</strong> generates tokens on high-bandwidth GPUs with many concurrent sequences and no prefill interruption.</p>
+<p>The operational win is that the pools get sized independently. A workload with long prompts and short outputs needs more prefill capacity, one with short prompts and long outputs needs more decode capacity, and a monolithic deployment has to provision for both in every GPU.</p>
+<h2 id="the-transfer-cost-computed-honestly">The transfer cost, computed honestly</h2>
+<p>It is tempting to reach for a round number here, something like “a long context is a few hundred megabytes, so a fast link moves it in a millisecond”. That estimate is wrong by orders of magnitude, and doing the arithmetic properly changes the conclusion rather than refining it.</p>
+<p>For Qwen3-235B, 94 layers with 4 KV heads of dimension 128 in FP8, KV is 1,024 bytes per token per layer, so <strong>96 KB per token</strong> for the whole model.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>CONTEXT</strong></th>
+<th><strong>KV SIZE (FP8)</strong></th>
+<th><strong>TRANSFER AT 400 GB/S (50 GB/S)</strong></th>
+<th><strong>AT 450 GB/S NVLINK</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1K tokens</td>
+<td>96 MB</td>
+<td>1.9 ms</td>
+<td>0.21 ms</td>
+</tr>
+<tr>
+<td>8K tokens</td>
+<td>770 MB</td>
+<td>15 ms</td>
+<td>1.7 ms</td>
+</tr>
+<tr>
+<td>128K tokens</td>
+<td>12.3 GB</td>
+<td>246 ms</td>
+<td>27 ms</td>
+</tr>
+<tr>
+<td>1M tokens</td>
+<td>96 GB</td>
+<td>1.9 s</td>
+<td>214 ms</td>
+</tr>
+</tbody>
+</table>
+<p>The NVLink column is 450 GB/s rather than the 900 GB/s usually quoted for H100, because 900 is the aggregate of both directions and a KV transfer runs one way.</p>
+<p>Two conclusions follow. The first is that the transfer never dominates on its own terms, because it scales the same way the prefill that produced it does. The correct comparison is always transfer time against <em>recompute</em> time, so if prefill of 128K tokens takes 2 s and moving its KV takes 246 ms, transfer wins comfortably, and it keeps winning at a million tokens where prefill runs into tens of seconds and the transfer is under two.</p>
+<p>The second is that the absolute numbers still bite. Two seconds of KV moving over the network is two seconds of TTFT you have to hide, and it is a large multiple of the decode step it is feeding. On a slow link, or with a short prompt where prefill was cheap anyway, the trade stops being obvious.</p>
+<p>Which is why layer-by-layer streaming matters so much. Transferring layer <em>i</em> ’s KV while layer <em>i+1</em> prefills hides nearly all of the transfer, turning a serial cost into an overlapped one, and that’s the difference between the table above being a showstopper and being a design parameter.</p>
+<h2 id="mooncake">Mooncake</h2>
+<p>Mooncake, the serving platform behind Kimi, is the production proof point, and its central design choice is worth stating precisely. It’s <strong>KV-cache-centric</strong> , meaning the KV cache isn’t an internal detail of a GPU</p>
+<p>worker, it’s a first-class disaggregated resource with its own storage tier, built from the CPU memory and DRAM and SSD capacity already sitting in the cluster, addressed over RDMA.</p>
+<p>That inversion, cache as infrastructure rather than as cache, enables prefix reuse across the entire cluster instead of within one worker, which on prompt-heavy production traffic is worth more than any single-node optimisation. Mooncake also implements early rejection under overload, predicting whether a request can meet its SLO before committing prefill work to it.</p>
+<h2 id="distserve-and-splitwise">DistServe and Splitwise</h2>
+<p><strong>DistServe</strong> (Zhong et al., OSDI 2024) is the academic foundation, showing that prefill and decode have different optimal parallelism configurations, that co-location forces a compromise on both, and that disaggregation plus per-phase configuration substantially improves the number of requests served within SLO.</p>
+<p><strong>Splitwise</strong> (Patel et al., ISCA 2024) adds the heterogeneity argument. Because the phases have different bottlenecks they can run on <em>different GPU generations</em> , older and cheaper high-FLOPS parts for prefill and high-bandwidth parts for decode, improving cost and power efficiency beyond what homogeneous disaggregation gives.</p>
+<h2 id="the-engineering-reality">The engineering reality</h2>
+<p>Disaggregation has become a standard deployment mode with standard components. A <strong>KV transfer layer</strong> with a pluggable backend, RDMA verbs or NVLink or GPUDirect, and an engine-facing connector API so prefill and decode workers can be different processes or different engines. A <strong>router</strong> that’s prefixaware, since routing a request to the prefill worker whose cache already holds its prefix is worth more than load balancing. A <strong>KV store tier</strong> below GPU memory holding prefixes evicted from VRAM. And <strong>orchestration</strong> that scales the two pools independently against their own SLOs.</p>
+<p>The costs are equally real. Two pools to operate, a transfer path that can fail independently of both, a router that becomes a critical dependency, and a much harder capacity-planning problem. Below a certain scale none of that is worth it, because the interference disaggregation removes is smaller than the complexity it adds.</p>
+<h2 id="when-it-helps">When it helps</h2>
+<p>Disaggregation helps when prompt and output lengths vary widely, when TTFT and TPOT SLOs are both tight, when prefix sharing is high enough to justify a cluster-wide cache, when heterogeneous hardware is available, and when the deployment is large enough for two pools to be sized efficiently.</p>
+<p>It doesn’t help when the workload is homogeneous so interference is minimal, when the deployment is small enough that fragmentation exceeds the gains, when the link between the pools is slow enough that KV transfer stops being cheap against recompute, or when your operational complexity budget is already spent.</p>
+<h2 id="key-concept">Key Concept</h2>
+<p>Disaggregation separates prefill and decode into independently configured pools, and the KV transfer between them is the engineering problem. Compute the transfer honestly, since Qwen3-235B in FP8 is 96 KB per token, making 128K context 12.3 GB and 1M context 96 GB, so about two seconds over a 400 Gb/ s network and a fifth of a second over one direction of NVLink. Stream KV layer by layer to hide it under remaining prefill. And Mooncake’s real lesson is architectural, treat the KV cache as cluster infrastructure with its own storage tier and prefix reuse becomes a cluster-wide property.</p>
+<h2 id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Recompute the transfer table for a Llama-3-70B-shaped model, 80 layers, 8 KV heads, dimension 128, in FP8 and FP16. At which context length does transfer over 400 Gb/s exceed prefill time at 20,000 tokens/s?</p></li>
+<li><p>Explain how layer-by-layer streaming hides transfer latency, and derive the condition under which it’s fully hidden.</p></li>
+<li><p>Design a prefix-aware router for a disaggregated deployment with 16 prefill and 32 decode workers. What state does it need, and what happens when that state is stale?</p></li>
+<li><p><strong>Build:</strong> simulate a disaggregated system against a monolithic one on a workload with bimodal prompt lengths. Report goodput for both at a fixed SLO pair and find the traffic mix where they cross over.</p></li>
+</ol>
+
+          </div>
+          
+          
+    <div class="chapter-pager">
+      
+        <a href="ch29-tensor-pipeline-expert-parallelism.html" class="pager-card prev">
+          <span class="pager-label">← Previous</span>
+          <span class="pager-title">Tensor, Pipeline, and Expert Parallelism</span>
+        </a>
+        
+        <a href="ch31-weight-quantisation.html" class="pager-card next">
+          <span class="pager-label">Next →</span>
+          <span class="pager-title">Weight Quantisation</span>
+        </a>
+        
+    </div>
+    <div class="keyboard-hint">Tip: Use <span class="kbd">←</span> and <span class="kbd">→</span> keys to navigate chapters</div>
+    
+        </article>
+      </main>
+    </div>
+  </div>
+  <script src="assets/script.js"></script>
+</body>
+</html>
