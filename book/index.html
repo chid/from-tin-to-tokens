@@ -242,15 +242,29 @@
       <main class="content-wrapper">
         <div class="content-inner">
           <section class="hero-section">
+            <div class="hero-badge">
+              <span>📖 Open Access Systems Textbook</span>
+              <span>•</span>
+              <span>Creative Commons CC-BY 4.0</span>
+            </div>
             <img src="assets/images/from-tin-to-tokens-v1.0.pdf-0001-06.png" alt="From Tin to Tokens Cover" class="hero-cover-img" />
             <h1 class="hero-title">From Tin to Tokens</h1>
             <p class="hero-subtitle">Building an LLM Inference Stack from Scratch in Rust</p>
-            <p class="hero-meta">Written by <strong>Dave Lemphers</strong> at <a href="https://maincode.com" target="_blank" rel="noopener">Maincode</a> · Version 1.0 (2026) · Creative Commons CC-BY 4.0</p>
+            <p class="hero-meta">Written by <strong>Dave Lemphers</strong> at <a href="https://maincode.com" target="_blank" rel="noopener">Maincode</a> · Version 1.0 (2026)</p>
             
+            <div class="hero-stats-bar">
+              <span class="hero-stat-chip">9 Architectural Parts</span>
+              <span class="hero-stat-chip">39 Chapters</span>
+              <span class="hero-stat-chip">6 Appendices</span>
+              <span class="hero-stat-chip">192 Pages</span>
+              <span class="hero-stat-chip">Pure Rust + GPU Kernels</span>
+              <span class="hero-stat-chip">ROCm &amp; CUDA Verified</span>
+            </div>
+
             <div class="hero-actions">
-              <a href="preface.html" class="btn-primary">Start Reading (Preface)</a>
+              <a href="preface.html" class="btn-primary">Start Reading (Preface) →</a>
               <a href="ch01-why-inference-is-different.html" class="btn-secondary">Jump to Chapter 1</a>
-              <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="btn-secondary" download>Download PDF Edition</a>
+              <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" class="btn-secondary" download>📥 Download PDF (18MB)</a>
             </div>
 
             <p class="prose" style="text-align: left; margin: 2.5rem 0 1.5rem;">
@@ -258,8 +272,91 @@
             </p>
           </section>
 
-          <section class="toc-section">
-            <h2 style="font-size: 1.75rem; font-weight: 800; border-bottom: 2px solid var(--border-subtle); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Table of Contents</h2>
+          <!-- Featured Erratum & Interactive Deep-Dive Banner -->
+          <div class="errata-banner">
+            <div>
+              <div class="errata-banner-tag">
+                <span>⚡ New Interactive Deep Dive &amp; Erratum · Chapter 24</span>
+              </div>
+              <h3 class="errata-banner-title">MoE Memory Bandwidth &amp; Batch Amortization Deep Dive</h3>
+              <p class="errata-banner-desc">
+                Explore the interactive simulator and mathematical breakdown of shared expert vs. routed expert memory traffic, GEMM saturation, and DeepSeek-V3 FP8 calculations.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+              <a href="shared-expert-amortization.html" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.88rem; text-decoration: none;">Explore Simulator →</a>
+              <a href="../ERRATA.md" class="btn-secondary" style="padding: 0.55rem 1.1rem; font-size: 0.88rem; text-decoration: none;">View ERRATA.md</a>
+            </div>
+          </div>
+
+          <!-- 6-Layer Architectural Blueprint Roadmap -->
+          <section class="blueprint-section" id="architecture">
+            <div class="blueprint-header">
+              <div>
+                <div class="blueprint-tag">The Inference Stack Journey</div>
+                <h2 class="blueprint-title">Architectural Blueprint &amp; Layer Dependencies</h2>
+              </div>
+              <p class="blueprint-subtitle">
+                6 core architectural layers explored step-by-step with production-grade Rust kernels, driver shims, and memory allocators.
+              </p>
+            </div>
+            <div class="blueprint-grid">
+              <a href="ch04-gpu-architecture-for-inference.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 01</span>
+                  <h4 class="blueprint-layer-title">Hardware &amp; Driver</h4>
+                  <p class="blueprint-layer-desc">Ch 4–7 · KFD ioctls, GPU virtual memory mapping, command ring buffers, and asynchronous queue dispatch.</p>
+                </div>
+                <span class="blueprint-code-tag">sys/kfd.rs</span>
+              </a>
+              <a href="ch08-attention-variants.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 02</span>
+                  <h4 class="blueprint-layer-title">Attention &amp; Memory</h4>
+                  <p class="blueprint-layer-desc">Ch 8–14 · FlashAttention-2 tiling, Split-KV online softmax reduction, paged KV block tables, and prefix caching.</p>
+                </div>
+                <span class="blueprint-code-tag">kernels/flash_attn.rs</span>
+              </a>
+              <a href="ch15-continuous-batching.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 03</span>
+                  <h4 class="blueprint-layer-title">Serving Engine</h4>
+                  <p class="blueprint-layer-desc">Ch 15–20 · Continuous iteration-level batching, chunked prefill, RadixAttention trees, and speculative verification.</p>
+                </div>
+                <span class="blueprint-code-tag">engine/scheduler.rs</span>
+              </a>
+              <a href="ch21-weight-loading-and-model-formats.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 04</span>
+                  <h4 class="blueprint-layer-title">Model Execution</h4>
+                  <p class="blueprint-layer-desc">Ch 21–26 · Grouped GEMM routing for MoE, fused RMSNorm kernels, autoregressive decode loops, and multimodal adapters.</p>
+                </div>
+                <span class="blueprint-code-tag">model/moe.rs</span>
+              </a>
+              <a href="ch27-the-interconnect-fabric.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 05</span>
+                  <h4 class="blueprint-layer-title">Multi-GPU Distributed</h4>
+                  <p class="blueprint-layer-desc">Ch 27–30 · NVLink/PCIe collectives, ring all-reduce, pipeline parallelism, and disaggregated prefill/decode serving.</p>
+                </div>
+                <span class="blueprint-code-tag">dist/collectives.rs</span>
+              </a>
+              <a href="ch36-correctness-validation.html" class="blueprint-card">
+                <div>
+                  <span class="blueprint-layer-num">LAYER 06</span>
+                  <h4 class="blueprint-layer-title">Production &amp; Proof</h4>
+                  <p class="blueprint-layer-desc">Ch 36–39 · Mathematical correctness test harness against f64 oracles, throughput benchmarks, and the 7-stage build order.</p>
+                </div>
+                <span class="blueprint-code-tag">verify/oracle.rs</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="toc-section" id="chapters">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; border-bottom: 2px solid var(--border-subtle); padding-bottom: 0.5rem; margin-bottom: 1.5rem; gap: 0.5rem;">
+              <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0;">Table of Contents</h2>
+              <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">9 Parts · 39 Chapters · 6 Appendices</span>
+            </div>
             <div class="toc-grid">
               
     <div class="toc-card">
@@ -687,15 +784,83 @@
           </a>
         </li>
         
+        <li class="toc-card-item" style="margin-top: 0.75rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-subtle);">
+          <a href="../ERRATA.md" class="toc-card-link" style="color: var(--accent);">
+            <span class="toc-card-num" style="font-weight: 700; color: var(--accent);">ERR</span>
+            <span class="toc-card-title-text"><strong>Confirmed Errata Log</strong></span>
+          </a>
+        </li>
+
+        <li class="toc-card-item">
+          <a href="shared-expert-amortization.html" class="toc-card-link" style="color: var(--accent);">
+            <span class="toc-card-num" style="font-weight: 700; color: var(--accent);">SIM</span>
+            <span class="toc-card-title-text"><strong>MoE Bandwidth Simulator &amp; Explainer</strong></span>
+          </a>
+        </li>
+        
       </ul>
     </div>
     
             </div>
           </section>
+
+          <!-- Engineering Footer & BibTeX Widget -->
+          <footer class="index-footer">
+            <div class="footer-grid">
+              <div>
+                <h3 class="footer-title">From Tin to Tokens</h3>
+                <p class="footer-desc">
+                  Written by <strong>Dave Lemphers</strong> · Published by <a href="https://maincode.com" target="_blank" rel="noopener" style="color: var(--accent);">Maincode</a>.<br>
+                  A complete, open textbook on low-level LLM runtime engineering, raw GPU driver interfaces, and custom Rust execution engines.
+                </p>
+                <p style="font-size: 0.8rem; color: var(--text-subtle); margin-bottom: 1.25rem;">
+                  Text licensed under Creative Commons <strong>CC-BY 4.0</strong>. Code samples licensed under <strong>MIT</strong>.
+                </p>
+                <div class="footer-links">
+                  <a href="https://github.com/MaincodeHQ/from-tin-to-tokens" target="_blank" rel="noopener">★ GitHub Repository</a>
+                  <a href="https://github.com/MaincodeHQ/from-tin-to-tokens/releases/download/v1.0/from-tin-to-tokens-v1.0.pdf" download>📥 Download PDF</a>
+                  <a href="../ERRATA.md">Errata &amp; Corrections</a>
+                  <a href="shared-expert-amortization.html">MoE Simulator</a>
+                </div>
+              </div>
+
+              <div>
+                <div class="bibtex-box">
+                  <div class="bibtex-header">
+                    <span>CITATION (BIBTEX)</span>
+                    <button class="bibtex-copy-btn" id="copy-bibtex-btn" onclick="copyBibtex()">Copy BibTeX</button>
+                  </div>
+                  <pre class="bibtex-content" id="bibtex-code">@book{lemphers2026tin_to_tokens,
+  title={From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust},
+  author={Lemphers, Dave},
+  publisher={Maincode HQ},
+  year={2026},
+  edition={1.0},
+  url={https://github.com/MaincodeHQ/from-tin-to-tokens}
+}</pre>
+                </div>
+              </div>
+            </div>
+          </footer>
         </div>
       </main>
     </div>
   </div>
   <script src="assets/script.js"></script>
+  <script>
+    function copyBibtex() {
+      const code = document.getElementById('bibtex-code');
+      const btn = document.getElementById('copy-bibtex-btn');
+      if (!code || !btn) return;
+      navigator.clipboard.writeText(code.innerText.trim()).then(() => {
+        btn.innerText = '✓ Copied!';
+        btn.style.color = 'var(--accent)';
+        setTimeout(() => {
+          btn.innerText = 'Copy BibTeX';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>

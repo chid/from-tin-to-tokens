@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoE Memory Bandwidth & Batch Amortization: Shared vs. Routed Experts</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      --primary: #3b82f6;
+      --primary-light: #1e293b;
+      --success: #22c55e;
+      --success-light: #064e3b;
+      --danger: #ef4444;
+      --danger-light: #450a0a;
+      --warning: #f59e0b;
+      --warning-light: #451a03;
+      --border: #334155;
+      --card-bg: #1e293b;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+      font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      color: var(--text-main, #1e293b);
+      line-height: 1.65;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-danger { background: var(--danger-light); color: var(--danger); }
+    .badge-success { background: var(--success-light); color: var(--success); }
+
+    .header-section {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .header-section h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin: 0.75rem 0 0.5rem 0;
+      line-height: 1.25;
+    }
+
+    .header-section .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted, #64748b);
+      margin: 0;
+    }
+
+    /* In-text Citations */
+    a.cite-ref {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85em;
+      padding: 0 0.15em;
+      border-radius: 3px;
+      transition: background-color 0.15s;
+    }
+    a.cite-ref:hover {
+      background-color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .box {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .box-danger {
+      border-left: 5px solid var(--danger);
+      background: var(--danger-light);
+    }
+
+    .box-success {
+      border-left: 5px solid var(--success);
+      background: var(--success-light);
+    }
+
+    .box h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.15rem;
+    }
+
+    .formula-card {
+      background: var(--bg-code, #f8fafc);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    /* Interactive Simulator */
+    .interactive-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      background: var(--bg-code, #f8fafc);
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted, #64748b);
+      margin-bottom: 0.35rem;
+    }
+
+    .control-group input, .control-group select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      font-size: 0.95rem;
+      background: var(--card-bg);
+      color: inherit;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 340px;
+      margin: 1.5rem 0;
+    }
+
+    svg.chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    table.data-table th, table.data-table td {
+      padding: 0.65rem 0.85rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.data-table th:first-child, table.data-table td:first-child {
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: var(--bg-code, #f8fafc);
+      font-weight: 600;
+      color: var(--text-muted, #475569);
+    }
+
+    table.data-table tr:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .pill-btn {
+      cursor: pointer;
+      background: white;
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .pill-btn:hover, .pill-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* References Section */
+    .reference-item {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      background: var(--card-bg);
+      scroll-margin-top: 2rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .reference-item:target {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .reference-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.35rem;
+    }
+
+    .reference-num {
+      font-weight: 700;
+      color: var(--primary);
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+    }
+
+    .reference-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.4rem 0;
+    }
+
+    .reference-title a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .reference-title a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .reference-meta {
+      font-size: 0.875rem;
+      color: var(--text-muted, #64748b);
+      margin-bottom: 0.5rem;
+    }
+
+    .reference-annotation {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      margin-bottom: 0.75rem;
+    }
+
+    .bibtex-details {
+      margin-top: 0.5rem;
+    }
+
+    .bibtex-details summary {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted, #64748b);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .bibtex-details summary:hover {
+      color: var(--primary);
+    }
+
+    .bibtex-code {
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-code, #f8fafc);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .backlink {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+    }
+
+    .backlink:hover {
+      text-decoration: underline;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav-links">
+      <a href="ch24-mixture-of-experts-inference.html">← Back to Chapter 24 (MoE Inference)</a>
+      <span>•</span>
+      <a href="../ERRATA.md">View ERRATA.md</a>
+    </nav>
+
+    <header class="header-section">
+      <span class="badge badge-primary">Technical Analysis & Formal References</span>
+      <h1>MoE Memory Bandwidth & Batch Amortization</h1>
+      <p class="subtitle">Why shared experts amortize immediately as <code>1/B</code> from Batch 1, while routed experts only amortize once the active expert pool saturates.</p>
+    </header>
+
+    <!-- SECTION 1: THE BOOK TEXT VS REALITY -->
+    <section>
+      <h2>1. The Erratum in Chapter 24 (Page 116)</h2>
+      <p>In <em>From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust</em> (v1.0) <sup><a id="cite-1" href="#ref-1" class="cite-ref">[1]</a></sup>, Chapter 24 examines the memory bandwidth bottlenecks of Mixture-of-Experts (MoE) decode. On page 116, the section on <em>Quantised experts</em> makes an assertion regarding shared experts that inverts the physical reality of GPU memory access:</p>
+
+      <div class="comparison-grid">
+        <div class="box box-danger">
+          <h3><span class="badge badge-danger">Original (Inverted)</span> Page 116</h3>
+          <p><em>"...And <strong>watch the shared expert</strong>, which every token reads regardless of routing, so its bandwidth cost doesn’t amortise with batch the way routed experts do."</em></p>
+          <hr style="border: none; border-top: 1px dashed var(--danger); margin: 1rem 0;">
+          <p style="font-size: 0.85rem; color: #991b1b;"><strong>The error:</strong> Conflates <em>sparsity</em> (which shared experts lack) with <em>batch amortization</em> (which shared experts benefit from completely and immediately).</p>
+        </div>
+
+        <div class="box box-success">
+          <h3><span class="badge badge-success">Corrected</span> Architectural Truth</h3>
+          <p><em>"...And <strong>watch the shared expert</strong>, which every token reads regardless of routing: like any dense weight its per-token bandwidth falls as <strong>1/B from batch 1</strong> (43 MB/token at B=1 → 0.67 MB/token at B=64 in DeepSeek-V3), while routed expert traffic per token only falls once the active expert set saturates — sparsity offers no saving on the shared expert, but batching does."</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MATHEMATICAL EXPLANATION -->
+    <section>
+      <h2>2. The Mathematical Proof: Dense GEMM vs. Sparse Routing</h2>
+      <p>The shared expert architecture was originally pioneered by <strong>DeepSeekMoE</strong> <sup><a id="cite-2" href="#ref-2" class="cite-ref">[2]</a></sup> and scaled up in <strong>DeepSeek-V2</strong> <sup><a id="cite-3" href="#ref-3" class="cite-ref">[3]</a></sup> and <strong>DeepSeek-V3</strong> <sup><a id="cite-4" href="#ref-4" class="cite-ref">[4]</a></sup>. The underlying mathematics governs why the shared expert behaves identically to standard dense layers under batched inference.</p>
+
+      <h3>Case A: The Shared Expert (Dense Amortization)</h3>
+      <p>Let $W_{\text{shared}}$ denote the parameter weights of the shared expert FFN. Because every token $t \in \{1, \dots, B\}$ in the batch must be evaluated by the shared expert, the computation across the batch is expressed as a single standard dense General Matrix Multiply ($\text{GEMM}$):</p>
+      
+      <div class="formula-card">
+        Y_{\text{shared}} = X \cdot W_{\text{shared}} \quad \text{where } X \in \mathbb{R}^{B \times d_{\text{model}}}
+      </div>
+
+      <p>Execution characteristics:</p>
+      <ul>
+        <li>The weights $W_{\text{shared}}$ reside in High Bandwidth Memory (HBM/VRAM).</li>
+        <li>For all $B$ tokens, the GPU loads the weight tensor $W_{\text{shared}}$ <strong>exactly once per batch forward pass</strong> into registers/LDS.</li>
+      </ul>
+
+      <div class="formula-card">
+        \text{Total Memory Traffic}_{\text{shared}}(B) = W_{\text{shared}} \quad \text{[Constant with respect to } B\text{]}<br>
+        \text{Per-Token Traffic}_{\text{shared}}(B) = \frac{W_{\text{shared}}}{B} \propto \frac{1}{B} \quad \mathbf{\implies \text{Strict } 1/B \text{ falloff starting immediately at } B=1}
+      </div>
+
+      <h3>Case B: Routed Experts (Dynamic Expansion to Saturation)</h3>
+      <p>In contrast, routed experts employ top-$K_r$ gating out of $N_r$ available experts <sup><a id="cite-5" href="#ref-5" class="cite-ref">[5]</a>, <a id="cite-6" href="#ref-6" class="cite-ref">[6]</a></sup>. The total number of unique experts loaded into VRAM across a batch of $B$ independent tokens is the union of activated experts, $U(B)$:</p>
+      
+      <div class="formula-card">
+        \mathbb{E}[U(B)] = N_r \cdot \left[1 - \left(1 - \frac{K_r}{N_r}\right)^B\right]
+      </div>
+
+      <p>This formulation dictates two distinct operational regimes:</p>
+      <ol>
+        <li><strong>Low-to-Medium Batch ($B \cdot K_r \ll N_r$):</strong> Because routing is distributed, tokens select mostly disjoint subsets of experts. Each additional token introduces $K_r$ new expert weights that must be fetched across the memory bus:
+          <div class="formula-card">
+            \mathbb{E}[U(B)] \approx B \cdot K_r \implies \text{Per-Token Traffic} \approx \frac{(B \cdot K_r) \cdot W_{\text{expert}}}{B} = K_r \cdot W_{\text{expert}} \quad \mathbf{\text{[FLAT! Zero amortization]}}
+          </div>
+          This lack of amortization at low batch is widely documented in systems literature as the "expert thrashing" or memory wall effect <sup><a id="cite-7" href="#ref-7" class="cite-ref">[7]</a>, <a id="cite-8" href="#ref-8" class="cite-ref">[8]</a></sup>.
+        </li>
+        <li><strong>High Batch (Saturation, $B \cdot K_r \gg N_r$):</strong> Only after the active expert pool saturates ($\mathbb{E}[U(B)] \to N_r$) does total weight bandwidth hit its ceiling ($N_r \cdot W_{\text{expert}}$). From this point onward, per-token bandwidth finally begins decaying as $O(1/B)$ <sup><a id="cite-9" href="#ref-9" class="cite-ref">[9]</a>, <a id="cite-10" href="#ref-10" class="cite-ref">[10]</a></sup>.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 3: INTERACTIVE VISUALIZER -->
+    <section class="interactive-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.4rem;">3. Interactive Bandwidth Simulator</h2>
+          <p style="margin: 0.25rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">Simulate per-token memory traffic across batch sizes and verify the curves.</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="pill-btn active" onclick="setPreset('deepseek-v3', this)">DeepSeek-V3 (FP8)</button>
+          <button class="pill-btn" onclick="setPreset('mixtral', this)">Mixtral 8x7B (FP16)</button>
+          <button class="pill-btn" onclick="setPreset('qwen-57b', this)">Qwen2.5-57B (FP16)</button>
+        </div>
+      </div>
+
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="numExperts">Routed Experts ($N_r$)</label>
+          <input type="number" id="numExperts" value="256" min="1" max="512" oninput="updateSimulation()">
+        </div>
+        <div class="control-group">
+          <label for="topK">Top-$K$ per Token ($K_r$)</label>
+          <input type="number" id="topK" value="8" min="1" max="64" oninput="updateSimulation()">
+        </div>
+        <div class="control-group">
+          <label for="expertSize">Routed Expert Size (MB)</label>
+          <input type="number" id="expertSize" value="43" min="1" max="1000" oninput="updateSimulation()">
+        </div>
+        <div class="control-group">
+          <label for="sharedSize">Shared Expert Size (MB)</label>
+          <input type="number" id="sharedSize" value="43" min="0" max="1000" oninput="updateSimulation()">
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <svg id="chartSvg" class="chart-svg" viewBox="0 0 800 320"></svg>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <span style="display: flex; align-items: center; gap: 0.4rem;">
+          <span style="width: 14px; height: 14px; background: #2563eb; border-radius: 3px; display: inline-block;"></span>
+          <strong>Shared Expert (Falls as 1/B from B=1)</strong>
+        </span>
+        <span style="display: flex; align-items: center; gap: 0.4rem;">
+          <span style="width: 14px; height: 14px; background: #dc2626; border-radius: 3px; display: inline-block;"></span>
+          <strong>Routed Experts (Flat until saturation)</strong>
+        </span>
+        <span style="display: flex; align-items: center; gap: 0.4rem;">
+          <span style="width: 14px; height: 14px; background: #059669; border-radius: 3px; display: inline-block;"></span>
+          <strong>Total Per-Token Bandwidth</strong>
+        </span>
+      </div>
+
+      <h3>Traffic Breakdown Table</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Batch Size ($B$)</th>
+            <th>Active Routed Experts</th>
+            <th>Shared Traffic / Token</th>
+            <th>Routed Traffic / Token</th>
+            <th>Total Traffic / Token</th>
+            <th>Shared Amortization</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 4: DEEPSEEK-V3 WALKTHROUGH -->
+    <section>
+      <h2>4. Case Study: DeepSeek-V3 in FP8</h2>
+      <p>Using the official architecture specifications from the <em>DeepSeek-V3 Technical Report</em> <sup><a id="cite-4-2" href="#ref-4" class="cite-ref">[4]</a></sup>:</p>
+      
+      <div class="box" style="margin-bottom: 1.5rem;">
+        <h4 style="margin-top: 0;">DeepSeek-V3 Layer Specifications</h4>
+        <ul>
+          <li><strong>Hidden Dimension ($d_{\text{model}}$):</strong> 7168</li>
+          <li><strong>MoE Intermediate Size ($d_{\text{expert}}$):</strong> 2048</li>
+          <li><strong>Architecture:</strong> 1 shared expert + 256 routed experts (top-8 active)</li>
+          <li><strong>Parameters per Expert:</strong> 3 projections ($\text{gate}, \text{up}, \text{down}$) $= 3 \times 7168 \times 2048 = 44,040,192\text{ parameters}$</li>
+          <li><strong>Size in FP8 (1 byte/param):</strong> $\approx 44.04\text{ MB}$ (decimal) or $\approx 42.0\text{ MiB}$ (binary) $\approx \mathbf{43\text{ MB}}$.</li>
+        </ul>
+      </div>
+
+      <p>Evaluating the empirical bandwidth from Batch 1 to Batch 64:</p>
+      <ul>
+        <li><strong>At Batch 1:</strong>
+          <ul>
+            <li>Shared expert reads 1 expert $= 43\text{ MB/token}$.</li>
+            <li>Routed experts read 8 experts $= 8 \times 43 = 344\text{ MB/token}$.</li>
+          </ul>
+        </li>
+        <li><strong>At Batch 64:</strong>
+          <ul>
+            <li>Shared expert weights are loaded <em>once</em> across all 64 tokens: $43\text{ MB} / 64 = \mathbf{0.67\text{ MB/token}}$. <strong>(A 64× bandwidth reduction!)</strong></li>
+            <li>Across 64 tokens selecting 8 experts each, the expected unique active routed experts is:
+              $$\mathbb{E}[U(64)] = 256 \times \left(1 - (1 - 8/256)^{64}\right) \approx 222\text{ active experts}$$
+              Total routed weight read $= 222 \times 43\text{ MB} \approx 9,546\text{ MB}$.<br>
+              Per-token traffic $= 9,546\text{ MB} / 64 \approx \mathbf{149.5\text{ MB/token}}$. <strong>(Only a 2.3× reduction!)</strong>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <p>Theoretical and empirical studies on DeepSeekMoE convergence <sup><a id="cite-11" href="#ref-11" class="cite-ref">[11]</a></sup> affirm that the shared expert captures fundamental universal representations across tokens, making Data Parallel (DP) replication across GPU ranks optimal without inter-GPU all-to-all communication overhead <sup><a id="cite-4-3" href="#ref-4" class="cite-ref">[4]</a>, <a id="cite-10-2" href="#ref-10" class="cite-ref">[10]</a></sup>.</p>
+    </section>
+
+    <!-- SECTION 5: EXERCISE 2 COLLATERAL -->
+    <section>
+      <h2>5. The Collateral Error in Chapter 24, Exercise 2</h2>
+      <p>At the conclusion of Chapter 24 (page 116) <sup><a id="cite-1-2" href="#ref-1" class="cite-ref">[1]</a></sup>, Exercise 2 asks:</p>
+      <div class="box" style="font-style: italic; margin: 1rem 0;">
+        "2. DeepSeek-V3 has a shared expert plus top-8 of 256 routed. Compute the per-token weight traffic in FP8 and <strong>identify which component fails to amortise with batch</strong>."
+      </div>
+      <p>Because of the author's inverted premise, the exercise expected the answer to be <em>"the shared expert"</em>. But as mathematically proven above, the correct answer is the <strong>routed experts</strong>: they are the component that fails to amortize across low and medium batch sizes due to expert set expansion!</p>
+    </section>
+
+    <!-- SECTION 6: FORMAL REFERENCES -->
+    <section id="references">
+      <h2>6. References & Formal Bibliography</h2>
+      <p>The following peer-reviewed papers, systems reports, and technical analyses document the mathematical and physical foundations of MoE serving, shared expert design, and memory bandwidth amortization:</p>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">Primary MoE & Shared Expert Architectures</h3>
+
+      <div class="reference-item" id="ref-2">
+        <div class="reference-header">
+          <span class="reference-num">[2]</span>
+          <a href="#cite-2" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2401.06066" target="_blank">DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models</a>
+        </div>
+        <div class="reference-meta">
+          Damai Dai, Chengqi Deng, Chenggang Zhao, R. X. Xu, Huazuo Gao, Deli Chen, Jiashi Li, Wangding Zeng, Xingkai Yu, Y. Wu, Z. Xie, Y. K. Li, Panpan Huang, Fuli Luo, Chong Ruan, Zhifang Sui, Wenfeng Liang (2024). <em>arXiv preprint arXiv:2401.06066</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Introduced the architectural division between $K_s$ shared experts and $K_r$ routed experts. Formalized how dedicating isolated parameters to universal tokens prevents expert overlap and captures domain-invariant knowledge.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{dai2024deepseekmoe,
+  title={DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models},
+  author={Dai, Damai and Deng, Chengqi and Zhao, Chenggang and Xu, R. X. and Gao, Huazuo and Chen, Deli and Li, Jiashi and Zeng, Wangding and Yu, Xingkai and Wu, Y. and others},
+  journal={arXiv preprint arXiv:2401.06066},
+  year={2024}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-3">
+        <div class="reference-header">
+          <span class="reference-num">[3]</span>
+          <a href="#cite-3" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2405.04434" target="_blank">DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model</a>
+        </div>
+        <div class="reference-meta">
+          DeepSeek-AI (2024). <em>arXiv preprint arXiv:2405.04434</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Scaled DeepSeekMoE to 236B total parameters with Multi-head Latent Attention (MLA) and 2 shared experts + 160 routed experts, establishing low-cost MoE serving economics.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{deepseek2024deepseekv2,
+  title={DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model},
+  author={{DeepSeek-AI}},
+  journal={arXiv preprint arXiv:2405.04434},
+  year={2024}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-4">
+        <div class="reference-header">
+          <span class="reference-num">[4]</span>
+          <a href="#cite-4" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2412.19437" target="_blank">DeepSeek-V3 Technical Report</a>
+        </div>
+        <div class="reference-meta">
+          DeepSeek-AI (2024). <em>arXiv preprint arXiv:2412.19437</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Outlines the 671B parameter MoE architecture (37B active) with 1 shared expert and 256 routed experts. Section 3 details the deployment strategy: replicating the shared expert across Data Parallelism (DP) ranks, allowing it to execute concurrently with all-to-all communication without network traffic.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{deepseek2024deepseekv3,
+  title={DeepSeek-V3 Technical Report},
+  author={{DeepSeek-AI}},
+  journal={arXiv preprint arXiv:2412.19437},
+  year={2024}
+}</div>
+        </details>
+      </div>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">Foundational Sparse MoE Theory & Saturation</h3>
+
+      <div class="reference-item" id="ref-5">
+        <div class="reference-header">
+          <span class="reference-num">[5]</span>
+          <a href="#cite-5" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/1701.06538" target="_blank">Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</a>
+        </div>
+        <div class="reference-meta">
+          Noam Shazeer, Azalia Mirhoseini, Krzysztof Maziarz, Andy Davis, Quoc Le, Geoffrey Hinton, Jeff Dean (2017). <em>International Conference on Learning Representations (ICLR 2017)</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Introduced sparsely-gated top-$K$ Mixture-of-Experts for deep networks, introducing load balancing auxiliary losses and defining token dispatching.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@inproceedings{shazeer2017outrageously,
+  title={Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer},
+  author={Shazeer, Noam and Mirhoseini, Azalia and Maziarz, Krzysztof and Davis, Andy and Le, Quoc and Hinton, Geoffrey and Dean, Jeff},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-6">
+        <div class="reference-header">
+          <span class="reference-num">[6]</span>
+          <a href="#cite-6" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2101.03961" target="_blank">Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</a>
+        </div>
+        <div class="reference-meta">
+          William Fedus, Barret Zoph, Noam Shazeer (2022). <em>Journal of Machine Learning Research (JMLR)</em>, 23(120), 1-39.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Simplified routing to top-1, investigated expert capacity factor, and characterized how batch sizes interact with routing dynamics and expert saturation.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{fedus2022switch,
+  title={Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity},
+  author={Fedus, William and Zoph, Barret and Shazeer, Noam},
+  journal={Journal of Machine Learning Research},
+  volume={23},
+  number={120},
+  pages={1--39},
+  year={2022}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-11">
+        <div class="reference-header">
+          <span class="reference-num">[11]</span>
+          <a href="#cite-11" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2505.10860" target="_blank">On DeepSeekMoE: Statistical Benefits of Shared Experts and Normalized Sigmoid Gating</a>
+        </div>
+        <div class="reference-meta">
+          Deli Chen, Damai Dai, Huazuo Gao, et al. (2025). <em>arXiv preprint arXiv:2505.10860</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Provides rigorous theoretical convergence analysis showing how shared experts isolate universal token representations, reducing expert variance in the routed components.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{chen2025deepseekmoe_statistical,
+  title={On DeepSeekMoE: Statistical Benefits of Shared Experts and Normalized Sigmoid Gating},
+  author={Chen, Deli and Dai, Damai and Gao, Huazuo and others},
+  journal={arXiv preprint arXiv:2505.10860},
+  year={2025}
+}</div>
+        </details>
+      </div>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">Systems, Inference Engines & Grouped GEMM</h3>
+
+      <div class="reference-item" id="ref-8">
+        <div class="reference-header">
+          <span class="reference-num">[8]</span>
+          <a href="#cite-8" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2211.15841" target="_blank">MegaBlocks: Efficient Sparse Training with Block-Sparse Operations</a>
+        </div>
+        <div class="reference-meta">
+          Trevor Gale, Deepak Narayanan, Cliff Wong, Xiaohan Chen, Matei Zaharia (2023). <em>Proceedings of Machine Learning and Systems (MLSys 2023)</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Developed block-sparse GPU kernels (dmm) to eliminate padding and drop tokens in ragged MoE computation, demonstrating how memory bandwidth limits ragged expert evaluation.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{gale2023megablocks,
+  title={MegaBlocks: Efficient Sparse Training with Block-Sparse Operations},
+  author={Gale, Trevor and Narayanan, Deepak and Wong, Cliff and Chen, Xiaohan and Zaharia, Matei},
+  journal={Proceedings of Machine Learning and Systems (MLSys)},
+  volume={5},
+  year={2023}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-10">
+        <div class="reference-header">
+          <span class="reference-num">[10]</span>
+          <a href="#cite-10" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://arxiv.org/abs/2312.07104" target="_blank">SGLang: Efficiently Scaling Large Language Model Serving</a>
+        </div>
+        <div class="reference-meta">
+          Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Jeff Huang, Chuyue Sun, Cody Hao Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E. Gonzalez, Hao Zhang (2023). <em>arXiv preprint arXiv:2312.07104</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> High-performance LLM serving framework that implements optimized multi-GPU Expert Parallelism, overlapping shared expert computation with dispatch communication for DeepSeek models.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@article{zheng2023sglang,
+  title={Efficiently Scaling Large Language Model Serving with SGLang},
+  author={Zheng, Lianmin and Yin, Liangsheng and Xie, Zhiqiang and Huang, Jeff and Sun, Chuyue and Yu, Cody Hao and Cao, Shiyi and Kozyrakis, Christos and Stoica, Ion and Gonzalez, Joseph E. and others},
+  journal={arXiv preprint arXiv:2312.07104},
+  year={2023}
+}</div>
+        </details>
+      </div>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">Educational Guides & Industry Articles</h3>
+
+      <div class="reference-item" id="ref-7">
+        <div class="reference-header">
+          <span class="reference-num">[7]</span>
+          <a href="#cite-7" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://huggingface.co/blog/moe" target="_blank">Mixture of Experts Explained</a>
+        </div>
+        <div class="reference-meta">
+          Omar Sanseviero, Lewis Tunstall, Philipp Schmid, Sourab Mangrulkar, Younes Belkada (2023). <em>Hugging Face Blog</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Clear breakdown of MoE inference bandwidth economics, explaining how batching induces expert set expansion and converts sparse computation into dense memory loading.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@misc{sanseviero2023moe,
+  title={Mixture of Experts Explained},
+  author={Sanseviero, Omar and Tunstall, Lewis and Schmid, Philipp and Mangrulkar, Sourab and Belkada, Younes},
+  howpublished={\url{https://huggingface.co/blog/moe}},
+  year={2023}
+}</div>
+        </details>
+      </div>
+
+      <div class="reference-item" id="ref-9">
+        <div class="reference-header">
+          <span class="reference-num">[9]</span>
+          <a href="#cite-9" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts" target="_blank">A Visual Guide to Mixture of Experts (MoE)</a>
+        </div>
+        <div class="reference-meta">
+          Maarten Grootendorst (2024). <em>Newsletter Publication</em>.
+        </div>
+        <div class="reference-annotation">
+          <strong>Key Contribution:</strong> Highly regarded visual reference illustrating token routing, expert capacity, and the structural differences between dense feed-forward networks and routed MoE layers.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@misc{grootendorst2024visualmoe,
+  title={A Visual Guide to Mixture of Experts (MoE)},
+  author={Grootendorst, Maarten},
+  howpublished={\url{https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts}},
+  year={2024}
+}</div>
+        </details>
+      </div>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">Source Book & Erratum Documentation</h3>
+
+      <div class="reference-item" id="ref-1">
+        <div class="reference-header">
+          <span class="reference-num">[1]</span>
+          <a href="#cite-1" class="backlink" title="Jump to citation">↩ Back to text</a>
+        </div>
+        <div class="reference-title">
+          <a href="ch24-mixture-of-experts-inference.html">From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust (v1.0)</a>
+        </div>
+        <div class="reference-meta">
+          Dave Lemphers (2026). Chapter 24: "Mixture of Experts Inference", Section: "Quantised experts", p. 116.
+        </div>
+        <div class="reference-annotation">
+          <strong>Context:</strong> The source text reviewed. Page 116 features the shared expert amortisation inversion and Exercise 2. Corrected in <a href="../ERRATA.md">ERRATA.md</a>.
+        </div>
+        <details class="bibtex-details">
+          <summary>View BibTeX</summary>
+          <div class="bibtex-code">@book{lemphers2026tintotokens,
+  title={From Tin to Tokens: Building an LLM Inference Stack from Scratch in Rust},
+  author={Lemphers, Dave},
+  edition={1.0},
+  year={2026},
+  chapter={24},
+  pages={116}
+}</div>
+        </details>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const presets = {
+      'deepseek-v3': { numExperts: 256, topK: 8, expertSize: 43, sharedSize: 43 },
+      'mixtral': { numExperts: 8, topK: 2, expertSize: 250, sharedSize: 0 },
+      'qwen-57b': { numExperts: 64, topK: 8, expertSize: 95, sharedSize: 0 }
+    };
+
+    function setPreset(key, btn) {
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const p = presets[key];
+      document.getElementById('numExperts').value = p.numExperts;
+      document.getElementById('topK').value = p.topK;
+      document.getElementById('expertSize').value = p.expertSize;
+      document.getElementById('sharedSize').value = p.sharedSize;
+      updateSimulation();
+    }
+
+    function calcActiveExperts(B, E, K) {
+      return E * (1.0 - Math.pow((E - K) / E, B));
+    }
+
+    function updateSimulation() {
+      const E = parseFloat(document.getElementById('numExperts').value);
+      const K = parseFloat(document.getElementById('topK').value);
+      const We = parseFloat(document.getElementById('expertSize').value);
+      const Ws = parseFloat(document.getElementById('sharedSize').value);
+
+      const batchSizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512];
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+
+      const chartData = [];
+
+      batchSizes.forEach(B => {
+        const activeU = calcActiveExperts(B, E, K);
+        const sharedPerTok = Ws / B;
+        const routedPerTok = (activeU * We) / B;
+        const totalPerTok = sharedPerTok + routedPerTok;
+        const sharedFold = (Ws / 1) / (sharedPerTok || 1);
+
+        chartData.push({ B, sharedPerTok, routedPerTok, totalPerTok });
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${B}</strong></td>
+          <td>${activeU.toFixed(1)} / ${E}</td>
+          <td style="color: #2563eb; font-weight: 600;">${sharedPerTok.toFixed(2)} MB</td>
+          <td style="color: #dc2626; font-weight: 600;">${routedPerTok.toFixed(2)} MB</td>
+          <td style="color: #059669; font-weight: 700;">${totalPerTok.toFixed(2)} MB</td>
+          <td><span class="badge ${sharedFold > 1 ? 'badge-success' : 'badge-primary'}">${sharedFold.toFixed(1)}×</span></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      renderChart(chartData);
+    }
+
+    function renderChart(data) {
+      const svg = document.getElementById('chartSvg');
+      svg.innerHTML = '';
+
+      const width = 800;
+      const height = 320;
+      const padLeft = 70;
+      const padRight = 30;
+      const padTop = 20;
+      const padBottom = 40;
+
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      const maxVal = Math.max(...data.map(d => d.totalPerTok), 10) * 1.1;
+
+      // X-scale logarithmic for batch size: 1 to 512
+      const minLogB = Math.log2(1);
+      const maxLogB = Math.log2(512);
+
+      function getX(B) {
+        return padLeft + ((Math.log2(B) - minLogB) / (maxLogB - minLogB)) * plotW;
+      }
+
+      function getY(val) {
+        return padTop + plotH - (val / maxVal) * plotH;
+      }
+
+      // Draw Grid & Axes
+      let gridHtml = '';
+      
+      // Horizontal grid lines
+      for (let i = 0; i <= 4; i++) {
+        const val = (maxVal * i) / 4;
+        const y = getY(val);
+        gridHtml += `<line x1="${padLeft}" y1="${y}" x2="${width - padRight}" y2="${y}" stroke="var(--border)" stroke-dasharray="3,3"/>`;
+        gridHtml += `<text x="${padLeft - 10}" y="${y + 4}" font-size="11" fill="var(--text-muted)" text-anchor="end">${val.toFixed(0)} MB</text>`;
+      }
+
+      // Vertical grid lines
+      data.forEach(d => {
+        const x = getX(d.B);
+        gridHtml += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${height - padBottom}" stroke="var(--border)" stroke-dasharray="2,2"/>`;
+        gridHtml += `<text x="${x}" y="${height - padBottom + 18}" font-size="11" fill="var(--text-muted)" text-anchor="middle">B=${d.B}</text>`;
+      });
+
+      // Axis label
+      gridHtml += `<text x="${padLeft + plotW / 2}" y="${height - 5}" font-size="12" fill="var(--text-muted)" text-anchor="middle">Batch Size (B, Log Scale)</text>`;
+
+      // Paths
+      function createPath(key, color, strokeWidth = 3) {
+        let d = '';
+        data.forEach((pt, idx) => {
+          const x = getX(pt.B);
+          const y = getY(pt[key]);
+          d += (idx === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+        });
+        return `<path d="${d}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round"/>`;
+      }
+
+      // Data points
+      function createCircles(key, color) {
+        return data.map(pt => {
+          const x = getX(pt.B);
+          const y = getY(pt[key]);
+          return `<circle cx="${x}" cy="${y}" r="4.5" fill="${color}" stroke="#ffffff" stroke-width="2"/>`;
+        }).join('');
+      }
+
+      const pathShared = createPath('sharedPerTok', '#2563eb', 2.5);
+      const pathRouted = createPath('routedPerTok', '#dc2626', 2.5);
+      const pathTotal = createPath('totalPerTok', '#059669', 3.5);
+
+      const circlesShared = createCircles('sharedPerTok', '#2563eb');
+      const circlesRouted = createCircles('routedPerTok', '#dc2626');
+      const circlesTotal = createCircles('totalPerTok', '#059669');
+
+      svg.innerHTML = gridHtml + pathShared + pathRouted + pathTotal + circlesShared + circlesRouted + circlesTotal;
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateSimulation();
+    });
+  </script>
+</body>
+</html>
